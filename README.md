@@ -15,3 +15,5 @@ On the other hand if the user logs a running workout he or she will get a overvi
 - User login to track data for specific users.
 - Simple UI for quick navigations through the menu.
 - The ability to create custom exercises and workouts.
+
+![Wireframe](/images/wireframe.jpg)
