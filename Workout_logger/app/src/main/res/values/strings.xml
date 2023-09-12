@@ -3,4 +3,9 @@
     <string name="generate_button_text">Generate</string>
     <string name="random_generated_number">Number</string>
     <string name="random_number_generator">Random Number Generator</string>
+    <string name="swap_activity_text">Change to second activity</string>
+    <string name="num_input_hint">Enter max number</string>
+    <string name="swap_activity_text_second_activity">Back to main activity</string>
+    <string name="second_activity_text">Random generated number from previous activity</string>
+    <string name="random_num_texxt">No number generated</string>
 </resources>
