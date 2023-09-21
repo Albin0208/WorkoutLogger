@@ -7,21 +7,10 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/generated_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/random_generated_number"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/generator_button" />
-
-    <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/random_number_generator"
+        android:text="@string/guestbook"
         android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,22 +18,22 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/generator_button"
+        android:id="@+id/btn_add_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/generate_button_text"
+        android:text="@string/add_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/limit" />
+        app:layout_constraintTop_toBottomOf="@+id/et_name" />
 
     <EditText
-        android:id="@+id/limit"
+        android:id="@+id/et_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:minHeight="48dp"
-        android:hint="@string/num_input_hint"
-        android:inputType="number"
+        android:hint="@string/your_name"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -53,7 +42,7 @@
         android:id="@+id/swap_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/swap_activity_text"
+        android:text="@string/view_all_names"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

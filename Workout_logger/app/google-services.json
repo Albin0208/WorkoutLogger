@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "475261126835",
+    "project_id": "workout-logger-d6a51",
+    "storage_bucket": "workout-logger-d6a51.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475261126835:android:eff098269e6640b0b2c8c6",
+        "android_client_info": {
+          "package_name": "com.example.workout_logger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtGaHU7ORQjJA0ulCX1yahKJtVghDyn_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
