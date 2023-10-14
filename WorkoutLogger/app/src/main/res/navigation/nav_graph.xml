@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.workoutlogger.fragments.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/exerciseFragment"
+        android:name="com.example.workoutlogger.fragments.ExerciseListFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_exercise_list" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.workoutlogger.fragments.SettingsFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
