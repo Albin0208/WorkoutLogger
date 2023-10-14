@@ -3,12 +3,19 @@ package com.example.workoutlogger.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.workoutlogger.ExerciseAdapter;
 import com.example.workoutlogger.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +67,16 @@ public class ExerciseListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_exercise_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_exercise_list, container, false);
+
+        List<String> exercises = new ArrayList<>(Arrays.asList("Knäböj", "Bänkpress", "Marklyft"));
+
+        RecyclerView recyclerView = view.findViewById(R.id.exercise_recyclerView);
+        ExerciseAdapter exerciseAdapter = new ExerciseAdapter(exercises);
+        recyclerView.setAdapter(exerciseAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+        return view;
     }
 }
