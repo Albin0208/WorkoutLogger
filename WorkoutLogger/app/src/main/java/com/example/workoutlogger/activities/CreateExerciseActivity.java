@@ -14,8 +14,6 @@ import android.widget.Toast;
 import com.example.workoutlogger.ExerciseViewModel;
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -43,7 +41,7 @@ public class CreateExerciseActivity extends AppCompatActivity {
         saveButton.setOnClickListener(view -> {
             String name = exerciseName.getText().toString();
 
-            if (!name.isEmpty()) {
+            if (isValidName(name)) {
                 Map<String, Object> exercise = new HashMap<>();
                 exercise.put("name", name);
 
@@ -52,12 +50,26 @@ public class CreateExerciseActivity extends AppCompatActivity {
                     .addOnSuccessListener(this::onExerciseCreationSuccess)
                     .addOnFailureListener(this::onExerciseCreationFailure);
 
+            } else {
+                // Show an error message
+                exerciseName.setError("Please enter a exercise name");
             }
         });
+
+        exerciseName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                exerciseName.setError(null); // Clear the error when the field is focused.
+            }
+        });
+
+    }
+
+    private boolean isValidName(String name) {
+        return !name.isEmpty() && name.trim().length() > 0;
     }
 
     private void onExerciseCreationSuccess(DocumentReference ref) {
-        String name = exerciseName.getText().toString();
+        String name = exerciseName.getText().toString().trim();
 
         Exercise exercise = new Exercise(name);
 
