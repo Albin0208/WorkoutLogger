@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.workoutlogger.Login;
+import com.example.workoutlogger.activities.LoginActivity;
 import com.example.workoutlogger.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -71,7 +71,7 @@ public class SettingsFragment extends Fragment {
 
         btnLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getActivity(), Login.class);
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
             getActivity().finish();
         });

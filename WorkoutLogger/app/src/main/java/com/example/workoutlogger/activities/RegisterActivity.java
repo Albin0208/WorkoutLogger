@@ -1,4 +1,4 @@
-package com.example.workoutlogger;
+package com.example.workoutlogger.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,25 +9,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.workoutlogger.R;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class Login extends AppCompatActivity {
-    TextInputEditText editTextEmail, editTextPassword;
-    Button buttonLogin;
+public class RegisterActivity extends AppCompatActivity {
 
-    FirebaseAuth mAuth;
+    TextInputEditText editTextEmail, editTextPassword;
+    Button buttonReg;
+
+    private FirebaseAuth mAuth;
     ProgressBar progressBar;
     TextView textView;
 
-    @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
@@ -42,49 +39,49 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
 
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
-        buttonLogin = findViewById(R.id.btn_login);
+        buttonReg = findViewById(R.id.btn_register);
         progressBar = findViewById(R.id.progressBar);
-        textView = findViewById(R.id.registerNow);
+        textView = findViewById(R.id.loginNow);
 
         textView.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), Register.class);
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+
             startActivity(intent);
             finish();
         });
 
-        buttonLogin.setOnClickListener(View -> {
-            progressBar.setVisibility(android.view.View.VISIBLE);
-            String email, password;
-            email = String.valueOf(editTextEmail.getText());
+        buttonReg.setOnClickListener(view -> {
+            progressBar.setVisibility(View.VISIBLE);
+            String username, password;
+            username = String.valueOf(editTextEmail.getText());
             password = String.valueOf(editTextPassword.getText());
 
-            if (TextUtils.isEmpty(email)) {
-                Toast.makeText(Login.this, "Enter email", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(username)) {
+                Toast.makeText(RegisterActivity.this, "Enter username", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (TextUtils.isEmpty(password)) {
-                Toast.makeText(Login.this, "Enter password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            mAuth.signInWithEmailAndPassword(email, password)
+            mAuth.createUserWithEmailAndPassword(username, password)
                     .addOnCompleteListener(this, task -> {
-                        progressBar.setVisibility(android.view.View.GONE);
+                        progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
-                            Toast.makeText(Login.this, "Login Successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Account created.",
+                                    Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
-                            finish();
+
                         } else {
-                            Toast.makeText(Login.this, "Login failed.",
+                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     });

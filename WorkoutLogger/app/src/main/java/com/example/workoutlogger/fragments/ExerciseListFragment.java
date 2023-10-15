@@ -1,5 +1,6 @@
 package com.example.workoutlogger.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,8 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import com.example.workoutlogger.ExerciseAdapter;
+import com.example.workoutlogger.activities.CreateExerciseActivity;
+import com.example.workoutlogger.adapters.ExerciseAdapter;
 import com.example.workoutlogger.R;
 
 import java.util.ArrayList;
@@ -69,6 +72,7 @@ public class ExerciseListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_exercise_list, container, false);
 
+        // TODO Create a list of exercises from the database
         List<String> exercises = new ArrayList<>(Arrays.asList("Knäböj", "Bänkpress", "Marklyft"));
 
         RecyclerView recyclerView = view.findViewById(R.id.exercise_recyclerView);
@@ -76,6 +80,12 @@ public class ExerciseListFragment extends Fragment {
         recyclerView.setAdapter(exerciseAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        Button createExerciseButton = view.findViewById(R.id.add_exercise_button);
+
+        createExerciseButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), CreateExerciseActivity.class);
+            startActivity(intent);
+        });
 
         return view;
     }
