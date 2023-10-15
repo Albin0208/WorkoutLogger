@@ -9,13 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.data.Exercise;
 
 import java.util.List;
 
 public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ExerciseAdapterViewHolder> {
-    private List<String> exercises; // Todo Create an exercise class to use instead
+    private List<Exercise> exercises; // Todo Create an exercise class to use instead
 
-    public ExerciseAdapter(List<String> exercises) {
+    public ExerciseAdapter(List<Exercise> exercises) {
         this.exercises = exercises;
     }
 
@@ -28,7 +29,13 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
 
     @Override
     public void onBindViewHolder(@NonNull ExerciseAdapter.ExerciseAdapterViewHolder holder, int position) {
-        holder.name.setText(exercises.get(position));
+        Exercise exercise = exercises.get(position);
+        holder.name.setText(exercise.getName());
+    }
+
+    public void setExercises(List<Exercise> exercises) {
+        this.exercises = exercises;
+        notifyDataSetChanged();
     }
 
     @Override
