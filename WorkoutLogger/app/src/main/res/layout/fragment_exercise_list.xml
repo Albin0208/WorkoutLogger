@@ -9,13 +9,18 @@
     android:orientation="vertical">
 
     <!-- Search Field -->
+    <!-- Search Field -->
     <EditText
         android:id="@+id/search_editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search..."
         android:drawableStart="@android:drawable/ic_menu_search"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/rounded_edittext_background"
+    />
+
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
