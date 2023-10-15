@@ -58,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         // Get all the exercises from the database
         db.collection("exercises").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
