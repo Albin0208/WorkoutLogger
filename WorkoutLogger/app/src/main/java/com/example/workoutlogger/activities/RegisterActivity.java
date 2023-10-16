@@ -57,34 +57,45 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         buttonReg.setOnClickListener(view -> {
-            progressBar.setVisibility(View.VISIBLE);
-            String username, password;
-            username = String.valueOf(editTextEmail.getText());
-            password = String.valueOf(editTextPassword.getText());
+            String username = String.valueOf(editTextEmail.getText());
+            String password = String.valueOf(editTextPassword.getText());
 
             if (TextUtils.isEmpty(username)) {
-                Toast.makeText(RegisterActivity.this, "Enter username", Toast.LENGTH_SHORT).show();
+                editTextEmail.setError("Email is required");
                 return;
             }
 
             if (TextUtils.isEmpty(password)) {
-                Toast.makeText(RegisterActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
+                editTextPassword.setError("Password is required");
                 return;
             }
 
+            editTextEmail.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    editTextEmail.setError(null); // Clear the error when the field is focused.
+                }
+            });
+
+            editTextPassword.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    editTextPassword.setError(null); // Clear the error when the field is focused.
+                }
+            });
+            progressBar.setVisibility(View.VISIBLE);
+
             mAuth.createUserWithEmailAndPassword(username, password)
-                    .addOnCompleteListener(this, task -> {
-                        progressBar.setVisibility(View.GONE);
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "Account created.",
-                                    Toast.LENGTH_SHORT).show();
+                .addOnCompleteListener(this, task -> {
+                    progressBar.setVisibility(View.GONE);
+                    if (task.isSuccessful()) {
+                        Toast.makeText(RegisterActivity.this, "Account created.",
+                                Toast.LENGTH_SHORT).show();
 
 
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
         });
     }
 }
