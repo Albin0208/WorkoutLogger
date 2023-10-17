@@ -42,6 +42,15 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // Get the user from the database
+        db.collection("users").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d("MainActivity", "onCreate: " + task.getResult().getData());
+            } else {
+                Log.d("MainActivity", "Error getting documents: ", task.getException());
+            }
+        });
+
         // Get the exercises from the database
         db.collection("exercises").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -52,19 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
                 ExerciseViewModel exerciseViewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
                 exerciseViewModel.setExercises(exercises);
-
-            } else {
-                Log.d("MainActivity", "Error getting documents: ", task.getException());
-            }
-        });
-
-        // Get all the exercises from the database
-        db.collection("exercises").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                List<String> exercises = new ArrayList<>(Arrays.asList("Test"));
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    exercises.add(document.getData().get("name").toString());
-                }
 
             } else {
                 Log.d("MainActivity", "Error getting documents: ", task.getException());
