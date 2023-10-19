@@ -1,7 +1,5 @@
 package com.example.workoutlogger.repositories;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -34,8 +32,8 @@ public class UserRepository {
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-//                            User user = documentSnapshot.toObject(User.class);
-//                            userData.setValue(user);
+                            User user = documentSnapshot.toObject(User.class);
+                            userData.setValue(user);
                         }
                     })
                     .addOnFailureListener(e -> {

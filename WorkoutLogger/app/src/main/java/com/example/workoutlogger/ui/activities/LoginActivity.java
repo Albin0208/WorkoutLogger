@@ -16,11 +16,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseTooManyRequestsException;
 
 public class LoginActivity extends AppCompatActivity {
-    TextInputEditText editTextEmail, editTextPassword;
-    Button buttonLogin;
-    ProgressBar progressBar;
-    TextView textView;
-    TextView errorMessage;
     private final UserViewModel userViewModel = new UserViewModel();
 
     @Override
@@ -38,12 +33,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        editTextEmail = findViewById(R.id.email);
-        editTextPassword = findViewById(R.id.password);
-        buttonLogin = findViewById(R.id.btn_login);
-        progressBar = findViewById(R.id.progressBar);
-        textView = findViewById(R.id.registerNow);
-        errorMessage = findViewById(R.id.errorMessage);
+        TextInputEditText editTextEmail = findViewById(R.id.email);
+        TextInputEditText editTextPassword = findViewById(R.id.password);
+        Button buttonLogin = findViewById(R.id.btn_login);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        TextView textView = findViewById(R.id.registerNow);
+        TextView errorMessage = findViewById(R.id.errorMessage);
 
         textView.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
