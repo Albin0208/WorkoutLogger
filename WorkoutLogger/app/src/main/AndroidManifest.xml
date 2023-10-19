@@ -15,9 +15,12 @@
         android:theme="@style/Theme.Material3.Dark"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activities.WorkoutActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.CreateExerciseActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.MainActivity"/>
+            android:parentActivityName=".ui.activities.MainActivity" />
         <activity
             android:name=".ui.activities.RegisterActivity"
             android:exported="false"
