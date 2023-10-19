@@ -24,33 +24,27 @@ public class ExerciseViewModel extends ViewModel {
         LiveData<List<Exercise>> globalExercises = exerciseRepository.getGlobalExercises();
         LiveData<List<Exercise>> userExercises = exerciseRepository.getUserExercises();
 
-        mergedExercises.addSource(globalExercises, exercises -> {
-            // Handle global exercises (if needed)
-            List<Exercise> mergedList = new ArrayList<>();
-            // Merge logic here
-            if (userExercises.getValue() != null) {
-                mergedList.addAll(userExercises.getValue());
-            }
-            if (exercises != null) {
-                mergedList.addAll(exercises);
-            }
-            mergedExercises.setValue(mergedList);
-        });
+        mergedExercises.addSource(globalExercises, exercises -> updateMergedData(mergedExercises, globalExercises, userExercises));
 
-        mergedExercises.addSource(userExercises, exercises -> {
-            // Handle user-specific exercises (if needed)
-            List<Exercise> mergedList = new ArrayList<>();
-            // Merge logic here
-            if (globalExercises.getValue() != null) {
-                mergedList.addAll(globalExercises.getValue());
-            }
-            if (exercises != null) {
-                mergedList.addAll(exercises);
-            }
-            mergedExercises.setValue(mergedList);
-        });
+        mergedExercises.addSource(userExercises, exercises -> updateMergedData(mergedExercises, globalExercises, userExercises));
 
         return mergedExercises;
+    }
+
+    private void updateMergedData(MediatorLiveData<List<Exercise>> mergedExercises, LiveData<List<Exercise>> globalExercises, LiveData<List<Exercise>> userExercises) {
+        List<Exercise> mergedList = new ArrayList<>();
+
+        List<Exercise> globalList = globalExercises.getValue();
+        List<Exercise> userList = userExercises.getValue();
+
+        if (globalList != null) {
+            mergedList.addAll(globalList);
+        }
+        if (userList != null) {
+            mergedList.addAll(userList);
+        }
+
+        mergedExercises.setValue(mergedList);
     }
 
     public LiveData<List<Exercise>> getUserExercises() {
