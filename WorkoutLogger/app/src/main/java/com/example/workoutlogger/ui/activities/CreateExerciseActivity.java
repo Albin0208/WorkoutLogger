@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CreateExerciseActivity extends AppCompatActivity {
-
-    private FirebaseFirestore db;
     private EditText exerciseName;
 
     @Override
@@ -33,8 +31,6 @@ public class CreateExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_exercise);
         getSupportActionBar().setTitle("Create Exercise");
-
-        db = FirebaseFirestore.getInstance();
 
         exerciseName = findViewById(R.id.new_exercise_name);
         Button saveButton = findViewById(R.id.save_exercise_button);
