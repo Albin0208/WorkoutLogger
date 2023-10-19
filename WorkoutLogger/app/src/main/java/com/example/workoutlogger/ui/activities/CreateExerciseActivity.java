@@ -43,7 +43,6 @@ public class CreateExerciseActivity extends AppCompatActivity {
             String name = exerciseName.getText().toString();
 
             if (isValidName(name)) {
-                // TODO This should be changed to the users exercises
                 ExerciseViewModel viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
 
                 OnCompleteListener<DocumentReference> onCompleteListener = task -> {
