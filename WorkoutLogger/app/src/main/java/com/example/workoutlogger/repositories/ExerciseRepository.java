@@ -17,9 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 public class ExerciseRepository {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private MutableLiveData<List<Exercise>> exerciseData = new MutableLiveData<>();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final MutableLiveData<List<Exercise>> exerciseData = new MutableLiveData<>();
 
+    /**
+     * Gets all exercises from Firestore
+     *
+     * @return A LiveData object containing a list of exercises
+     */
     public LiveData<List<Exercise>> getExercises() {
         // Initialize with an empty list
         exerciseData.setValue(new ArrayList<>());
@@ -44,10 +49,15 @@ public class ExerciseRepository {
         return exerciseData;
     }
 
+    /**
+     * Creates an exercise in Firestore
+     *
+     * @param exercise             The exercise to create
+     * @param onCompleteListener   The listener to call when the exercise is created
+     */
     public void createExercise(Exercise exercise, OnCompleteListener<DocumentReference> onCompleteListener) {
         Map<String, Object> exerciseMap = new HashMap<>();
         exerciseMap.put("name", exercise.getName());
-
 
         db.collection("exercises").add(exerciseMap)
                 .addOnCompleteListener(onCompleteListener)
