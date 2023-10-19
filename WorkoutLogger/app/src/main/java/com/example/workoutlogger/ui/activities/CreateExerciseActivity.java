@@ -59,10 +59,11 @@ public class CreateExerciseActivity extends AppCompatActivity {
                     }
                 };
 
-                viewModel.createExercise(name, onCompleteListener);
+                viewModel.createUserExercise(name, onCompleteListener);
             } else {
                 // Show an error message
                 exerciseName.setError("Please enter a exercise name");
+                exerciseName.requestFocus();
             }
         });
 
@@ -76,31 +77,6 @@ public class CreateExerciseActivity extends AppCompatActivity {
 
     private boolean isValidName(String name) {
         return !name.isEmpty() && name.trim().length() > 0;
-    }
-
-    private void onExerciseCreationSuccess(DocumentReference ref) {
-        String name = exerciseName.getText().toString().trim();
-
-        Exercise exercise = new Exercise(name);
-
-        // Get a reference to your ExerciseViewModel
-//        ExerciseViewModel exerciseViewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
-//
-//        // Add the newly created exercise to the ViewModel
-//        List<Exercise> exercises = new ArrayList<>(exerciseViewModel.getExercises().getValue());
-//        exercises.add(exercise);
-//        exerciseViewModel.setExercises(exercises);
-
-        Toast.makeText(CreateExerciseActivity.this, "Exercise Created", Toast.LENGTH_SHORT).show();
-
-        finish(); // Close the activity
-    }
-
-
-
-    private void onExerciseCreationFailure(Exception e) {
-        Log.e("CreateExerciseActivity", "Exercise Creation failed", e);
-        Toast.makeText(this, "Exercise Creation failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override

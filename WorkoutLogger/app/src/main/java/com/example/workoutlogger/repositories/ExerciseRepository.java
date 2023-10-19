@@ -3,10 +3,13 @@ package com.example.workoutlogger.repositories;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.data.Exercise;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,17 +21,16 @@ import java.util.Map;
 
 public class ExerciseRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final MutableLiveData<List<Exercise>> exerciseData = new MutableLiveData<>();
 
     /**
-     * Gets all exercises from Firestore
+     * Gets all global exercises from Firestore
      *
-     * @return A LiveData object containing a list of exercises
+     * @return A LiveData object containing a list of global exercises
      */
-    public LiveData<List<Exercise>> getExercises() {
-        // Initialize with an empty list
-        exerciseData.setValue(new ArrayList<>());
+    public MutableLiveData<List<Exercise>> getGlobalExercises() {
+        MutableLiveData<List<Exercise>> exerciseData = new MutableLiveData<>();
 
+        // Get the global exercises
         db.collection("exercises").addSnapshotListener((querySnapshot, error) -> {
             if (error != null) {
                 // Handle the error
@@ -42,11 +44,45 @@ public class ExerciseRepository {
                         exercises.add(exercise);
                     }
                 }
+
+                Log.d("ExerciseRepository", "Exercises: " + exercises);
                 exerciseData.setValue(exercises);
             }
         });
 
         return exerciseData;
+    }
+
+    /**
+     * Gets all user specific exercises from Firestore
+     *
+     * @return A LiveData object containing a list of user specific exercises
+     */
+    public MutableLiveData<List<Exercise>> getUserExercises() {
+        MutableLiveData<List<Exercise>> userExercises = new MutableLiveData<>();
+        // Get the user specific exercises
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null)
+            return userExercises;
+
+        db.collection("users").document(currentUser.getUid()).collection("exercises")
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.e("ExerciseRepository", "Error getting user exercises ", error);
+                    } else if (querySnapshot != null) {
+                        List<Exercise> exercises = new ArrayList<>();
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            Exercise exercise = document.toObject(Exercise.class);
+                            if (exercise != null) {
+                                exercise.setId(document.getId());
+                                exercises.add(exercise);
+                            }
+                        }
+                        userExercises.setValue(exercises);
+                    }
+                });
+
+        return userExercises;
     }
 
     /**
@@ -60,6 +96,21 @@ public class ExerciseRepository {
         exerciseMap.put("name", exercise.getName());
 
         db.collection("exercises").add(exerciseMap)
+                .addOnCompleteListener(onCompleteListener)
+                .addOnFailureListener(e -> {
+                    // Handle Firestore exception
+                    Log.e("ExerciseRepository", "Error creating exercise", e);
+                });
+    }
+
+    public void createUserExercise(Exercise exercise, OnCompleteListener<DocumentReference> onCompleteListener) {
+        Map<String, Object> exerciseMap = new HashMap<>();
+        exerciseMap.put("name", exercise.getName());
+
+        // Get the current users id
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        db.collection("users").document(currentUser.getUid()).collection("exercises").add(exerciseMap)
                 .addOnCompleteListener(onCompleteListener)
                 .addOnFailureListener(e -> {
                     // Handle Firestore exception
