@@ -43,6 +43,7 @@ public class CreateExerciseActivity extends AppCompatActivity {
             String name = exerciseName.getText().toString();
 
             if (isValidName(name)) {
+                // TODO This should be changed to the users exercises
                 ExerciseViewModel viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
 
                 OnCompleteListener<DocumentReference> onCompleteListener = task -> {
@@ -52,7 +53,6 @@ public class CreateExerciseActivity extends AppCompatActivity {
 
                         // Close the activity and go back to the previous screen
                         finish();
-//                        finish();
                     } else {
                         // Log error message
                         Log.e("CreateExerciseActivity", "Exercise Creation failed", task.getException());

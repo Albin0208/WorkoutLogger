@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.viewmodels.UserViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,12 +30,15 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private ProgressBar progressBar;
+    private final UserViewModel userViewModel = new UserViewModel();
+
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            navigateToLoginActivity();
+        if (userViewModel.isUserSignedIn()) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -96,38 +100,18 @@ public class RegisterActivity extends AppCompatActivity {
         buttonReg.setEnabled(false);
 
         // TODO Add a check if username is already taken
-        createUser(email, password, username);
-    }
-
-    private void createUser(String email, String password, String username) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
+        userViewModel.registerUser(email, password, username)
+                .addOnCompleteListener(task -> {
+                    // Redirect to login activity
                     progressBar.setVisibility(View.GONE);
                     buttonReg.setEnabled(true);
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Account created.", Toast.LENGTH_SHORT).show();
-                        saveUserToDatabase(username);
+                        navigateToLoginActivity();
                     } else {
                         Log.e("Creating user", "Registration failed: " + task.getException());
                         Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    private void saveUserToDatabase(String username) {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            Map<String, Object> userMap = new HashMap<>();
-            userMap.put("name", username);
-
-            db.collection("users").document(user.getUid()).set(userMap)
-                    .addOnSuccessListener(documentReference -> {
-                        navigateToLoginActivity();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Creating user", "Error saving user data: " + e);
-                        Toast.makeText(this, "Error saving user data. Please try again.", Toast.LENGTH_SHORT).show();
-                    });
-        }
     }
 }

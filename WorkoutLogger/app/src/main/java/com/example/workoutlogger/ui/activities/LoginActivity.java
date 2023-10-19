@@ -3,32 +3,31 @@ package com.example.workoutlogger.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.viewmodels.UserViewModel;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class LoginActivity extends AppCompatActivity {
     TextInputEditText editTextEmail, editTextPassword;
     Button buttonLogin;
-
-    FirebaseAuth mAuth;
     ProgressBar progressBar;
     TextView textView;
+    TextView errorMessage; // Add this TextView
+    private final UserViewModel userViewModel = new UserViewModel();
 
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
+        if (userViewModel.isUserSignedIn()) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
@@ -40,13 +39,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
-
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         buttonLogin = findViewById(R.id.btn_login);
         progressBar = findViewById(R.id.progressBar);
         textView = findViewById(R.id.registerNow);
+        errorMessage = findViewById(R.id.errorMessage); // Initialize the errorMessage TextView
 
         textView.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
@@ -61,27 +59,40 @@ public class LoginActivity extends AppCompatActivity {
             password = String.valueOf(editTextPassword.getText());
 
             if (TextUtils.isEmpty(email)) {
-                Toast.makeText(LoginActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
+                // Display an error message in the errorMessage TextView
+                errorMessage.setText("Please enter a email");
+                errorMessage.setVisibility(android.view.View.VISIBLE);
+                progressBar.setVisibility(android.view.View.GONE);
                 return;
             }
 
             if (TextUtils.isEmpty(password)) {
-                Toast.makeText(LoginActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
+                // Display an error message in the errorMessage TextView
+                errorMessage.setText("Please enter a password");
+                errorMessage.setVisibility(android.view.View.VISIBLE);
+                progressBar.setVisibility(android.view.View.GONE);
                 return;
             }
 
-            mAuth.signInWithEmailAndPassword(email, password)
+            userViewModel.signIn(email, password)
                     .addOnCompleteListener(this, task -> {
                         progressBar.setVisibility(android.view.View.GONE);
                         if (task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Login Successfully", Toast.LENGTH_SHORT).show();
-
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(LoginActivity.this, "Login failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            // Display an error message in the errorMessage TextView
+                            Exception exception = task.getException();
+                            if (exception instanceof FirebaseAuthInvalidUserException) {
+                                errorMessage.setText("Invalid email address.");
+                            } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+                                errorMessage.setText("Invalid password.");
+                            } else {
+                                errorMessage.setText("Login failed.");
+                            }
+
+                            errorMessage.setVisibility(android.view.View.VISIBLE);
                         }
                     });
         });
