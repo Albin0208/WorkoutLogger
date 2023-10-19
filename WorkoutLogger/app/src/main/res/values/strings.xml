@@ -24,4 +24,5 @@
     <string name="password_length">Password is required and must be at least 8 characters long</string>
     <string name="username_required">Username is required</string>
     <string name="invalid_email">Please enter a valid email</string>
+    <string name="too_many_requests">Too many tries signing in to this account, please try again later</string>
 </resources>

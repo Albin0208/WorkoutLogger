@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.viewmodels.UserViewModel;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.FirebaseTooManyRequestsException;
 
 public class LoginActivity extends AppCompatActivity {
     TextInputEditText editTextEmail, editTextPassword;
@@ -52,9 +53,8 @@ public class LoginActivity extends AppCompatActivity {
 
         buttonLogin.setOnClickListener(View -> {
             progressBar.setVisibility(android.view.View.VISIBLE);
-            String email, password;
-            email = String.valueOf(editTextEmail.getText());
-            password = String.valueOf(editTextPassword.getText());
+            String email = String.valueOf(editTextEmail.getText());
+            String password = String.valueOf(editTextPassword.getText());
 
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 editTextEmail.setError(getString(R.string.email_required));
@@ -80,9 +80,16 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         } else {
-                            Log.e("LoginActivity", "Login failed", task.getException());
+                            Exception e = task.getException();
+                            Log.e("LoginActivity", "Login failed", e);
 
-                            errorMessage.setText(R.string.incorrect_email_or_password);
+                            if (e instanceof FirebaseTooManyRequestsException)
+                                errorMessage.setText(R.string.too_many_requests);
+                            else
+                                errorMessage.setText(R.string.incorrect_email_or_password);
+
+
+
                             errorMessage.setVisibility(android.view.View.VISIBLE);
                         }
                     });

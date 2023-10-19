@@ -30,7 +30,7 @@ public class SettingsFragment extends Fragment {
             userViewModel.signOut();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
-            getActivity().finish();
+            requireActivity().finish();
         });
 
         return view;
