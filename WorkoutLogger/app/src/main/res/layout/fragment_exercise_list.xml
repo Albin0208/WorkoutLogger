@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".fragments.ExerciseListFragment"
+    tools:context=".ui.fragments.ExerciseListFragment"
     android:orientation="vertical">
 
-    <!-- Search Field -->
     <!-- Search Field -->
     <EditText
         android:id="@+id/search_editText"
@@ -21,6 +20,12 @@
         android:background="@drawable/rounded_edittext_background"
     />
 
+    <!-- Loading spinner -->
+    <ProgressBar
+        android:id="@+id/loading_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
@@ -28,6 +33,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/exercise_recyclerView" />
+
+
 
     <!-- Button -->
     <Button

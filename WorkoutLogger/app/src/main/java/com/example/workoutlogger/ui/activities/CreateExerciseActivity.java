@@ -1,4 +1,4 @@
-package com.example.workoutlogger.activities;
+package com.example.workoutlogger.ui.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,9 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.workoutlogger.ExerciseViewModel;
+import com.example.workoutlogger.viewmodels.ExerciseViewModel;
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,14 +43,23 @@ public class CreateExerciseActivity extends AppCompatActivity {
             String name = exerciseName.getText().toString();
 
             if (isValidName(name)) {
-                Map<String, Object> exercise = new HashMap<>();
-                exercise.put("name", name);
+                ExerciseViewModel viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
 
-                db.collection("exercises")
-                    .add(exercise)
-                    .addOnSuccessListener(this::onExerciseCreationSuccess)
-                    .addOnFailureListener(this::onExerciseCreationFailure);
+                OnCompleteListener<DocumentReference> onCompleteListener = task -> {
+                    if (task.isSuccessful()) {
+                        // Notify the user that the exercise was created
+                        Toast.makeText(CreateExerciseActivity.this, "Exercise Created", Toast.LENGTH_SHORT).show();
 
+                        // Close the activity and go back to the previous screen
+                        finish();
+//                        finish();
+                    } else {
+                        // Log error message
+                        Log.e("CreateExerciseActivity", "Exercise Creation failed", task.getException());
+                    }
+                };
+
+                viewModel.createExercise(name, onCompleteListener);
             } else {
                 // Show an error message
                 exerciseName.setError("Please enter a exercise name");
@@ -74,12 +84,12 @@ public class CreateExerciseActivity extends AppCompatActivity {
         Exercise exercise = new Exercise(name);
 
         // Get a reference to your ExerciseViewModel
-        ExerciseViewModel exerciseViewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
-
-        // Add the newly created exercise to the ViewModel
-        List<Exercise> exercises = new ArrayList<>(exerciseViewModel.getExercises().getValue());
-        exercises.add(exercise);
-        exerciseViewModel.setExercises(exercises);
+//        ExerciseViewModel exerciseViewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
+//
+//        // Add the newly created exercise to the ViewModel
+//        List<Exercise> exercises = new ArrayList<>(exerciseViewModel.getExercises().getValue());
+//        exercises.add(exercise);
+//        exerciseViewModel.setExercises(exercises);
 
         Toast.makeText(CreateExerciseActivity.this, "Exercise Created", Toast.LENGTH_SHORT).show();
 

@@ -1,4 +1,4 @@
-package com.example.workoutlogger.activities;
+package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
