@@ -18,4 +18,10 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="username">Username</string>
+    <string name="incorrect_email_or_password">Incorrect email or password</string>
+    <string name="password_required">Please enter a password</string>
+    <string name="email_required">Please enter a valid email</string>
+    <string name="password_length">Password is required and must be at least 8 characters long</string>
+    <string name="username_required">Username is required</string>
+    <string name="invalid_email">Please enter a valid email</string>
 </resources>
