@@ -6,15 +6,5 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.WorkoutActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.Material3.Dark.NoActionBar">
-
-        <include
-            android:id="@+id/custom_toolbar"
-            layout="@layout/custom_toolbar" />
-
-    </com.google.android.material.appbar.AppBarLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

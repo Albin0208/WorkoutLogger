@@ -25,4 +25,8 @@
     <string name="username_required">Username is required</string>
     <string name="invalid_email">Please enter a valid email</string>
     <string name="too_many_requests">Too many tries signing in to this account, please try again later</string>
+    <string name="abort_workout_message">Are you sure you want to abort the workout?\nAll data will be lost.</string>
+    <string name="abort_workout_title">Abort Workout</string>
+    <string name="no_button">No</string>
+    <string name="yes_button">Yes</string>
 </resources>
