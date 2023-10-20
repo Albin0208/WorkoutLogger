@@ -15,6 +15,8 @@ import com.example.workoutlogger.viewmodels.UserViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseTooManyRequestsException;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
     private final UserViewModel userViewModel = new UserViewModel();
 
@@ -32,6 +34,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Remove the actionbar
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         TextInputEditText editTextEmail = findViewById(R.id.email);
         TextInputEditText editTextPassword = findViewById(R.id.password);

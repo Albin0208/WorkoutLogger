@@ -52,7 +52,9 @@
 
     <TextView
         android:id="@+id/errorMessage"
-        android:textColor="#FF0000"
+        android:textColor="?attr/colorErrorContainer"
+        android:background="?attr/colorOnErrorContainer"
+        android:padding="8dp"
         android:gravity="center"
         android:visibility="gone"
         android:layout_width="match_parent"

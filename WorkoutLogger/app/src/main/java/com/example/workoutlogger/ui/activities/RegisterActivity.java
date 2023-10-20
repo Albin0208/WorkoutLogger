@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
+import java.util.Objects;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private TextInputEditText editTextEmail, editTextPassword, editTextUsername;
@@ -40,6 +42,9 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        // Remove the actionbar
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         editTextEmail = findViewById(R.id.email);
         editTextUsername = findViewById(R.id.username);
@@ -110,7 +115,9 @@ public class RegisterActivity extends AppCompatActivity {
                             editTextEmail.setError(exception.getMessage());
                             editTextEmail.requestFocus();
                         } else {
-                            Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
+                            TextView errorMessage = findViewById(R.id.errorMessage);
+                            errorMessage.setVisibility(View.VISIBLE);
+                            errorMessage.setText("Registration failed. Please try again.");
                         }
                     }
                 });

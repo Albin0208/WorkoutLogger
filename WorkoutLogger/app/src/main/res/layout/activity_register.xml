@@ -56,6 +56,17 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/errorMessage"
+        android:textColor="?attr/colorErrorContainer"
+        android:background="?attr/colorOnErrorContainer"
+        android:padding="8dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:visibility="gone"

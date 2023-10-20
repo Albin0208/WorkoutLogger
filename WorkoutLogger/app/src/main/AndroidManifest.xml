@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Material3.Dark"
+        android:theme="@style/Base.Theme.WorkoutLogger"
         tools:targetApi="31">
         <activity
             android:name=".ui.activities.WorkoutActivity"
@@ -23,12 +23,10 @@
             android:parentActivityName=".ui.activities.MainActivity" />
         <activity
             android:name=".ui.activities.RegisterActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Material3.Dark.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Material3.Dark.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
