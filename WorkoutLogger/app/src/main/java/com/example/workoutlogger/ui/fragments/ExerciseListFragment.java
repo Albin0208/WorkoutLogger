@@ -31,6 +31,12 @@ public class ExerciseListFragment extends Fragment {
     private ProgressBar loadingSpinner;
     private final ExerciseOnClickListener listener;
 
+    public ExerciseListFragment() {
+        this.listener = exercise -> {
+            Toast.makeText(getContext(), "Exercise clicked: " + exercise.getName(), Toast.LENGTH_SHORT).show();
+        };
+    }
+
     public ExerciseListFragment(ChooseExerciseActivity chooseExerciseActivity) {
         this.listener = chooseExerciseActivity;
     }
