@@ -13,9 +13,14 @@ import android.widget.Toolbar;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class WorkoutActivity extends AppCompatActivity {
@@ -29,6 +34,19 @@ public class WorkoutActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.custom_toolbar);
         View view = getSupportActionBar().getCustomView();
+
+        List<Exercise> exercises = new ArrayList<>();
+        exercises.add(new Exercise("Bench Press"));
+        exercises.add(new Exercise("Squat"));
+        exercises.add(new Exercise("Deadlift"));
+        // Setup recycler view
+        RecyclerView recyclerView = findViewById(R.id.exercise_list);
+        WorkoutAdapter workoutAdapter = new WorkoutAdapter();
+        recyclerView.setAdapter(workoutAdapter);
+        recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+        workoutAdapter.submitList(exercises);
+
+
 
 
         ImageButton abortWorkout = view.findViewById(R.id.abort_workout);

@@ -19,21 +19,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Workout Name"
-                android:inputType="text"
-                android:padding="16dp"
-                android:textSize="18sp"
-                android:id="@+id/workout_name"
-                android:layout_margin="16dp"
-                android:background="@drawable/rounded_dialog_bg"
+                android:id="@+id/exercise_list"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,5 +41,4 @@
         android:drawablePadding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
