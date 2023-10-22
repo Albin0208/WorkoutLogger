@@ -3,16 +3,14 @@ package com.example.workoutlogger.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
-import android.widget.Toast;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.ui.adapters.ExerciseOnClickListener;
 import com.example.workoutlogger.ui.fragments.ExerciseListFragment;
-import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 public class ChooseExerciseActivity extends AppCompatActivity implements ExerciseOnClickListener {
     @Override
@@ -31,4 +29,11 @@ public class ChooseExerciseActivity extends AppCompatActivity implements Exercis
         setResult(RESULT_OK, intent);
         finish();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        finish();
+        return true;
+    }
+
 }

@@ -35,21 +35,6 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
     public void onBindViewHolder(@NonNull WorkoutViewHolder holder, int position) {
         Exercise exercise = getItem(position);
         holder.bind(exercise);
-
-//        holder.addSetButton.setOnClickListener(v -> {
-//            int id = holder.sets.size() + 1;
-//            int reps = 0;
-//            int weight = 0;
-//            ExerciseSet exerciseSet = new ExerciseSet(id, reps, weight);
-//            holder.sets.add(exerciseSet);
-//            holder.setAdapter.submitList(new ArrayList<>(holder.sets));
-//        });
-    }
-
-    public void addExercise(Exercise exercise) {
-        List<Exercise> exercises = new ArrayList<>(getCurrentList());
-        exercises.add(exercise);
-        submitList(exercises);
     }
 
     public static class WorkoutViewHolder extends RecyclerView.ViewHolder {
