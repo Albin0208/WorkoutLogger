@@ -1,27 +1,45 @@
 package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
+import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class WorkoutActivity extends AppCompatActivity {
+    private WorkoutAdapter workoutAdapter;
+    private WorkoutViewModel workoutViewModel;
 
+    ActivityResultLauncher<Intent> chooseExerciseLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Exercise exercise = result.getData().getParcelableExtra("exercise", Exercise.class);
+                    workoutViewModel.addExercise(exercise);
+
+                }
+            });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,21 +50,21 @@ public class WorkoutActivity extends AppCompatActivity {
         getSupportActionBar().setCustomView(R.layout.custom_toolbar);
         View view = getSupportActionBar().getCustomView();
 
-        List<Exercise> exercises = new ArrayList<>();
-        exercises.add(new Exercise("Bench Press"));
-        exercises.add(new Exercise("Squat"));
-        exercises.add(new Exercise("Deadlift"));
+        workoutViewModel = new ViewModelProvider(this).get(WorkoutViewModel.class);
+
         // Setup recycler view
         RecyclerView recyclerView = findViewById(R.id.exercise_list);
-        WorkoutAdapter workoutAdapter = new WorkoutAdapter();
+        workoutAdapter = new WorkoutAdapter();
         recyclerView.setAdapter(workoutAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
-        workoutAdapter.submitList(exercises);
 
+        workoutViewModel.getExercises().observe(this, exercises -> {
+            workoutAdapter.submitList(new ArrayList<>(exercises));
+        });
         Button addExerciseButton = findViewById(R.id.add_exercise_button);
         addExerciseButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, ChooseExerciseActivity.class);
-            startActivity(intent);
+            chooseExerciseLauncher.launch(intent);
         });
 
 

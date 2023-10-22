@@ -46,6 +46,12 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
 //        });
     }
 
+    public void addExercise(Exercise exercise) {
+        List<Exercise> exercises = new ArrayList<>(getCurrentList());
+        exercises.add(exercise);
+        submitList(exercises);
+    }
+
     public static class WorkoutViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
         private final RecyclerView setList;
