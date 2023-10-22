@@ -1,15 +1,12 @@
 package com.example.workoutlogger.ui.activities;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,7 +43,11 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
         workoutAdapter.submitList(exercises);
 
-
+        Button addExerciseButton = findViewById(R.id.add_exercise_button);
+        addExerciseButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ChooseExerciseActivity.class);
+            startActivity(intent);
+        });
 
 
         ImageButton abortWorkout = view.findViewById(R.id.abort_workout);
