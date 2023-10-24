@@ -54,14 +54,14 @@ public class RegisterActivity extends AppCompatActivity {
 
         textView.setOnClickListener(view -> navigateToLoginActivity());
 
-        authViewModel.getRegisterSuccess().observe(this, success -> {
+        authViewModel.getAuthSuccess().observe(this, success -> {
             if (success) {
                 Toast.makeText(this, "Account created.", Toast.LENGTH_SHORT).show();
                 navigateToLoginActivity();
             }
         });
 
-        authViewModel.getRegisterError().observe(this, error -> {
+        authViewModel.getAuthError().observe(this, error -> {
             progressBar.setVisibility(View.GONE);
             buttonReg.setEnabled(true);
 
