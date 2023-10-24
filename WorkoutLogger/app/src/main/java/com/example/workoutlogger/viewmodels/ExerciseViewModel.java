@@ -60,4 +60,14 @@ public class ExerciseViewModel extends ViewModel {
         Exercise exercise = new Exercise(name);
         exerciseRepository.createUserExercise(exercise, onCompleteListener);
     }
+
+    /**
+     * Checks if the name is valid
+     *
+     * @param name The name to check
+     * @return True if the name is valid, false otherwise
+     */
+    public boolean isValidName(String name) {
+        return !name.isEmpty() && name.trim().length() > 0;
+    }
 }

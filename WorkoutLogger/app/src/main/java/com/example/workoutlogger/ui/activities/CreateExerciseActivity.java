@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.workoutlogger.viewmodels.ExerciseViewModel;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 public class CreateExerciseActivity extends AppCompatActivity {
     private EditText exerciseName;
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +35,16 @@ public class CreateExerciseActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Create Exercise");
 
         exerciseName = findViewById(R.id.new_exercise_name);
+        spinner = findViewById(R.id.new_exercise_name_loading);
         Button saveButton = findViewById(R.id.save_exercise_button);
 
         saveButton.setOnClickListener(view -> {
             String name = exerciseName.getText().toString();
+            // Display a loading spinner
+            spinner.setVisibility(ProgressBar.VISIBLE);
 
-            if (isValidName(name)) {
-                ExerciseViewModel viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
+            ExerciseViewModel viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
+            if (viewModel.isValidName(name)) {
 
                 OnCompleteListener<DocumentReference> onCompleteListener = task -> {
                     if (task.isSuccessful()) {
@@ -56,22 +61,12 @@ public class CreateExerciseActivity extends AppCompatActivity {
 
                 viewModel.createUserExercise(name, onCompleteListener);
             } else {
+                spinner.setVisibility(ProgressBar.GONE);
                 // Show an error message
                 exerciseName.setError("Please enter a exercise name");
                 exerciseName.requestFocus();
             }
         });
-
-        exerciseName.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                exerciseName.setError(null); // Clear the error when the field is focused.
-            }
-        });
-
-    }
-
-    private boolean isValidName(String name) {
-        return !name.isEmpty() && name.trim().length() > 0;
     }
 
     @Override

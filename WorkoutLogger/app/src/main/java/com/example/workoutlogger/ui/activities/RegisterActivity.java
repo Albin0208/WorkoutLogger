@@ -2,8 +2,7 @@ package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -11,13 +10,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.workoutlogger.R;
-import com.example.workoutlogger.viewmodels.UserViewModel;
+import com.example.workoutlogger.viewmodels.AuthViewModel;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 import java.util.Objects;
 
@@ -26,12 +23,12 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputEditText editTextEmail, editTextPassword, editTextUsername;
     private Button buttonReg;
     private ProgressBar progressBar;
-    private final UserViewModel userViewModel = new UserViewModel();
+    private AuthViewModel authViewModel;
 
     @Override
     public void onStart() {
         super.onStart();
-        if (userViewModel.isUserSignedIn()) {
+        if (authViewModel.isUserSignedIn()) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
@@ -42,6 +39,8 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
         // Remove the actionbar
         Objects.requireNonNull(getSupportActionBar()).hide();
@@ -55,71 +54,65 @@ public class RegisterActivity extends AppCompatActivity {
 
         textView.setOnClickListener(view -> navigateToLoginActivity());
 
-        buttonReg.setOnClickListener(view -> registerUser());
+        authViewModel.getRegisterSuccess().observe(this, success -> {
+            if (success) {
+                Toast.makeText(this, "Account created.", Toast.LENGTH_SHORT).show();
+                navigateToLoginActivity();
+            }
+        });
+
+        authViewModel.getRegisterError().observe(this, error -> {
+            progressBar.setVisibility(View.GONE);
+            buttonReg.setEnabled(true);
+
+            boolean hasFocused = false;
+            // Go through the error list and set all fields that have errors and the first field should be focused
+            for (Pair<String, String> pair : error) {
+                switch (pair.first) {
+                    case "email":
+                        editTextEmail.setError(pair.second);
+                        if (!hasFocused) {
+                            editTextEmail.requestFocus();
+                            hasFocused = true;
+                        }
+                        break;
+                    case "username":
+                        editTextUsername.setError(pair.second);
+                        if (!hasFocused) {
+                            editTextUsername.requestFocus();
+                            hasFocused = true;
+                        }
+                        break;
+                    case "password":
+                        editTextPassword.setError(pair.second);
+                        if (!hasFocused) {
+                            editTextPassword.requestFocus();
+                            hasFocused = true;
+                        }
+                        break;
+                    default:
+                        // Error is not connected to any field but display anyways
+                        TextView errorMessage = findViewById(R.id.errorMessage);
+                        errorMessage.setVisibility(View.VISIBLE);
+                        errorMessage.setText(pair.second);
+                }
+            }
+        });
+
+        buttonReg.setOnClickListener(view -> {
+            progressBar.setVisibility(View.VISIBLE);
+            buttonReg.setEnabled(false);
+            String email = String.valueOf(editTextEmail.getText());
+            String username = String.valueOf(editTextUsername.getText());
+            String password = String.valueOf(editTextPassword.getText());
+
+            authViewModel.register(email, password, username);
+        });
     }
 
     private void navigateToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    private boolean isPasswordValid(String password) {
-        return !TextUtils.isEmpty(password) || password.length() >= 8;
-    }
-
-    private void registerUser() {
-        String email = String.valueOf(editTextEmail.getText());
-        String username = String.valueOf(editTextUsername.getText());
-        String password = String.valueOf(editTextPassword.getText());
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            editTextEmail.setError(getString(R.string.invalid_email));
-            editTextEmail.requestFocus();
-            return;
-        }
-
-        if (TextUtils.isEmpty(username)) {
-            editTextUsername.setError(getString(R.string.username_required));
-            editTextUsername.requestFocus();
-            return;
-        }
-
-        if (!isPasswordValid(password)) {
-            editTextPassword.setError(getString(R.string.password_length));
-            editTextPassword.requestFocus();
-            return;
-        }
-
-        progressBar.setVisibility(View.VISIBLE);
-        buttonReg.setEnabled(false);
-
-        userViewModel.registerUser(email, password, username)
-                .addOnCompleteListener(task -> {
-                    // Redirect to login activity
-                    progressBar.setVisibility(View.GONE);
-                    buttonReg.setEnabled(true);
-                    if (task.isSuccessful()) {
-                        Toast.makeText(this, "Account created.", Toast.LENGTH_SHORT).show();
-                        navigateToLoginActivity();
-                    } else {
-                        Exception exception = task.getException();
-                        Log.e("Creating user", "Registration failed: " + exception);
-                        if (exception instanceof FirebaseAuthInvalidUserException) {
-                            editTextEmail.setError("Invalid email address.");
-                            editTextEmail.requestFocus();
-                        } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
-                            editTextPassword.setError("Invalid password.");
-                            editTextPassword.requestFocus();
-                        } else if (exception instanceof FirebaseAuthUserCollisionException) {
-                            editTextEmail.setError(exception.getMessage());
-                            editTextEmail.requestFocus();
-                        } else {
-                            TextView errorMessage = findViewById(R.id.errorMessage);
-                            errorMessage.setVisibility(View.VISIBLE);
-                            errorMessage.setText("Registration failed. Please try again.");
-                        }
-                    }
-                });
     }
 }
