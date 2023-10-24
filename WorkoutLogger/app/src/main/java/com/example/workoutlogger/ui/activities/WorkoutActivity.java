@@ -2,15 +2,16 @@ package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -42,10 +43,7 @@ public class WorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
 
-        Log.i("CRATE", "onCreate: ");
-
-        Objects.requireNonNull(getSupportActionBar()).setDisplayOptions(androidx.appcompat.app.ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.custom_toolbar);
         View view = getSupportActionBar().getCustomView();
 
@@ -57,17 +55,11 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView.setAdapter(workoutAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
 
-        workoutViewModel.getExercises().observe(this, exercises -> {
-            workoutAdapter.submitList(new ArrayList<>(exercises));
-        });
+        workoutViewModel.getExercises().observe(this, exercises -> workoutAdapter.submitList(new ArrayList<>(exercises)));
 
         Button addExerciseButton = findViewById(R.id.add_exercise_button);
 
-        addExerciseButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ChooseExerciseActivity.class);
-            chooseExerciseLauncher.launch(intent);
-        });
-
+        addExerciseButton.setOnClickListener(v -> chooseExerciseLauncher.launch(new Intent(this, ChooseExerciseActivity.class)));
 
         ImageButton abortWorkout = view.findViewById(R.id.abort_workout);
         ImageButton finishWorkout = view.findViewById(R.id.finish_workout);
@@ -83,25 +75,19 @@ public class WorkoutActivity extends AppCompatActivity {
      * Shows a dialog asking the user if they want to abort the workout
      */
     private void showAbortWorkout() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        final View customLayout = LayoutInflater.from(this).inflate(R.layout.dialog_abort_workout, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        final View customLayout = LayoutInflater.from(this).inflate(R.layout.dialog_abort_workout, viewGroup, false);
 
         Button yesButton = customLayout.findViewById(R.id.confirm_button);
         Button noButton = customLayout.findViewById(R.id.cancel_button);
 
         builder.setView(customLayout);
-        AlertDialog dialog = builder.create();
+        final AlertDialog dialog = builder.create();
 
-        // Apply the custom background to the dialog's window
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setBackgroundDrawableResource(R.drawable.rounded_dialog_bg); // Reference to your custom background drawable
-        }
+        yesButton.setOnClickListener(v -> finish());
 
-        yesButton.setOnClickListener(v1 -> finish());
-
-        noButton.setOnClickListener(v1 -> dialog.dismiss());
+        noButton.setOnClickListener(v -> dialog.dismiss());
 
 
         dialog.show();
