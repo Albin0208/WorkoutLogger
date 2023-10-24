@@ -52,7 +52,8 @@
             android:layout_height="wrap_content"
             android:text="@string/no_button"
             android:layout_marginEnd="12dp"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            style="@style/Widget.Material3.Button.IconButton.Filled" />
 
         <Button
             android:id="@+id/confirm_button"
@@ -60,7 +61,8 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/yes_button"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            style="@style/Widget.Material3.Button.IconButton.Filled"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

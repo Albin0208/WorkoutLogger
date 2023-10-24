@@ -37,8 +37,7 @@
         android:id="@+id/add_exercise_button"
         android:layout_margin="16dp"
         android:textSize="18sp"
-        android:padding="12dp"
-        android:drawablePadding="8dp"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
