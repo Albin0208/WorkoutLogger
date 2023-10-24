@@ -15,20 +15,4 @@ public class UserViewModel {
         userRepository = new UserRepository();
         userLiveData = (MutableLiveData<User>) userRepository.getUserData();
     }
-
-    public Task<AuthResult> registerUser(String email, String password, String username) {
-        return userRepository.createUser(email, password, username);
-    }
-
-    public Task<AuthResult> signIn(String email, String password) {
-        return userRepository.signIn(email, password);
-    }
-
-    public boolean isUserSignedIn() {
-        return userRepository.isUserSignedIn();
-    }
-
-    public void signOut() {
-        userRepository.signOut();
-    }
 }
