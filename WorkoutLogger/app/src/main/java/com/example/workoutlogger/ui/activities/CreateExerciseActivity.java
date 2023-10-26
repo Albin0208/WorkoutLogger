@@ -32,7 +32,7 @@ public class CreateExerciseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_exercise);
-        getSupportActionBar().setTitle("Create Exercise");
+        getSupportActionBar().setTitle(R.string.create_exercise);
 
         exerciseName = findViewById(R.id.new_exercise_name);
         spinner = findViewById(R.id.new_exercise_name_loading);
@@ -44,26 +44,29 @@ public class CreateExerciseActivity extends AppCompatActivity {
             spinner.setVisibility(ProgressBar.VISIBLE);
 
             ExerciseViewModel viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
+
+            viewModel.getExerciseCreatedResult().observe(this, result -> {
+                if (result.isSuccess()) {
+                    // Notify the user that the exercise was created
+                    Toast.makeText(CreateExerciseActivity.this, "Exercise Created", Toast.LENGTH_SHORT).show();
+
+                    // Close the activity and go back to the previous screen
+                    finish();
+                } else {
+                    spinner.setVisibility(ProgressBar.GONE);
+                    // Log the error
+                    Log.e("CreateExerciseActivity", "Error creating exercise", result.getError());
+                    // Notify the user that the exercise was not created
+                    Toast.makeText(CreateExerciseActivity.this, R.string.server_error_on_exercise_creation, Toast.LENGTH_SHORT).show();
+                }
+            });
+
             if (viewModel.isValidName(name)) {
-
-                OnCompleteListener<DocumentReference> onCompleteListener = task -> {
-                    if (task.isSuccessful()) {
-                        // Notify the user that the exercise was created
-                        Toast.makeText(CreateExerciseActivity.this, "Exercise Created", Toast.LENGTH_SHORT).show();
-
-                        // Close the activity and go back to the previous screen
-                        finish();
-                    } else {
-                        // Log error message
-                        Log.e("CreateExerciseActivity", "Exercise Creation failed", task.getException());
-                    }
-                };
-
-                viewModel.createUserExercise(name, onCompleteListener);
+                viewModel.createUserExercise(name);
             } else {
                 spinner.setVisibility(ProgressBar.GONE);
                 // Show an error message
-                exerciseName.setError("Please enter a exercise name");
+                exerciseName.setError(getString(R.string.enter_an_exercise_error));
                 exerciseName.requestFocus();
             }
         });

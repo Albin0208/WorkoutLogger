@@ -30,4 +30,7 @@
     <string name="no_button">No</string>
     <string name="yes_button">Yes</string>
     <string name="email_taken">This email is already in use by another user</string>
+    <string name="enter_an_exercise_error">Please enter a exercise name</string>
+    <string name="server_error_on_exercise_creation">Something went wrong when creating the exercise. Please try again</string>
+    <string name="create_exercise">Create Exercise</string>
 </resources>

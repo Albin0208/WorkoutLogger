@@ -1,10 +1,17 @@
 package com.example.workoutlogger.viewmodels;
 
+import android.annotation.SuppressLint;
+import android.view.animation.Transformation;
+
+import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.repositories.ExerciseRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -12,11 +19,16 @@ import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class ExerciseViewModel extends ViewModel {
     private final ExerciseRepository exerciseRepository;
+    private final MutableLiveData<Result<Exercise>> exerciseCreatedResult;
 
     public ExerciseViewModel() {
         exerciseRepository = new ExerciseRepository();
+        exerciseCreatedResult = new MutableLiveData<>();
     }
 
     public LiveData<List<Exercise>> getExercises() {
@@ -56,9 +68,17 @@ public class ExerciseViewModel extends ViewModel {
         exerciseRepository.createExercise(exercise, onCompleteListener);
     }
 
-    public void createUserExercise(String name, OnCompleteListener<DocumentReference> onCompleteListener) {
+    @SuppressLint("CheckResult")
+    public void createUserExercise(String name) {
         Exercise exercise = new Exercise(name);
-        exerciseRepository.createUserExercise(exercise, onCompleteListener);
+        exerciseRepository.createUserExercise(exercise)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(exerciseCreatedResult::setValue);
+    }
+
+    public LiveData<Result<Exercise>> getExerciseCreatedResult() {
+        return exerciseCreatedResult;
     }
 
     /**

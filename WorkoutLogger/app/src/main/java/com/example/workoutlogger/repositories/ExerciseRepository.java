@@ -7,6 +7,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.Result;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.rxjava3.core.Observable;
+
 public class ExerciseRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -27,7 +30,7 @@ public class ExerciseRepository {
      *
      * @return A LiveData object containing a list of global exercises
      */
-    public MutableLiveData<List<Exercise>> getGlobalExercises() {
+    public LiveData<List<Exercise>> getGlobalExercises() {
         MutableLiveData<List<Exercise>> exerciseData = new MutableLiveData<>();
 
         // Get the global exercises
@@ -58,7 +61,7 @@ public class ExerciseRepository {
      *
      * @return A LiveData object containing a list of user specific exercises
      */
-    public MutableLiveData<List<Exercise>> getUserExercises() {
+    public LiveData<List<Exercise>> getUserExercises() {
         MutableLiveData<List<Exercise>> userExercises = new MutableLiveData<>();
         // Get the user specific exercises
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -103,18 +106,29 @@ public class ExerciseRepository {
                 });
     }
 
-    public void createUserExercise(Exercise exercise, OnCompleteListener<DocumentReference> onCompleteListener) {
-        Map<String, Object> exerciseMap = new HashMap<>();
-        exerciseMap.put("name", exercise.getName());
+    public Observable<Result<Exercise>> createUserExercise(Exercise exercise) {
+        return Observable.create(emitter -> {
+            // Get the current user
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Get the current users id
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                emitter.onNext(new Result<>(new Exception("User is not logged in")));
+                emitter.onComplete();
+            } else {
+                Map<String, Object> exerciseMap = new HashMap<>();
+                exerciseMap.put("name", exercise.getName());
 
-        db.collection("users").document(currentUser.getUid()).collection("exercises").add(exerciseMap)
-                .addOnCompleteListener(onCompleteListener)
-                .addOnFailureListener(e -> {
-                    // Handle Firestore exception
-                    Log.e("ExerciseRepository", "Error creating exercise", e);
-                });
+                db.collection("users")
+                        .document(currentUser.getUid())
+                        .collection("exercises")
+                        .add(exerciseMap)
+                        .addOnSuccessListener(ref -> {
+                            exercise.setId(ref.getId());
+                            emitter.onNext(new Result<>(exercise));
+                            emitter.onComplete();
+                        })
+                        .addOnFailureListener(emitter::onError);
+            }
+        });
     }
 }

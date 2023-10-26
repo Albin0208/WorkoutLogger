@@ -25,7 +25,7 @@ public class ChooseExerciseActivity extends AppCompatActivity implements Exercis
     @Override
     public void onClick(Exercise exercise) {
         Intent intent = new Intent();
-        intent.putExtra("exercise", (Parcelable) exercise);
+        intent.putExtra("exercise", exercise);
         setResult(RESULT_OK, intent);
         finish();
     }
