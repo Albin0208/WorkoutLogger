@@ -31,6 +31,11 @@ public class ExerciseViewModel extends ViewModel {
         exerciseCreatedResult = new MutableLiveData<>();
     }
 
+    /**
+     * Gets all exercises from Firestore
+     *
+     * @return A LiveData object containing a list of exercises
+     */
     public LiveData<List<Exercise>> getExercises() {
         MediatorLiveData<List<Exercise>> mergedExercises = new MediatorLiveData<>();
         LiveData<List<Exercise>> globalExercises = exerciseRepository.getGlobalExercises();
@@ -43,6 +48,13 @@ public class ExerciseViewModel extends ViewModel {
         return mergedExercises;
     }
 
+    /**
+     * Updates the merged data
+     *
+     * @param mergedExercises The merged exercises
+     * @param globalExercises The global exercises
+     * @param userExercises   The user exercises
+     */
     private void updateMergedData(MediatorLiveData<List<Exercise>> mergedExercises, LiveData<List<Exercise>> globalExercises, LiveData<List<Exercise>> userExercises) {
         List<Exercise> mergedList = new ArrayList<>();
 
@@ -59,15 +71,31 @@ public class ExerciseViewModel extends ViewModel {
         mergedExercises.setValue(mergedList);
     }
 
+    /**
+     * Gets all users exercises from Firestore
+     *
+     * @return A LiveData object containing a list of users exercises
+     */
     public LiveData<List<Exercise>> getUserExercises() {
         return exerciseRepository.getUserExercises();
     }
 
+    /**
+     * Creates a global exercise
+     *
+     * @param name                The name of the exercise to create
+     * @param onCompleteListener The listener to call when the exercise is created
+     */
     public void createExercise(String name, OnCompleteListener<DocumentReference> onCompleteListener) {
         Exercise exercise = new Exercise(name);
         exerciseRepository.createExercise(exercise, onCompleteListener);
     }
 
+    /**
+     * Creates a user specific exercise
+     *
+     * @param name The name of the exercise to create
+     */
     @SuppressLint("CheckResult")
     public void createUserExercise(String name) {
         Exercise exercise = new Exercise(name);
@@ -77,6 +105,11 @@ public class ExerciseViewModel extends ViewModel {
                 .subscribe(exerciseCreatedResult::setValue);
     }
 
+    /**
+     * Gets the result of the exercise creation
+     *
+     * @return A LiveData object containing the result of the exercise creation
+     */
     public LiveData<Result<Exercise>> getExerciseCreatedResult() {
         return exerciseCreatedResult;
     }
