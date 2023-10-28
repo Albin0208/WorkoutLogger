@@ -32,6 +32,7 @@ public class ExerciseListFragment extends Fragment {
     private final ExerciseOnClickListener listener;
 
     public ExerciseListFragment() {
+        // TODO Replace with going to detail view of exercise
         this.listener = exercise -> {
             Toast.makeText(getContext(), "Exercise clicked: " + exercise.getName(), Toast.LENGTH_SHORT).show();
         };

@@ -17,7 +17,7 @@
             android:id="@+id/exercise_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Exercise Name"
+            android:text="@string/exercise_name"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +36,7 @@
             android:id="@+id/add_set_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Set"
+            android:text="@string/add_set"
             app:layout_constraintTop_toBottomOf="@+id/set_list"
             app:layout_constraintStart_toStartOf="parent" />
 

@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/homeFragment"
-        android:title="Home"
+        android:title="@string/home"
         android:icon="@drawable/baseline_home_24" />
     <item
         android:id="@+id/exerciseFragment"
-        android:title="Exercises"
+        android:title="@string/exercises"
         android:icon="@drawable/baseline_person_24" />
     <item
         android:id="@+id/settingsFragment"
-        android:title="Settings"
+        android:title="@string/settings"
         android:icon="@drawable/baseline_settings_24" />
 </menu>

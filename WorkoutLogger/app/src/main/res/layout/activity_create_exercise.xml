@@ -34,7 +34,7 @@
                 android:id="@+id/new_exercise_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Exercise Name"
+                android:hint="@string/exercise_name"
                 android:autofillHints="name"
                 android:inputType="text"
                 android:minHeight="48dp" />
@@ -52,7 +52,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/save"
         android:id="@+id/save_exercise_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
