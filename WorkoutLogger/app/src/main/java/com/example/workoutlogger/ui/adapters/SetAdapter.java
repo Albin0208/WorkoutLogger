@@ -1,5 +1,7 @@
 package com.example.workoutlogger.ui.adapters;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +44,29 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
             setNumber = itemView.findViewById(R.id.setNumberTextView);
             reps = itemView.findViewById(R.id.repsEditText);
             weight = itemView.findViewById(R.id.weightEditText);
+
+            setUpHintBehavior(reps);
+            setUpHintBehavior(weight);
+        }
+
+        /**
+         * Sets up the hint behavior for the EditTexts
+         *
+         * @param editText The EditText to set up
+         */
+        private void setUpHintBehavior(EditText editText) {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    editText.setHint(charSequence.length() > 0 ? null : "0");
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {}
+            });
         }
 
         public void bind(ExerciseSet exerciseSet, int position) {

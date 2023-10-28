@@ -7,33 +7,60 @@
 
     <TextView
         android:id="@+id/setNumberTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="20dp"
         android:layout_height="wrap_content"
         android:text="1"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:clickable="true"
+        android:focusable="true" />
 
-    <EditText
-        android:id="@+id/repsEditText"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/weightInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/reps"
-        android:inputType="number"
-        android:textSize="16sp"
+        android:layout_marginEnd="4dp"
         app:layout_constraintStart_toEndOf="@+id/setNumberTextView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/weightEditText" />
+        app:layout_constraintEnd_toStartOf="@+id/repsInputLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:suffixText="kg">
 
-    <EditText
-        android:id="@+id/weightEditText"
+        <EditText
+            android:id="@+id/weightEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:importantForAutofill="no" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/repsInputLayout"
+        android:layout_marginStart="4dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/weight"
-        android:inputType="numberDecimal"
-        android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/repsEditText"
+        app:layout_constraintStart_toEndOf="@+id/weightInputLayout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:suffixText="reps" >
+
+        <EditText
+            android:id="@+id/repsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:importantForAutofill="no" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

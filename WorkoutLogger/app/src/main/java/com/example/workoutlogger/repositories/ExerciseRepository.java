@@ -106,6 +106,13 @@ public class ExerciseRepository {
                 });
     }
 
+    /**
+     * Creates a user specific exercise in Firestore
+     *
+     * @param exercise The exercise to create
+     *
+     * @return An Observable object containing the created exercise
+     */
     public Observable<Result<Exercise>> createUserExercise(Exercise exercise) {
         return Observable.create(emitter -> {
             // Get the current user
