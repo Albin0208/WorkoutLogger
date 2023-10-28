@@ -9,6 +9,7 @@
 - Enkel inloggning av användare mot Firebase (1 p)
 - Tredjepartsinloggning med Google eller Facebook. Notera att man också kan använda Firebase för att implementera dessa autentiseringsmetoder, men ni får bara poäng för en implementation av varje typ (d.v.s det ger inte två poäng att implementera Facebook-autentisering på två olika sätt) (1 p)
 - Använder Google maps på meningsfullt sätt i appen. Man behöver registrera ett konto med ett bankkort för att kunna använda Google maps i sin applikation, men maps i sig ska fortfarande vara helt gratis (åtminstone så länge det inte är flera hundra tusen anrop per månad). Google har en mer detaljerad pristabell. Om man, av förståeliga skäl, är obekväm med att ge Google sitt kortnummer så accepterar vi också lösningar baserade på OpenStreetMap. Ni har mycket frihet i hur ni använder maps-funktionen,
+- Multispråk-stöd. Använd Androids system för att göra så att Appen identiferar minst 2 språk och använder t.ex. Engelska som default och Svenska för användare med Svenska språkinställningar. (1 p)
 
 # Tidsplanering
 
