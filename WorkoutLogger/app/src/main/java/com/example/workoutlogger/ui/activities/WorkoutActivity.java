@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -24,7 +23,6 @@ import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class WorkoutActivity extends AppCompatActivity {
     private WorkoutAdapter workoutAdapter;
@@ -44,41 +42,68 @@ public class WorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
 
+        setupCustomActionBar();
+        setupWorkoutViewModel();
+        setupRecyclerView();
+        setupButtons();
+        setupOnBackPressedCallback();
+    }
+
+    /**
+     * Sets up the custom action bar
+     */
+    private void setupCustomActionBar() {
+        ActionBar bar = getSupportActionBar();
+
+        if (bar != null) {
+            bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            bar.setCustomView(R.layout.custom_toolbar);
+        }
+    }
+
+    /**
+     * Sets up the WorkoutViewModel
+     */
+    private void setupWorkoutViewModel() {
+        workoutViewModel = new ViewModelProvider(this).get(WorkoutViewModel.class);
+        workoutViewModel.getExercises().observe(this, exercises -> workoutAdapter.submitList(new ArrayList<>(exercises)));
+    }
+
+    /**
+     * Sets up the RecyclerView
+     */
+    private void setupRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.exercise_list);
+        workoutAdapter = new WorkoutAdapter();
+        recyclerView.setAdapter(workoutAdapter);
+        recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+    }
+
+    /**
+     *
+     */
+    private void setupButtons() {
+        Button addExerciseButton = findViewById(R.id.add_exercise_button);
+        addExerciseButton.setOnClickListener(v -> chooseExerciseLauncher.launch(new Intent(this, ChooseExerciseActivity.class)));
+
+        ImageButton abortWorkout = findViewById(R.id.abort_workout);
+        ImageButton finishWorkout = findViewById(R.id.finish_workout);
+
+        abortWorkout.setOnClickListener(v -> showAbortWorkout());
+        finishWorkout.setOnClickListener(v -> handleFinishWorkout());
+    }
+
+    /**
+     * Sets up the onBackPressed callback
+     */
+    private void setupOnBackPressedCallback() {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 showAbortWorkout();
             }
         };
-
         getOnBackPressedDispatcher().addCallback(this, callback);
-
-        Objects.requireNonNull(getSupportActionBar()).setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.custom_toolbar);
-        View view = getSupportActionBar().getCustomView();
-
-        workoutViewModel = new ViewModelProvider(this).get(WorkoutViewModel.class);
-
-        // Setup recycler view
-        RecyclerView recyclerView = findViewById(R.id.exercise_list);
-        workoutAdapter = new WorkoutAdapter();
-        recyclerView.setAdapter(workoutAdapter);
-        recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
-
-        workoutViewModel.getExercises().observe(this, exercises -> workoutAdapter.submitList(new ArrayList<>(exercises)));
-
-        Button addExerciseButton = findViewById(R.id.add_exercise_button);
-
-        addExerciseButton.setOnClickListener(v -> chooseExerciseLauncher.launch(new Intent(this, ChooseExerciseActivity.class)));
-
-        ImageButton abortWorkout = view.findViewById(R.id.abort_workout);
-        ImageButton finishWorkout = view.findViewById(R.id.finish_workout);
-
-        abortWorkout.setOnClickListener(v -> showAbortWorkout());
-
-        finishWorkout.setOnClickListener(v -> {
-            // TODO Implement finishing the workout
-        });
     }
 
     /**
@@ -96,10 +121,15 @@ public class WorkoutActivity extends AppCompatActivity {
         final AlertDialog dialog = builder.create();
 
         yesButton.setOnClickListener(v -> finish());
-
         noButton.setOnClickListener(v -> dialog.dismiss());
 
-
         dialog.show();
+    }
+
+    /**
+     * Handles finishing the workout
+     */
+    private void handleFinishWorkout() {
+        // TODO Implement this
     }
 }
