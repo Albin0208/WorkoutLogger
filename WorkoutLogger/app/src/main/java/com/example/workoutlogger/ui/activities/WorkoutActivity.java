@@ -42,12 +42,40 @@ public class WorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
 
+//        ImageView imageView = findViewById(R.id.menu_icon);
+//
+////        imageView.setOnClickListener(v -> {
+////
+////        });
+
         setupCustomActionBar();
         setupWorkoutViewModel();
         setupRecyclerView();
         setupButtons();
         setupOnBackPressedCallback();
     }
+
+//    private void showMenu() {
+//
+//    }
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_exercise, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        int id = item.getItemId();
+//
+//        if (id == R.id.menu_delete) {
+//            showMenu();
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * Sets up the custom action bar
@@ -74,7 +102,7 @@ public class WorkoutActivity extends AppCompatActivity {
      */
     private void setupRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.exercise_list);
-        workoutAdapter = new WorkoutAdapter();
+        workoutAdapter = new WorkoutAdapter(workoutViewModel.getExercises().getValue());
         recyclerView.setAdapter(workoutAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
     }
