@@ -80,6 +80,10 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
             weight = itemView.findViewById(R.id.weightEditText);
             menuIcon = itemView.findViewById(R.id.menu_icon);
 
+            setNumber.setOnClickListener(v -> {
+                setNumber.setSelected(!setNumber.isSelected());
+            });
+
             setUpHintBehavior(reps, true);
             setUpHintBehavior(weight, false);
         }
