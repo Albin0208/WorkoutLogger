@@ -2,7 +2,6 @@ package com.example.workoutlogger.ui.adapters;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -20,12 +18,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.ExerciseSet;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolder> {
-    public SetAdapter(@NonNull DiffUtil.ItemCallback<ExerciseSet> diffCallback) {
+    public interface SetListener {
+        void onSetRemoved(ExerciseSet set, int position, SetAdapter adapter);
+
+        void onSetAdded(ExerciseSet set, int position, SetAdapter adapter);
+    }
+
+    private final SetListener onSetRemovedListener;
+    private int adapterPosition;
+
+    public SetAdapter(@NonNull DiffUtil.ItemCallback<ExerciseSet> diffCallback, SetListener listener, int adapterPosition) {
         super(diffCallback);
+        this.onSetRemovedListener = listener;
     }
 
     @NonNull
@@ -45,7 +50,8 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
 
         popupMenu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.menu_delete) {
-                holder.removeItem(position);
+                onSetRemovedListener.onSetRemoved(exerciseSet, adapterPosition, this);
+
                 return true;
             }
             return false;
@@ -54,12 +60,13 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
         holder.menuIcon.setOnClickListener(v -> popupMenu.show());
     }
 
-    public class SetViewHolder extends RecyclerView.ViewHolder {
+    public static class SetViewHolder extends RecyclerView.ViewHolder {
         private final TextView setNumber;
         private final EditText reps;
         private final EditText weight;
 
         private final ImageView menuIcon;
+        private ExerciseSet exerciseSet;
 
         public SetViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,6 +92,20 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     editText.setHint(charSequence.length() > 0 ? null : "0");
+
+                    if (charSequence.length() == 0) {
+                        if (editText.getId() == R.id.repsEditText) {
+                            exerciseSet.setReps(0);
+                        } else {
+                            exerciseSet.setWeight(0);
+                        }
+                    } else {
+                        if (editText.getId() == R.id.repsEditText) {
+                            exerciseSet.setReps(Integer.parseInt(charSequence.toString()));
+                        } else {
+                            exerciseSet.setWeight(Integer.parseInt(charSequence.toString()));
+                        }
+                    }
                 }
 
                 @Override
@@ -93,31 +114,10 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
         }
 
         public void bind(ExerciseSet exerciseSet, int position) {
+            this.exerciseSet = exerciseSet;
             setNumber.setText(String.valueOf(exerciseSet.getSetNumber()));
             reps.setText(String.valueOf(exerciseSet.getReps()));
             weight.setText(String.valueOf(exerciseSet.getWeight()));
-        }
-
-        private void removeItem(int position) {
-            List<ExerciseSet> currentList = new ArrayList<>(getCurrentList());
-            if (position >= 0 && position < currentList.size()) {
-                currentList.remove(position);
-
-                // Update set numbers for the remaining items
-                for (int i = position; i < currentList.size(); i++) {
-                    ExerciseSet exerciseSet = currentList.get(i);
-                    exerciseSet.setSetNumber(i + 1);
-                    exerciseSet.setId(i + 1);
-                }
-
-                // Notify the adapter of the item range change
-                int itemCount = getItemCount() - position;
-                if (itemCount > 0) {
-                    notifyItemRangeChanged(position, itemCount);
-                }
-
-                submitList(currentList);
-            }
         }
     }
 }

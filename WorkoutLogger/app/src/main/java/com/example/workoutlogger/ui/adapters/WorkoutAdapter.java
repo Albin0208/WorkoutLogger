@@ -1,6 +1,7 @@
 package com.example.workoutlogger.ui.adapters;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.WorkoutViewHolder> {
-    public WorkoutAdapter(List<Exercise> exercises) {
+    public interface OnExerciseRemovedListener {
+        void onExerciseRemoved(Exercise exercise, int position);
+    }
+
+    private final SetAdapter.SetListener setListener;
+    private final OnExerciseRemovedListener onExerciseRemovedListener;
+
+
+
+    public WorkoutAdapter(List<Exercise> exercises, OnExerciseRemovedListener listener, SetAdapter.SetListener setListener) {
         super(new ExerciseDiffCallback());
+        this.onExerciseRemovedListener = listener;
+        this.setListener = setListener;
     }
 
     @NonNull
@@ -36,7 +48,9 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
     @Override
     public void onBindViewHolder(@NonNull WorkoutViewHolder holder, int position) {
         Exercise exercise = getItem(position);
-        holder.bind(exercise);
+        holder.bind(exercise, position);
+
+//        holder.
 
         PopupMenu popupMenu = new PopupMenu(holder.itemView.getContext(), holder.menuIcon);
         popupMenu.inflate(R.menu.menu_exercise);
@@ -65,30 +79,24 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
             name = itemView.findViewById(R.id.exercise_name);
             setList = itemView.findViewById(R.id.set_list);
             addSetButton = itemView.findViewById(R.id.add_set_button);
-            setAdapter = new SetAdapter(new SetDiffCallback());
+            setAdapter = new SetAdapter(new SetDiffCallback(), setListener, getAdapterPosition());
             setList.setAdapter(setAdapter);
             setList.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(itemView.getContext()));
             sets = new ArrayList<>();
             menuIcon = itemView.findViewById(R.id.menu_icon);
-
-            addSetButton.setOnClickListener(v -> {
-//                ExerciseSet exerciseSet = new ExerciseSet(sets.size() + 1, 0, 0, sets.size() + 1);
-                // Add the set to the exercise
-
-
-                int id = setAdapter.getItemCount() + 1;
-                int reps = 0;
-                int weight = 0;
-                ExerciseSet exerciseSet = new ExerciseSet(id, reps, weight, id);
-                sets.add(exerciseSet);
-                List<ExerciseSet> s = new ArrayList<>(setAdapter.getCurrentList());
-                s.add(exerciseSet);
-                setAdapter.submitList(new ArrayList<>(s));
-            });
         }
 
-        public void bind(Exercise exercise) {
+        public void bind(Exercise exercise, int position) {
             name.setText(exercise.getName());
+            Log.d("SETSIZE", "bind: " + exercise.getName() + " " + exercise.getSets().size());
+            setAdapter.submitList(exercise.getSets());
+
+            addSetButton.setOnClickListener(v -> {
+                ExerciseSet exerciseSet = new ExerciseSet(exercise.getSets().size() + 1, 0, 0, exercise.getSets().size() + 1);
+//                sets.add(exerciseSet);
+                setListener.onSetAdded(exerciseSet, position, setAdapter);
+                setAdapter.submitList(exercise.getSets());
+            });
         }
 
         public void removeItem(int position) {

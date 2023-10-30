@@ -2,11 +2,13 @@ package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,12 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.ExerciseSet;
+import com.example.workoutlogger.ui.adapters.SetAdapter;
 import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.util.ArrayList;
 
-public class WorkoutActivity extends AppCompatActivity {
+public class WorkoutActivity extends AppCompatActivity implements WorkoutAdapter.OnExerciseRemovedListener, SetAdapter.SetListener {
     private WorkoutAdapter workoutAdapter;
     private WorkoutViewModel workoutViewModel;
 
@@ -42,40 +46,12 @@ public class WorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
 
-//        ImageView imageView = findViewById(R.id.menu_icon);
-//
-////        imageView.setOnClickListener(v -> {
-////
-////        });
-
         setupCustomActionBar();
         setupWorkoutViewModel();
         setupRecyclerView();
         setupButtons();
         setupOnBackPressedCallback();
     }
-
-//    private void showMenu() {
-//
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_exercise, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        int id = item.getItemId();
-//
-//        if (id == R.id.menu_delete) {
-//            showMenu();
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     /**
      * Sets up the custom action bar
@@ -94,7 +70,10 @@ public class WorkoutActivity extends AppCompatActivity {
      */
     private void setupWorkoutViewModel() {
         workoutViewModel = new ViewModelProvider(this).get(WorkoutViewModel.class);
-        workoutViewModel.getExercises().observe(this, exercises -> workoutAdapter.submitList(new ArrayList<>(exercises)));
+        workoutViewModel.getExercises().observe(this, exercises -> {
+            Log.d("SETADD", "setupWorkoutViewModel: Added exercise or set");
+            workoutAdapter.submitList(new ArrayList<>(exercises));
+        });
     }
 
     /**
@@ -102,7 +81,7 @@ public class WorkoutActivity extends AppCompatActivity {
      */
     private void setupRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.exercise_list);
-        workoutAdapter = new WorkoutAdapter(workoutViewModel.getExercises().getValue());
+        workoutAdapter = new WorkoutAdapter(workoutViewModel.getExercises().getValue(), this, this);
         recyclerView.setAdapter(workoutAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
     }
@@ -159,5 +138,26 @@ public class WorkoutActivity extends AppCompatActivity {
      */
     private void handleFinishWorkout() {
         // TODO Implement this
+    }
+
+    @Override
+    public void onSetRemoved(ExerciseSet set, int position, SetAdapter adapter) {
+        int setPosition = set.getSetNumber() - 1;
+        workoutViewModel.removeSet(position, setPosition);
+
+        if (setPosition >= 0 && setPosition <= adapter.getItemCount()) {
+            adapter.notifyItemRangeChanged(setPosition, adapter.getItemCount() - setPosition + 1);
+        }
+    }
+
+    @Override
+    public void onSetAdded(ExerciseSet set, int position, SetAdapter adapter) {
+        workoutViewModel.addSet(position, set);
+        adapter.notifyItemInserted(adapter.getItemCount() - 1);
+    }
+
+    @Override
+    public void onExerciseRemoved(Exercise exercise, int position) {
+        Toast.makeText(this, "Removing Exercise", Toast.LENGTH_SHORT).show();
     }
 }

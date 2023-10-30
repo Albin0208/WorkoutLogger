@@ -2,6 +2,7 @@ package com.example.workoutlogger.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class Exercise implements Parcelable {
     private String id;
     private String name;
-    private List<ExerciseSet> sets;
+    private List<ExerciseSet> sets = new ArrayList<>();
 
     public Exercise() {
     }
@@ -55,7 +56,16 @@ public class Exercise implements Parcelable {
     }
 
     public boolean equals(Exercise exercise) {
-        return this.name.equals(exercise.getName());
+        // Log the sets
+        for (ExerciseSet set : this.sets) {
+           Log.d("SETAA", "Set: " + set.getSetNumber() + " " + set.getReps() + " " + set.getWeight());
+        }
+        for (ExerciseSet set : exercise.getSets()) {
+            Log.d("SETAB", "Set: " + set.getSetNumber() + " " + set.getReps() + " " + set.getWeight());
+        }
+
+        Log.d("SETAA", "Set: " + this.sets.equals(exercise.getSets()));
+        return this.name.equals(exercise.getName()) && this.sets.equals(exercise.getSets());
     }
 
     public String getId() {
@@ -66,10 +76,11 @@ public class Exercise implements Parcelable {
         this.id = id;
     }
 
-    public void addSet() {
-        ExerciseSet exerciseSet = new ExerciseSet();
-        exerciseSet.setSetNumber(sets.size() + 1);
-        sets.add(exerciseSet);
+    public void addSet(ExerciseSet set) {
+        if (this.sets == null) {
+            this.sets = new ArrayList<>();
+        }
+        this.sets.add(set);
     }
 
     public void removeSet(int position) {
@@ -81,7 +92,7 @@ public class Exercise implements Parcelable {
     }
 
     public List<ExerciseSet> getSets() {
-        return sets;
+        return this.sets;
     }
 
     public void setSets(List<ExerciseSet> sets) {
