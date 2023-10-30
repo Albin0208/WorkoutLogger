@@ -2,6 +2,7 @@ package com.example.workoutlogger.ui.adapters;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,10 @@ import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.ExerciseSet;
 
 public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolder> {
+    public void setAdapterPosition(int adapterPosition) {
+        this.adapterPosition = adapterPosition;
+    }
+
     public interface SetListener {
         void onSetRemoved(ExerciseSet set, int position, SetAdapter adapter);
 
@@ -28,7 +33,7 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
     private final SetListener onSetRemovedListener;
     private int adapterPosition;
 
-    public SetAdapter(@NonNull DiffUtil.ItemCallback<ExerciseSet> diffCallback, SetListener listener, int adapterPosition) {
+    public SetAdapter(@NonNull DiffUtil.ItemCallback<ExerciseSet> diffCallback, SetListener listener) {
         super(diffCallback);
         this.onSetRemovedListener = listener;
     }
@@ -75,8 +80,8 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
             weight = itemView.findViewById(R.id.weightEditText);
             menuIcon = itemView.findViewById(R.id.menu_icon);
 
-            setUpHintBehavior(reps);
-            setUpHintBehavior(weight);
+            setUpHintBehavior(reps, true);
+            setUpHintBehavior(weight, false);
         }
 
         /**
@@ -84,7 +89,7 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
          *
          * @param editText The EditText to set up
          */
-        private void setUpHintBehavior(EditText editText) {
+        private void setUpHintBehavior(EditText editText, final boolean isReps) {
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -93,17 +98,12 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     editText.setHint(charSequence.length() > 0 ? null : "0");
 
-                    if (charSequence.length() == 0) {
-                        if (editText.getId() == R.id.repsEditText) {
-                            exerciseSet.setReps(0);
+                    if (exerciseSet != null) {
+                        int value = charSequence.length() == 0 ? 0 : Integer.parseInt(charSequence.toString());
+                        if (isReps) {
+                            exerciseSet.setReps(value);
                         } else {
-                            exerciseSet.setWeight(0);
-                        }
-                    } else {
-                        if (editText.getId() == R.id.repsEditText) {
-                            exerciseSet.setReps(Integer.parseInt(charSequence.toString()));
-                        } else {
-                            exerciseSet.setWeight(Integer.parseInt(charSequence.toString()));
+                            exerciseSet.setWeight(value);
                         }
                     }
                 }

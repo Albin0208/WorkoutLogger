@@ -17,9 +17,6 @@ import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.WorkoutViewHolder> {
     public interface OnExerciseRemovedListener {
         void onExerciseRemoved(Exercise exercise, int position);
@@ -72,7 +69,7 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
             name = itemView.findViewById(R.id.exercise_name);
             setList = itemView.findViewById(R.id.set_list);
             addSetButton = itemView.findViewById(R.id.add_set_button);
-            setAdapter = new SetAdapter(new SetDiffCallback(), setListener, getAdapterPosition());
+            setAdapter = new SetAdapter(new SetDiffCallback(), setListener);
             setList.setAdapter(setAdapter);
             setList.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(itemView.getContext()));
             menuIcon = itemView.findViewById(R.id.menu_icon);
@@ -81,18 +78,13 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
         public void bind(Exercise exercise, int position) {
             name.setText(exercise.getName());
             setAdapter.submitList(exercise.getSets());
+            setAdapter.setAdapterPosition(position);
 
             addSetButton.setOnClickListener(v -> {
                 ExerciseSet exerciseSet = new ExerciseSet(exercise.getSets().size() + 1, 0, 0, exercise.getSets().size() + 1);
                 setListener.onSetAdded(exerciseSet, position, setAdapter);
                 setAdapter.submitList(exercise.getSets());
             });
-        }
-
-        public void removeItem(int position) {
-            List<Exercise> exercises = new ArrayList<>(getCurrentList());
-            exercises.remove(position);
-            submitList(new ArrayList<>(exercises));
         }
     }
 }
