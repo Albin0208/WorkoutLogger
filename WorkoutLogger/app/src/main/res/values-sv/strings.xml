@@ -40,4 +40,5 @@
     <string name="weight">Vikt</string>
     <string name="add_set">Lägg till set</string>
     <string name="save">Spara</string>
+    <string name="delete">Radera</string>
 </resources>
