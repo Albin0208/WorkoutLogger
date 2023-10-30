@@ -1,7 +1,6 @@
 package com.example.workoutlogger.ui.adapters;
 
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
-import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +28,7 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
     private final SetAdapter.SetListener setListener;
     private final OnExerciseRemovedListener onExerciseRemovedListener;
 
-    public WorkoutAdapter(List<Exercise> exercises, OnExerciseRemovedListener listener, SetAdapter.SetListener setListener) {
+    public WorkoutAdapter(OnExerciseRemovedListener listener, SetAdapter.SetListener setListener) {
         super(new ExerciseDiffCallback());
         this.onExerciseRemovedListener = listener;
         this.setListener = setListener;

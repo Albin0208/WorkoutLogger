@@ -70,10 +70,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutAdapter
      */
     private void setupWorkoutViewModel() {
         workoutViewModel = new ViewModelProvider(this).get(WorkoutViewModel.class);
-        workoutViewModel.getExercises().observe(this, exercises -> {
-            Log.d("SETADD", "setupWorkoutViewModel: Added exercise or set");
-            workoutAdapter.submitList(new ArrayList<>(exercises));
-        });
+        workoutViewModel.getExercises().observe(this, exercises -> workoutAdapter.submitList(new ArrayList<>(exercises)));
     }
 
     /**
@@ -81,7 +78,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutAdapter
      */
     private void setupRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.exercise_list);
-        workoutAdapter = new WorkoutAdapter(workoutViewModel.getExercises().getValue(), this, this);
+        workoutAdapter = new WorkoutAdapter(this, this);
         recyclerView.setAdapter(workoutAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
     }
