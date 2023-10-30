@@ -30,8 +30,6 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
     private final SetAdapter.SetListener setListener;
     private final OnExerciseRemovedListener onExerciseRemovedListener;
 
-
-
     public WorkoutAdapter(List<Exercise> exercises, OnExerciseRemovedListener listener, SetAdapter.SetListener setListener) {
         super(new ExerciseDiffCallback());
         this.onExerciseRemovedListener = listener;
@@ -50,14 +48,12 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
         Exercise exercise = getItem(position);
         holder.bind(exercise, position);
 
-//        holder.
-
         PopupMenu popupMenu = new PopupMenu(holder.itemView.getContext(), holder.menuIcon);
         popupMenu.inflate(R.menu.menu_exercise);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.menu_delete) {
-                holder.removeItem(position);
+                onExerciseRemovedListener.onExerciseRemoved(exercise, position);
                 return true;
             }
             return false;
@@ -72,8 +68,7 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
         private final RecyclerView setList;
         private final Button addSetButton;
         private final ImageView menuIcon;
-        SetAdapter setAdapter;
-        List<ExerciseSet> sets;
+        private final SetAdapter setAdapter;
         public WorkoutViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.exercise_name);
@@ -82,18 +77,15 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
             setAdapter = new SetAdapter(new SetDiffCallback(), setListener, getAdapterPosition());
             setList.setAdapter(setAdapter);
             setList.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(itemView.getContext()));
-            sets = new ArrayList<>();
             menuIcon = itemView.findViewById(R.id.menu_icon);
         }
 
         public void bind(Exercise exercise, int position) {
             name.setText(exercise.getName());
-            Log.d("SETSIZE", "bind: " + exercise.getName() + " " + exercise.getSets().size());
             setAdapter.submitList(exercise.getSets());
 
             addSetButton.setOnClickListener(v -> {
                 ExerciseSet exerciseSet = new ExerciseSet(exercise.getSets().size() + 1, 0, 0, exercise.getSets().size() + 1);
-//                sets.add(exerciseSet);
                 setListener.onSetAdded(exerciseSet, position, setAdapter);
                 setAdapter.submitList(exercise.getSets());
             });

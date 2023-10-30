@@ -57,4 +57,10 @@ public class WorkoutViewModel extends ViewModel {
         currentExercises.set(position, exercise);
         exercisesLiveData.setValue(currentExercises);
     }
+
+    public void removeExercise(Exercise exercise) {
+        List<Exercise> currentExercises = exercisesLiveData.getValue();
+        currentExercises.remove(exercise);
+        exercisesLiveData.setValue(currentExercises);
+    }
 }

@@ -158,6 +158,10 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutAdapter
 
     @Override
     public void onExerciseRemoved(Exercise exercise, int position) {
-        Toast.makeText(this, "Removing Exercise", Toast.LENGTH_SHORT).show();
+        workoutViewModel.removeExercise(exercise);
+
+        if (position >= 0 && position <= workoutAdapter.getItemCount()) {
+            workoutAdapter.notifyItemRangeChanged(position, workoutAdapter.getItemCount() - position + 1);
+        }
     }
 }
