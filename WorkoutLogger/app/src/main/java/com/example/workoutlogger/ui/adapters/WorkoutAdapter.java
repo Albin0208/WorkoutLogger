@@ -83,7 +83,6 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
             addSetButton.setOnClickListener(v -> {
                 ExerciseSet exerciseSet = new ExerciseSet(exercise.getSets().size() + 1, 0, 0, exercise.getSets().size() + 1);
                 setListener.onSetAdded(exerciseSet, position, setAdapter);
-                setAdapter.submitList(exercise.getSets());
             });
         }
     }
