@@ -8,12 +8,14 @@ public class ExerciseSet implements Parcelable {
     private int reps;
     private int weight;
     private int setNumber;
+    private boolean isCompleted;
 
     public ExerciseSet(int id, int reps, int weight, int setNumber) {
         this.id = id;
         this.reps = reps;
         this.weight = weight;
         this.setNumber = setNumber;
+        this.isCompleted = false;
     }
 
     public ExerciseSet() {
@@ -24,6 +26,7 @@ public class ExerciseSet implements Parcelable {
         reps = in.readInt();
         weight = in.readInt();
         setNumber = in.readInt();
+        isCompleted = in.readBoolean();
     }
 
     public static final Creator<ExerciseSet> CREATOR = new Creator<ExerciseSet>() {
@@ -85,5 +88,14 @@ public class ExerciseSet implements Parcelable {
         parcel.writeInt(reps);
         parcel.writeInt(weight);
         parcel.writeInt(setNumber);
+        parcel.writeBoolean(isCompleted);
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 }

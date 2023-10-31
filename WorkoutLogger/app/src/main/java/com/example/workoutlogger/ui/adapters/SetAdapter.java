@@ -122,6 +122,13 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
             setNumber.setText(String.valueOf(exerciseSet.getSetNumber()));
             reps.setText(String.valueOf(exerciseSet.getReps()));
             weight.setText(String.valueOf(exerciseSet.getWeight()));
+
+            setNumber.setSelected(this.exerciseSet.isCompleted());
+
+            setNumber.setOnClickListener(v -> {
+                this.exerciseSet.setCompleted(!this.exerciseSet.isCompleted());
+                setNumber.setSelected(this.exerciseSet.isCompleted());
+            });
         }
     }
 }
