@@ -56,15 +56,6 @@ public class Exercise implements Parcelable {
     }
 
     public boolean equals(Exercise exercise) {
-        // Log the sets
-        for (ExerciseSet set : this.sets) {
-           Log.d("SETAA", "Set: " + set.getSetNumber() + " " + set.getReps() + " " + set.getWeight());
-        }
-        for (ExerciseSet set : exercise.getSets()) {
-            Log.d("SETAB", "Set: " + set.getSetNumber() + " " + set.getReps() + " " + set.getWeight());
-        }
-
-        Log.d("SETAA", "Set: " + this.sets.equals(exercise.getSets()));
         return this.name.equals(exercise.getName()) && this.sets.equals(exercise.getSets());
     }
 

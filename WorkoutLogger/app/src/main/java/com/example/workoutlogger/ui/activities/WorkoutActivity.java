@@ -84,7 +84,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
     }
 
     /**
-     *
+     * Sets up the buttons
      */
     private void setupButtons() {
         Button addExerciseButton = findViewById(R.id.add_exercise_button);
@@ -144,7 +144,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
 
         // Notify the adapter that the set was removed and all sets after it need to be updated
         if (setPosition >= 0 && setPosition <= adapter.getItemCount()) {
-            adapter.notifyItemRangeChanged(setPosition, adapter.getItemCount() - setPosition + 1);
+            adapter.notifyItemRangeChanged(setPosition, adapter.getItemCount() - setPosition + 1); // + 1 to account for the set that was removed
         }
     }
 
