@@ -59,4 +59,13 @@ public class WorkoutViewModel extends ViewModel {
         currentExercises.remove(exercise);
         exercisesLiveData.setValue(currentExercises);
     }
+
+    public void toggleSetCompletion(int position, ExerciseSet set) {
+        set.setCompleted(!set.isCompleted());
+//        List<Exercise> currentExercises = exercisesLiveData.getValue();
+//        Exercise exercise = currentExercises.get(position);
+//        exercise.toggleSetCompletion(set);
+//        currentExercises.set(position, exercise);
+//        exercisesLiveData.setValue(currentExercises);
+    }
 }

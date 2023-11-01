@@ -2,13 +2,11 @@ package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -23,12 +21,14 @@ import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.ui.adapters.SetAdapter;
+import com.example.workoutlogger.ui.adapters.SetListener;
 import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
+import com.example.workoutlogger.ui.adapters.WorkoutListener;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.util.ArrayList;
 
-public class WorkoutActivity extends AppCompatActivity implements WorkoutAdapter.OnExerciseRemovedListener, SetAdapter.SetListener {
+public class WorkoutActivity extends AppCompatActivity implements WorkoutListener, SetListener {
     private WorkoutAdapter workoutAdapter;
     private WorkoutViewModel workoutViewModel;
 
@@ -151,6 +151,12 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutAdapter
     public void onSetAdded(ExerciseSet set, int position, SetAdapter adapter) {
         workoutViewModel.addSet(position, set);
         adapter.notifyItemInserted(adapter.getItemCount() - 1);
+    }
+
+    @Override
+    public void onSetToggleCompletion(ExerciseSet set, int position, SetAdapter adapter) {
+        workoutViewModel.toggleSetCompletion(position, set);
+        adapter.notifyItemChanged(position);
     }
 
     @Override

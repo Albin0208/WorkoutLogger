@@ -2,7 +2,6 @@ package com.example.workoutlogger.ui.adapters;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,18 +23,12 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
         this.adapterPosition = adapterPosition;
     }
 
-    public interface SetListener {
-        void onSetRemoved(ExerciseSet set, int position, SetAdapter adapter);
-
-        void onSetAdded(ExerciseSet set, int position, SetAdapter adapter);
-    }
-
-    private final SetListener onSetRemovedListener;
+    private final SetListener setListener;
     private int adapterPosition;
 
     public SetAdapter(@NonNull DiffUtil.ItemCallback<ExerciseSet> diffCallback, SetListener listener) {
         super(diffCallback);
-        this.onSetRemovedListener = listener;
+        this.setListener = listener;
     }
 
     @NonNull
@@ -48,14 +41,16 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
     @Override
     public void onBindViewHolder(@NonNull SetViewHolder holder, int position) {
         ExerciseSet exerciseSet = getItem(position);
-        holder.bind(exerciseSet, position);
+        holder.bind(exerciseSet);
+
+        holder.setNumber.setOnClickListener(v -> setListener.onSetToggleCompletion(exerciseSet, position, this));
 
         PopupMenu popupMenu = new PopupMenu(holder.itemView.getContext(), holder.menuIcon);
         popupMenu.inflate(R.menu.menu_exercise);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.menu_delete) {
-                onSetRemovedListener.onSetRemoved(exerciseSet, adapterPosition, this);
+                setListener.onSetRemoved(exerciseSet, adapterPosition, this);
 
                 return true;
             }
@@ -79,10 +74,6 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
             reps = itemView.findViewById(R.id.repsEditText);
             weight = itemView.findViewById(R.id.weightEditText);
             menuIcon = itemView.findViewById(R.id.menu_icon);
-
-            setNumber.setOnClickListener(v -> {
-                setNumber.setSelected(!setNumber.isSelected());
-            });
 
             setUpHintBehavior(reps, true);
             setUpHintBehavior(weight, false);
@@ -117,18 +108,13 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
             });
         }
 
-        public void bind(ExerciseSet exerciseSet, int position) {
+        public void bind(ExerciseSet exerciseSet) {
             this.exerciseSet = exerciseSet;
             setNumber.setText(String.valueOf(exerciseSet.getSetNumber()));
             reps.setText(String.valueOf(exerciseSet.getReps()));
             weight.setText(String.valueOf(exerciseSet.getWeight()));
 
             setNumber.setSelected(this.exerciseSet.isCompleted());
-
-            setNumber.setOnClickListener(v -> {
-                this.exerciseSet.setCompleted(!this.exerciseSet.isCompleted());
-                setNumber.setSelected(this.exerciseSet.isCompleted());
-            });
         }
     }
 }

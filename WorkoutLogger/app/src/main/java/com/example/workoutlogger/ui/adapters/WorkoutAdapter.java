@@ -18,14 +18,11 @@ import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
 
 public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.WorkoutViewHolder> {
-    public interface OnExerciseRemovedListener {
-        void onExerciseRemoved(Exercise exercise, int position);
-    }
 
-    private final SetAdapter.SetListener setListener;
-    private final OnExerciseRemovedListener onExerciseRemovedListener;
+    private final SetListener setListener;
+    private final WorkoutListener onExerciseRemovedListener;
 
-    public WorkoutAdapter(OnExerciseRemovedListener listener, SetAdapter.SetListener setListener) {
+    public WorkoutAdapter(WorkoutListener listener, SetListener setListener) {
         super(new ExerciseDiffCallback());
         this.onExerciseRemovedListener = listener;
         this.setListener = setListener;
