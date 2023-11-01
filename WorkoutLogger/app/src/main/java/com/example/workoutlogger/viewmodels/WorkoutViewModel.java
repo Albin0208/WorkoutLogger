@@ -37,7 +37,7 @@ public class WorkoutViewModel extends ViewModel {
      */
     public void addExercise(Exercise exercise) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
-        currentExercises.add(exercise);
+        currentExercises.add(new Exercise(exercise));
         exercisesLiveData.setValue(currentExercises);
     }
 
@@ -48,9 +48,7 @@ public class WorkoutViewModel extends ViewModel {
      */
     public void addSet(int position) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
-        Exercise exercise = currentExercises.get(position);
-        exercise.addSet(new ExerciseSet(0, 0, exercise.getSets().size() + 1));
-        currentExercises.set(position, exercise);
+        currentExercises.get(position).addSet(new ExerciseSet(0, 0, currentExercises.get(position).getSets().size() + 1));
         exercisesLiveData.setValue(currentExercises);
     }
 
@@ -71,11 +69,11 @@ public class WorkoutViewModel extends ViewModel {
     /**
      * Removes the exercise passed
      *
-     * @param exercise The exercise to remove
+     * @param position The position of the exercise to remove
      */
-    public void removeExercise(Exercise exercise) {
+    public void removeExercise(int position) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
-        currentExercises.remove(exercise);
+        currentExercises.remove(position);
         exercisesLiveData.setValue(currentExercises);
     }
 

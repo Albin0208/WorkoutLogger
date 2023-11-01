@@ -38,6 +38,13 @@ public class ExerciseSet implements Parcelable {
         }
     };
 
+    public ExerciseSet(ExerciseSet set) {
+        this.reps = set.getReps();
+        this.weight = set.getWeight();
+        this.setNumber = set.getSetNumber();
+        this.isCompleted = set.isCompleted();
+    }
+
     public int getReps() {
         return reps;
     }
@@ -54,8 +61,15 @@ public class ExerciseSet implements Parcelable {
         this.weight = weight;
     }
 
-    public boolean equals(ExerciseSet exerciseSet) {
-        return this.reps == exerciseSet.getReps() && this.weight == exerciseSet.getWeight() && this.setNumber == exerciseSet.getSetNumber() && this.isCompleted == exerciseSet.isCompleted();
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ExerciseSet exerciseSet = (ExerciseSet) obj;
+
+        return reps == exerciseSet.getReps() && weight == exerciseSet.getWeight() &&
+                setNumber == exerciseSet.getSetNumber() && isCompleted == exerciseSet.isCompleted();
     }
 
     public int getSetNumber() {

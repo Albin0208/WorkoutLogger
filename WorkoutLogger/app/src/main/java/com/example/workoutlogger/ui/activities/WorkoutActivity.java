@@ -2,6 +2,7 @@ package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,10 +163,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
 
     @Override
     public void onExerciseRemoved(Exercise exercise, int position) {
-        workoutViewModel.removeExercise(exercise);
-
-        if (position >= 0 && position <= workoutAdapter.getItemCount()) {
-            workoutAdapter.notifyItemRangeChanged(position, workoutAdapter.getItemCount() - position + 1);
-        }
+        workoutViewModel.removeExercise(position);
     }
 }

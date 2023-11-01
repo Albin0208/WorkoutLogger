@@ -2,21 +2,20 @@ package com.example.workoutlogger.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.workoutlogger.data.ExerciseSet;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Exercise implements Parcelable {
     private String id;
     private String name;
-    private List<ExerciseSet> sets = new ArrayList<>();
+    private List<ExerciseSet> sets;
 
     public Exercise() {
+        this.sets = new ArrayList<>();
     }
 
     public Exercise(String id, String name) {
@@ -45,6 +44,16 @@ public class Exercise implements Parcelable {
 
     public Exercise(String name) {
         this.name = name;
+        this.sets = new ArrayList<>();
+    }
+
+    public Exercise(Exercise exercise) {
+        this.id = exercise.getId();
+        this.name = exercise.getName();
+        this.sets = new ArrayList<>();
+        for (ExerciseSet set : exercise.getSets()) {
+            this.sets.add(new ExerciseSet(set));
+        }
     }
 
     public String getName() {
@@ -55,8 +64,24 @@ public class Exercise implements Parcelable {
         this.name = name;
     }
 
-    public boolean equals(Exercise exercise) {
-        return this.name.equals(exercise.getName()) && this.sets.equals(exercise.getSets());
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Exercise other = (Exercise) obj;
+
+        // Compare based on exercise name and sets
+        return Objects.equals(name, other.name) && Objects.equals(sets, other.sets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, sets);
     }
 
     public String getId() {

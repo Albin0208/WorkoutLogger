@@ -15,16 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
-import com.example.workoutlogger.data.ExerciseSet;
 
 public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.WorkoutViewHolder> {
 
     private final SetListener setListener;
-    private final WorkoutListener onExerciseRemovedListener;
+    private final WorkoutListener workoutListener;
 
     public WorkoutAdapter(WorkoutListener listener, SetListener setListener) {
         super(new ExerciseDiffCallback());
-        this.onExerciseRemovedListener = listener;
+        this.workoutListener = listener;
         this.setListener = setListener;
     }
 
@@ -39,20 +38,6 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
     public void onBindViewHolder(@NonNull WorkoutViewHolder holder, int position) {
         Exercise exercise = getItem(position);
         holder.bind(exercise, position);
-
-        PopupMenu popupMenu = new PopupMenu(holder.itemView.getContext(), holder.menuIcon);
-        popupMenu.inflate(R.menu.menu_exercise);
-
-        popupMenu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.menu_delete) {
-                onExerciseRemovedListener.onExerciseRemoved(exercise, position);
-                return true;
-            }
-            return false;
-        });
-
-        holder.menuIcon.setOnClickListener(v -> popupMenu.show());
-
     }
 
     public class WorkoutViewHolder extends RecyclerView.ViewHolder {
@@ -78,6 +63,20 @@ public class WorkoutAdapter extends ListAdapter<Exercise, WorkoutAdapter.Workout
             setAdapter.setAdapterPosition(position);
 
             addSetButton.setOnClickListener(v -> setListener.onSetAdded(position, setAdapter));
+            menuIcon.setOnClickListener(v -> showPopupMenu(exercise, position));
+        }
+
+        private void showPopupMenu(Exercise exercise, int position) {
+            PopupMenu popupMenu = new PopupMenu(itemView.getContext(), menuIcon);
+            popupMenu.inflate(R.menu.menu_exercise);
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.menu_delete) {
+                    workoutListener.onExerciseRemoved(exercise, position);
+                    return true;
+                }
+                return false;
+            });
+            popupMenu.show();
         }
     }
 }

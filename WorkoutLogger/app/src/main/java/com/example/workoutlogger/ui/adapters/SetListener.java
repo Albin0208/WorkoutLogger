@@ -18,7 +18,6 @@ public interface SetListener {
     /**
      * Called when a set is added to the adapter
      *
-     * @param set      the set being added
      * @param adapterPosition the position of the set in the adapter
      * @param adapter  the adapter that the set is added to
      */
