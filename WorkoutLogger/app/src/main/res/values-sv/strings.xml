@@ -41,4 +41,5 @@
     <string name="add_set">Lägg till set</string>
     <string name="save">Spara</string>
     <string name="delete">Radera</string>
+    <string name="finish_workout">Slutför pass</string>
 </resources>

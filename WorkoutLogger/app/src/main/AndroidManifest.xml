@@ -15,9 +15,13 @@
         android:theme="@style/Base.Theme.WorkoutLogger"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activities.ChooseExerciseActivity"
+            android:name=".ui.activities.FinishWorkoutActivity"
             android:exported="false"
             android:parentActivityName=".ui.activities.WorkoutActivity"/>
+        <activity
+            android:name=".ui.activities.ChooseExerciseActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.WorkoutActivity" />
         <activity
             android:name=".ui.activities.WorkoutActivity"
             android:exported="false"

@@ -1,5 +1,6 @@
 package com.example.workoutlogger.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,22 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Exercise exercise = result.getData().getParcelableExtra("exercise", Exercise.class);
                     workoutViewModel.addExercise(exercise);
+                }
+            });
+
+    ActivityResultLauncher<Intent> finishWorkoutLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    // TODO Implement this
+
+                    // Grab a tag that says if the user finished the workout or not
+                    boolean finishedWorkout = result.getData().getBooleanExtra("finishedWorkout", false);
+
+                    // If the user finished the workout, then finish the activity
+                    if (finishedWorkout) {
+                        finish();
+                    }
                 }
             });
 
@@ -136,6 +153,10 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
      */
     private void handleFinishWorkout() {
         // TODO Implement this
+//        Intent intent = new Intent(this, FinishWorkoutActivity.class);
+//        startActivity(intent);
+
+        finishWorkoutLauncher.launch(new Intent(this, FinishWorkoutActivity.class));
     }
 
     @Override
