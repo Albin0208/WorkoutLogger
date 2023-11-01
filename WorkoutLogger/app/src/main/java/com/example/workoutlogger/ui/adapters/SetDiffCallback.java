@@ -8,7 +8,7 @@ import com.example.workoutlogger.data.ExerciseSet;
 public class SetDiffCallback extends DiffUtil.ItemCallback<ExerciseSet> {
     @Override
     public boolean areItemsTheSame(@NonNull ExerciseSet oldItem, @NonNull ExerciseSet newItem) {
-        return oldItem.getId() == newItem.getId();
+        return oldItem.getSetNumber() == newItem.getSetNumber();
     }
 
     @Override

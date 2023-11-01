@@ -138,24 +138,25 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
     }
 
     @Override
-    public void onSetRemoved(ExerciseSet set, int position, SetAdapter adapter) {
-        int setPosition = set.getSetNumber() - 1;
-        workoutViewModel.removeSet(position, setPosition);
+    public void onSetRemoved(ExerciseSet set, int adapterPosition, SetAdapter adapter) {
+        int setPosition = set.getSetNumber() - 1; // Subtract 1 because the set number is 1-indexed
+        workoutViewModel.removeSet(adapterPosition, setPosition);
 
+        // Notify the adapter that the set was removed and all sets after it need to be updated
         if (setPosition >= 0 && setPosition <= adapter.getItemCount()) {
             adapter.notifyItemRangeChanged(setPosition, adapter.getItemCount() - setPosition + 1);
         }
     }
 
     @Override
-    public void onSetAdded(ExerciseSet set, int position, SetAdapter adapter) {
-        workoutViewModel.addSet(position, set);
+    public void onSetAdded(int adapterPosition, SetAdapter adapter) {
+        workoutViewModel.addSet(adapterPosition);
         adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 
     @Override
     public void onSetToggleCompletion(ExerciseSet set, int position, SetAdapter adapter) {
-        workoutViewModel.toggleSetCompletion(position, set);
+        workoutViewModel.toggleSetCompletion(set);
         adapter.notifyItemChanged(position);
     }
 

@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class WorkoutViewModel extends ViewModel {
-    private View.OnClickListener listener;
-
     private final MutableLiveData<List<Exercise>> exercisesLiveData = new MutableLiveData<>(new ArrayList<>());
 
     public WorkoutViewModel() {
@@ -32,20 +30,37 @@ public class WorkoutViewModel extends ViewModel {
         exercisesLiveData.setValue(exercises);
     }
 
+    /**
+     * Adds an exercise to the workout
+     *
+     * @param exercise The exercise to add
+     */
     public void addExercise(Exercise exercise) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
         currentExercises.add(exercise);
         exercisesLiveData.setValue(currentExercises);
     }
 
-    public void addSet(int position, ExerciseSet set) {
+    /**
+     * Adds a set to the exercise at the given position
+     *
+     * @param position The position of the exercise to add the set to
+     */
+    public void addSet(int position) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
         Exercise exercise = currentExercises.get(position);
+        ExerciseSet set = new ExerciseSet(0, 0, exercise.getSets().size() + 1);
         exercise.addSet(set);
         currentExercises.set(position, exercise);
         exercisesLiveData.setValue(currentExercises);
     }
 
+    /**
+     * Removes the set at the given position from the exercise at the given position
+     *
+     * @param position The position of the exercise to remove the set from
+     * @param setPosition The position of the set to remove
+     */
     public void removeSet(int position, int setPosition) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
         Exercise exercise = currentExercises.get(position);
@@ -54,18 +69,23 @@ public class WorkoutViewModel extends ViewModel {
         exercisesLiveData.setValue(currentExercises);
     }
 
+    /**
+     * Removes the exercise passed
+     *
+     * @param exercise The exercise to remove
+     */
     public void removeExercise(Exercise exercise) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
         currentExercises.remove(exercise);
         exercisesLiveData.setValue(currentExercises);
     }
 
-    public void toggleSetCompletion(int position, ExerciseSet set) {
+    /**
+     * Toggles the completion of the set passed
+     *
+     * @param set The set to toggle the completion of
+     */
+    public void toggleSetCompletion(ExerciseSet set) {
         set.setCompleted(!set.isCompleted());
-//        List<Exercise> currentExercises = exercisesLiveData.getValue();
-//        Exercise exercise = currentExercises.get(position);
-//        exercise.toggleSetCompletion(set);
-//        currentExercises.set(position, exercise);
-//        exercisesLiveData.setValue(currentExercises);
     }
 }

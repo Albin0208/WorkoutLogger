@@ -4,14 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ExerciseSet implements Parcelable {
-    private int id;
     private int reps;
     private int weight;
     private int setNumber;
     private boolean isCompleted;
 
-    public ExerciseSet(int id, int reps, int weight, int setNumber) {
-        this.id = id;
+    public ExerciseSet(int reps, int weight, int setNumber) {
         this.reps = reps;
         this.weight = weight;
         this.setNumber = setNumber;
@@ -22,7 +20,6 @@ public class ExerciseSet implements Parcelable {
     }
 
     protected ExerciseSet(Parcel in) {
-        id = in.readInt();
         reps = in.readInt();
         weight = in.readInt();
         setNumber = in.readInt();
@@ -41,10 +38,6 @@ public class ExerciseSet implements Parcelable {
         }
     };
 
-    public int getId() {
-        return id;
-    }
-
     public int getReps() {
         return reps;
     }
@@ -62,7 +55,7 @@ public class ExerciseSet implements Parcelable {
     }
 
     public boolean equals(ExerciseSet exerciseSet) {
-        return this.id == exerciseSet.getId() && this.reps == exerciseSet.getReps() && this.weight == exerciseSet.getWeight() && this.setNumber == exerciseSet.getSetNumber();
+        return this.reps == exerciseSet.getReps() && this.weight == exerciseSet.getWeight() && this.setNumber == exerciseSet.getSetNumber() && this.isCompleted == exerciseSet.isCompleted();
     }
 
     public int getSetNumber() {
@@ -73,10 +66,6 @@ public class ExerciseSet implements Parcelable {
         this.setNumber = setNumber;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -84,7 +73,6 @@ public class ExerciseSet implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeInt(id);
         parcel.writeInt(reps);
         parcel.writeInt(weight);
         parcel.writeInt(setNumber);
