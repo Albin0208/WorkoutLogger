@@ -139,8 +139,7 @@ public class ExerciseRepository {
                         .addOnFailureListener(e -> {
                             Log.e("ExerciseRepository", "Error creating exercise", e);
 
-                            // TODO Change e.getMessage to a string resource
-                            emitter.onNext(new Result<>(new Exception(e.getMessage())));
+                            emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_message))));
                         });
             }
         });

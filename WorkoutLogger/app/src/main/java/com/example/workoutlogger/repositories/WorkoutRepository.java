@@ -35,10 +35,10 @@ public class WorkoutRepository {
                     .add(workout)
                     .addOnSuccessListener(documentReference -> emitter.onNext(new Result<>(workout)))
                     .addOnFailureListener(e -> {
-                        Log.d("WorkoutRepository", "Error creating workout", e);
+                        Log.e("WorkoutRepository", "Error creating workout", e);
 
                         // TODO Change e.getMessage to a string resource
-                        emitter.onNext(new Result<>(new Exception(e.getMessage())));
+                        emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_message))));
                     });
         });
 
