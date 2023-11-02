@@ -1,11 +1,13 @@
 package com.example.workoutlogger.repositories;
 
+import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.Result;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -119,7 +121,7 @@ public class ExerciseRepository {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
             if (currentUser == null) {
-                emitter.onNext(new Result<>(new Exception("User is not logged in")));
+                emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.user_not_logged_in))));
                 emitter.onComplete();
             } else {
                 Map<String, Object> exerciseMap = new HashMap<>();
@@ -134,7 +136,12 @@ public class ExerciseRepository {
                             emitter.onNext(new Result<>(exercise));
                             emitter.onComplete();
                         })
-                        .addOnFailureListener(emitter::onError);
+                        .addOnFailureListener(e -> {
+                            Log.e("ExerciseRepository", "Error creating exercise", e);
+
+                            // TODO Change e.getMessage to a string resource
+                            emitter.onNext(new Result<>(new Exception(e.getMessage())));
+                        });
             }
         });
     }

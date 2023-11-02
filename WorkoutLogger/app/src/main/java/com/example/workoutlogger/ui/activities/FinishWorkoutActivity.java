@@ -40,10 +40,9 @@ public class FinishWorkoutActivity extends AppCompatActivity {
             if (result.isSuccess()) {
                 // Set the result to RESULT_OK and that the workout is finished
                 setResult(RESULT_OK, getIntent().putExtra("finishedWorkout", true));
-                finish();;
+                finish();
             }
             else {
-                // TODO Notify the user that the workout was not saved
                 TextView errorText = findViewById(R.id.workout_name_error);
                 errorText.setText(result.getError().getMessage());
                 errorText.setVisibility(View.VISIBLE);
