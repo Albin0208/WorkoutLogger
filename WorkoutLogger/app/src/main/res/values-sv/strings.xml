@@ -44,4 +44,5 @@
     <string name="finish_workout">Slutför pass</string>
     <string name="workout_name_required">Vänligen ange ett namn för passet</string>
     <string name="user_not_logged_in">Användaren är inte inloggad</string>
+    <string name="unexpected_error_message">Ett oväntat problem uppstod. Försök igen. Problemet kvarstår kontakta supporten.</string>
 </resources>
