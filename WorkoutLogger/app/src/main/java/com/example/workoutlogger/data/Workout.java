@@ -1,8 +1,13 @@
 package com.example.workoutlogger.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
-public class Workout {
+public class Workout implements Parcelable {
     private int id;
     private String name;
     private List<Exercise> exercises;
@@ -12,6 +17,24 @@ public class Workout {
         this.name = name;
         this.exercises = exercises;
     }
+
+    protected Workout(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        exercises = in.createTypedArrayList(Exercise.CREATOR);
+    }
+
+    public static final Creator<Workout> CREATOR = new Creator<Workout>() {
+        @Override
+        public Workout createFromParcel(Parcel in) {
+            return new Workout(in);
+        }
+
+        @Override
+        public Workout[] newArray(int size) {
+            return new Workout[size];
+        }
+    };
 
     public Workout() {
     }
@@ -42,5 +65,17 @@ public class Workout {
 
     public void setExercises(List<Exercise> exercises) {
         this.exercises = exercises;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(name);
+        parcel.writeTypedList(exercises);
     }
 }

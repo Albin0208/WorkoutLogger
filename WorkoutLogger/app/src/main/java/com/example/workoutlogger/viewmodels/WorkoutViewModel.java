@@ -1,5 +1,6 @@
 package com.example.workoutlogger.viewmodels;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.View;
 
@@ -9,14 +10,20 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
+import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.data.Workout;
+import com.example.workoutlogger.repositories.WorkoutRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<List<Exercise>> exercisesLiveData = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Result<Workout>> workoutCreatedResult = new MutableLiveData<>();
 
     public WorkoutViewModel() {
         Log.d("ViewModelLifecycle", "ViewModel created");
@@ -84,5 +91,28 @@ public class WorkoutViewModel extends ViewModel {
      */
     public void toggleSetCompletion(ExerciseSet set) {
         set.setCompleted(!set.isCompleted());
+    }
+
+    public Workout getWorkout() {
+        Workout workout = new Workout();
+        workout.setExercises(exercisesLiveData.getValue());
+
+        return workout;
+    }
+
+    @SuppressLint("CheckResult")
+    public void saveWorkout(Workout workout) {
+        WorkoutRepository workoutRepository = new WorkoutRepository();
+        // TODO Save the workout to the database
+        // Notify the user that the workout was saved
+        workoutRepository.createWorkout(workout)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(workoutCreatedResult::setValue);
+
+    }
+
+    public LiveData<Result<Workout>> getWorkoutCreatedResult() {
+        return workoutCreatedResult;
     }
 }

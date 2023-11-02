@@ -42,4 +42,5 @@
     <string name="save">Spara</string>
     <string name="delete">Radera</string>
     <string name="finish_workout">Slutför pass</string>
+    <string name="workout_name_required">Vänligen ange ett namn för passet</string>
 </resources>

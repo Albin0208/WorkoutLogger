@@ -45,4 +45,5 @@
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="finish_workout">Finish workout</string>
+    <string name="workout_name_required">Please enter a name for your workout</string>
 </resources>

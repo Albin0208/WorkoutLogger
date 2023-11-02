@@ -156,7 +156,11 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
 //        Intent intent = new Intent(this, FinishWorkoutActivity.class);
 //        startActivity(intent);
 
-        finishWorkoutLauncher.launch(new Intent(this, FinishWorkoutActivity.class));
+        // Send the workout to the FinishWorkoutActivity
+        Intent intent = new Intent(this, FinishWorkoutActivity.class);
+        intent.putExtra("workout", workoutViewModel.getWorkout());
+
+        finishWorkoutLauncher.launch(intent);
     }
 
     @Override
