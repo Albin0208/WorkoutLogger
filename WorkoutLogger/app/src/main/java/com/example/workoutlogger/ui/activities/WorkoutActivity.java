@@ -34,6 +34,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
     private WorkoutAdapter workoutAdapter;
     private WorkoutViewModel workoutViewModel;
 
+    /**
+     * The launcher for the ChooseExerciseActivity
+     */
     ActivityResultLauncher<Intent> chooseExerciseLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -43,12 +46,13 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
                 }
             });
 
+    /**
+     * The launcher for the FinishWorkoutActivity
+     */
     ActivityResultLauncher<Intent> finishWorkoutLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    // TODO Implement this
-
                     // Grab a tag that says if the user finished the workout or not
                     boolean finishedWorkout = result.getData().getBooleanExtra("finishedWorkout", false);
 
@@ -152,10 +156,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
      * Handles finishing the workout
      */
     private void handleFinishWorkout() {
-        // TODO Implement this
-//        Intent intent = new Intent(this, FinishWorkoutActivity.class);
-//        startActivity(intent);
-
         // Send the workout to the FinishWorkoutActivity
         Intent intent = new Intent(this, FinishWorkoutActivity.class);
         intent.putExtra("workout", workoutViewModel.getWorkout());

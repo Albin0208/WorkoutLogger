@@ -1,13 +1,18 @@
 package com.example.workoutlogger.viewmodels;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.data.Result;
@@ -103,7 +108,6 @@ public class WorkoutViewModel extends ViewModel {
     @SuppressLint("CheckResult")
     public void saveWorkout(Workout workout) {
         WorkoutRepository workoutRepository = new WorkoutRepository();
-        // TODO Save the workout to the database
         // Notify the user that the workout was saved
         workoutRepository.createWorkout(workout)
                 .subscribeOn(Schedulers.io())

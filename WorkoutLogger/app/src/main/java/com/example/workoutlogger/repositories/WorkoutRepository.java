@@ -15,10 +15,14 @@ import io.reactivex.rxjava3.core.Observable;
 public class WorkoutRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public WorkoutRepository() {
+    public WorkoutRepository() {}
 
-    }
-
+    /**
+     * Creates a workout in Firestore
+     *
+     * @param workout The workout to create
+     * @return An Observable object containing the result of the operation
+     */
     public Observable<Result<Workout>> createWorkout(Workout workout) {
         return Observable.create(emitter -> {
             // Grab the current user
@@ -37,7 +41,6 @@ public class WorkoutRepository {
                     .addOnFailureListener(e -> {
                         Log.e("WorkoutRepository", "Error creating workout", e);
 
-                        // TODO Change e.getMessage to a string resource
                         emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_message))));
                     });
         });
