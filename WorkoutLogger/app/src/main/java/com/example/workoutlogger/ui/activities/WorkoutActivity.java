@@ -27,6 +27,7 @@ import com.example.workoutlogger.ui.adapters.SetListener;
 import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 import com.example.workoutlogger.ui.adapters.WorkoutListener;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 
@@ -136,7 +137,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
      * Shows a dialog asking the user if they want to abort the workout
      */
     private void showAbortWorkout() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         ViewGroup viewGroup = findViewById(android.R.id.content);
         final View customLayout = LayoutInflater.from(this).inflate(R.layout.dialog_abort_workout, viewGroup, false);
 
@@ -156,11 +157,28 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
      * Handles finishing the workout
      */
     private void handleFinishWorkout() {
+        // Check if the user has added any exercises
+        if (workoutViewModel.getExercises().getValue() != null && !workoutViewModel.getExercises().getValue().isEmpty()) {
+
+
         // Send the workout to the FinishWorkoutActivity
         Intent intent = new Intent(this, FinishWorkoutActivity.class);
         intent.putExtra("workout", workoutViewModel.getWorkout());
 
         finishWorkoutLauncher.launch(intent);
+        } else {
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+//            final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+            builder.setTitle("Cannot Finish Workout");
+            builder.setMessage("Please add at least one exercise to finish the workout.");
+
+            builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+            AlertDialog dialog = builder.create();
+
+            dialog.show();
+        }
+
     }
 
     @Override
