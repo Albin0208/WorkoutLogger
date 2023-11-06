@@ -1,15 +1,5 @@
-<!--<resources xmlns:tools="http://schemas.android.com/tools">-->
-<!--    &lt;!&ndash; Base application theme &ndash;&gt;-->
-<!--    <style name="Base.Theme.WorkoutLogger" parent="Theme.Material3.Light">-->
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--        <item name="colorOnPrimary">@color/text_primary</item>-->
-<!--        <item name="colorPrimaryVariant">@color/dark_primary</item>-->
-<!--        <item name="colorSecondary">@color/secondary</item>-->
-<!--    </style>-->
-<!--</resources>-->
-
 <resources>
-    <style name="Base.Theme.WorkoutLogger" parent="Theme.Material3.Light">
+    <style name="Base.Theme.WorkoutLogger" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>

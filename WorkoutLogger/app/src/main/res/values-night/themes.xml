@@ -1,19 +1,5 @@
-<!--<resources xmlns:tools="http://schemas.android.com/tools">-->
-<!--    &lt;!&ndash; Base application theme. &ndash;&gt;-->
-<!--    <style name="Base.Theme.WorkoutLogger" parent="Theme.Material3.Dark">-->
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--        <item name="colorOnPrimary">@color/text_primary</item>-->
-<!--        <item name="colorPrimaryVariant">@color/dark_primary</item>-->
-<!--        <item name="colorSecondary">@color/secondary</item>-->
-<!--    </style>-->
-<!--    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">-->
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--        <item name="colorAccent">@color/accent</item>-->
-<!--        &lt;!&ndash; Add any other theme attributes you want to customize &ndash;&gt;-->
-<!--    </style>-->
-<!--</resources>-->
 <resources>
-    <style name="Base.Theme.WorkoutLogger" parent="Theme.Material3.Dark">
+    <style name="Base.Theme.WorkoutLogger" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/md_theme_dark_primary</item>
         <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>

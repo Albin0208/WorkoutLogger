@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.data.User;
 import com.example.workoutlogger.repositories.UserRepository;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -147,4 +148,7 @@ public class AuthViewModel extends AndroidViewModel {
         return authSuccess;
     }
 
+    public LiveData<User> getUser() {
+        return userRepository.getUser();
+    }
 }

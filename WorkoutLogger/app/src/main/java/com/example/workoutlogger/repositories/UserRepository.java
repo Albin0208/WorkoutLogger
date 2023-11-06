@@ -94,4 +94,25 @@ public class UserRepository {
         FirebaseUser user = auth.getCurrentUser();
         return user != null;
     }
+
+    public LiveData<User> getUser() {
+        MutableLiveData<User> userData = new MutableLiveData<>();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            db.collection("users")
+                    .document(userId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            User user = documentSnapshot.toObject(User.class);
+                            userData.setValue(user);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle the error
+                    });
+        }
+        return userData;
+    }
 }
