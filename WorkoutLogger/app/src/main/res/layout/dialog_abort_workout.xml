@@ -14,7 +14,6 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:textColor="?attr/colorOnSecondaryContainer"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +23,6 @@
     <TextView
         android:id="@+id/dialog_message"
         android:layout_width="match_parent"
-        android:textColor="?attr/colorOnSecondaryContainer"
         android:layout_height="wrap_content"
         android:text="@string/abort_workout_message"
         android:textSize="16sp"
