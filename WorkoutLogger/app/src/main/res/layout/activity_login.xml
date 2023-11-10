@@ -52,8 +52,8 @@
 
     <TextView
         android:id="@+id/errorMessage"
-        android:textColor="?attr/colorErrorContainer"
-        android:background="?attr/colorOnErrorContainer"
+        android:textColor="?attr/colorOnErrorContainer"
+        android:background="?attr/colorErrorContainer"
         android:padding="8dp"
         android:gravity="center"
         android:visibility="gone"

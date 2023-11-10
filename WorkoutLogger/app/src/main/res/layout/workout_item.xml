@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:layout_margin="8dp"
     android:clickable="true"
+    app:cardUseCompatPadding="true"
     android:focusable="true"
+    app:cardElevation="4dp"
     app:cardBackgroundColor="?attr/colorPrimaryContainer"
     >
     <LinearLayout

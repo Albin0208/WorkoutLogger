@@ -31,6 +31,14 @@
         android:paddingBottom="8dp"
         android:gravity="center" />
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loading_spinner"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
+
     <!-- RecyclerView for Recent Workouts -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recent_workouts"
@@ -40,5 +48,26 @@
         android:padding="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/workout_item" />
+
+    <!--  No workouts  -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/no_workouts"
+        android:text="@string/no_workouts_found"
+        android:gravity="center"
+        android:visibility="gone"
+        />
+    <!--  Error message fetching workouts  -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/error_workouts"
+        android:textColor="?attr/colorOnErrorContainer"
+        android:background="?attr/colorErrorContainer"
+        android:padding="8dp"
+        android:gravity="center"
+        android:visibility="gone"
+        />
 
 </LinearLayout>

@@ -30,8 +30,8 @@
         android:text="Error"
         android:padding="8dp"
         android:layout_gravity="center"
-        android:background="?attr/colorOnErrorContainer"
-        android:textColor="?attr/colorErrorContainer"
+        android:textColor="?attr/colorOnErrorContainer"
+        android:background="?attr/colorErrorContainer"
         android:id="@+id/workout_name_error"
         android:visibility="gone"/>
 

@@ -29,7 +29,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<List<Exercise>> exercisesLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Result<Workout>> workoutCreatedResult = new MutableLiveData<>();
-    private final MutableLiveData<List<Workout>> workoutsLiveData = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Result<List<Workout>>> workoutsLiveData = new MutableLiveData<>(new Result<>(new ArrayList<>()));
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(false);
 
     private final WorkoutRepository workoutRepository = new WorkoutRepository();
 
@@ -85,7 +87,7 @@ public class WorkoutViewModel extends ViewModel {
     public void removeExercise(int position) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
         currentExercises.remove(position);
-        exercisesLiveData.postValue(currentExercises);
+        exercisesLiveData.setValue(currentExercises);
     }
 
     /**
@@ -105,25 +107,29 @@ public class WorkoutViewModel extends ViewModel {
     }
 
     @SuppressLint("CheckResult")
-    public LiveData<List<Workout>> getWorkouts() {
+    public void getWorkouts() {
+        isLoading.postValue(true);
+
         // TODO Sort the workouts by date
         workoutRepository.getWorkouts()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
+                    isLoading.postValue(false);
                     if (response.isSuccess()) {
-                        workoutsLiveData.postValue(response.getData());
+                        workoutsLiveData.postValue(new Result<>(response.getData()));
+                        isEmpty.postValue(response.getData().isEmpty());
                         return;
                     }
 
-                    workoutsLiveData.postValue(new ArrayList<>());
+                    workoutsLiveData.postValue(new Result<>(response.getError()));
                 },
                     error -> {
+                    isLoading.postValue(false);
                     Log.e("WorkoutViewModel", "Error getting workouts", error);
-                    workoutsLiveData.postValue(new ArrayList<>());
+                    // TODO Extract to strings.xml
+                    workoutsLiveData.postValue(new Result<>(new Exception("Unexpected error getting workouts")));
                 });
-
-        return workoutsLiveData;
     }
 
     @SuppressLint("CheckResult")
@@ -140,7 +146,15 @@ public class WorkoutViewModel extends ViewModel {
         return workoutCreatedResult;
     }
 
-    public void refreshWorkouts() {
-        getWorkouts();
+    public LiveData<Result<List<Workout>>> getWorkoutsLiveData() {
+        return workoutsLiveData;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<Boolean> getIsEmpty() {
+        return isEmpty;
     }
 }
