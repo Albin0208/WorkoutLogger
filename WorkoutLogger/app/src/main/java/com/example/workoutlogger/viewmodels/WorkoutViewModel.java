@@ -29,12 +29,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<List<Exercise>> exercisesLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Result<Workout>> workoutCreatedResult = new MutableLiveData<>();
+    private final MutableLiveData<List<Workout>> workoutsLiveData = new MutableLiveData<>(new ArrayList<>());
 
     private final WorkoutRepository workoutRepository = new WorkoutRepository();
-
-    public WorkoutViewModel() {
-        Log.d("ViewModelLifecycle", "ViewModel created");
-    }
 
     public LiveData<List<Exercise>> getExercises() {
         return exercisesLiveData;
@@ -88,7 +85,7 @@ public class WorkoutViewModel extends ViewModel {
     public void removeExercise(int position) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
         currentExercises.remove(position);
-        exercisesLiveData.setValue(currentExercises);
+        exercisesLiveData.postValue(currentExercises);
     }
 
     /**
@@ -109,67 +106,22 @@ public class WorkoutViewModel extends ViewModel {
 
     @SuppressLint("CheckResult")
     public LiveData<List<Workout>> getWorkouts() {
-        MutableLiveData<List<Workout>> workoutsLiveData = new MutableLiveData<>();
-
         // TODO Sort the workouts by date
         workoutRepository.getWorkouts()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(it -> workoutsLiveData.setValue(it.getData()));
+                .subscribe(response -> {
+                    if (response.isSuccess()) {
+                        workoutsLiveData.postValue(response.getData());
+                        return;
+                    }
 
-//        // TODO Replace this with a call to the database
-//        List<Workout> workouts = new ArrayList<>();
-//
-//        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
-//                List.of(
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift")
-//                )
-//        )));
-//        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
-//                List.of(
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("3", "Deadlift"),
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift")
-//                )
-//        )));
-//        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
-//                List.of(
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift")
-//                )
-//        )));
-//        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
-//                List.of(
-//                        new Exercise("1", "Bench Press"),
-//                        new Exercise("2", "Squat"),
-//                        new Exercise("3", "Deadlift")
-//                )
-//        )));
-//
-//        workoutsLiveData.setValue(workouts);
+                    workoutsLiveData.postValue(new ArrayList<>());
+                },
+                    error -> {
+                    Log.e("WorkoutViewModel", "Error getting workouts", error);
+                    workoutsLiveData.postValue(new ArrayList<>());
+                });
 
         return workoutsLiveData;
     }
@@ -180,11 +132,15 @@ public class WorkoutViewModel extends ViewModel {
         workoutRepository.createWorkout(workout)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(workoutCreatedResult::setValue);
+                .subscribe(workoutCreatedResult::postValue);
 
     }
 
     public LiveData<Result<Workout>> getWorkoutCreatedResult() {
         return workoutCreatedResult;
+    }
+
+    public void refreshWorkouts() {
+        getWorkouts();
     }
 }

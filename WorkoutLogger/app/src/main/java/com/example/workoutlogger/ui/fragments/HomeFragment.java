@@ -18,7 +18,7 @@ import com.example.workoutlogger.ui.adapters.RecentWorkoutsAdapter;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 public class HomeFragment extends Fragment {
-
+    private WorkoutViewModel workoutViewModel;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -36,8 +36,10 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // TODO Add a loading spinner
 
-        WorkoutViewModel workoutViewModel = new ViewModelProvider(requireActivity()).get(WorkoutViewModel.class);
+
+        workoutViewModel = new ViewModelProvider(requireActivity()).get(WorkoutViewModel.class);
 
         RecentWorkoutsAdapter adapter = new RecentWorkoutsAdapter();
         recyclerView.setAdapter(adapter);
@@ -47,5 +49,13 @@ public class HomeFragment extends Fragment {
         startWorkoutButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), WorkoutActivity.class)));
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Update the recent workouts
+        workoutViewModel.refreshWorkouts();
+
     }
 }
