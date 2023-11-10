@@ -2,6 +2,7 @@ package com.example.workoutlogger.viewmodels;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,6 +100,12 @@ public class WorkoutViewModel extends ViewModel {
         set.setCompleted(!set.isCompleted());
     }
 
+
+    /**
+     * Gets the workout that was created
+     *
+     * @return The workout that was created
+     */
     public Workout getWorkout() {
         Workout workout = new Workout();
         workout.setExercises(exercisesLiveData.getValue());
@@ -106,6 +113,9 @@ public class WorkoutViewModel extends ViewModel {
         return workout;
     }
 
+    /**
+     * Gets all workouts for the current user
+     */
     @SuppressLint("CheckResult")
     public void getWorkouts() {
         isLoading.postValue(true);
@@ -128,7 +138,7 @@ public class WorkoutViewModel extends ViewModel {
                     isLoading.postValue(false);
                     Log.e("WorkoutViewModel", "Error getting workouts", error);
                     // TODO Extract to strings.xml
-                    workoutsLiveData.postValue(new Result<>(new Exception("Unexpected error getting workouts")));
+                    workoutsLiveData.postValue(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_getting_workouts))));
                 });
     }
 
@@ -142,18 +152,38 @@ public class WorkoutViewModel extends ViewModel {
 
     }
 
+    /**
+     * Gets the result of the workout that was created
+     *
+     * @return The result of the workout that was created
+     */
     public LiveData<Result<Workout>> getWorkoutCreatedResult() {
         return workoutCreatedResult;
     }
 
+    /**
+     * Gets the result of the workouts
+     *
+     * @return The result of the workouts
+     */
     public LiveData<Result<List<Workout>>> getWorkoutsLiveData() {
         return workoutsLiveData;
     }
 
+    /**
+     * Gets whether the workouts are loading or not
+     *
+     * @return Whether the workouts are loading or not
+     */
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
 
+    /**
+     * Gets whether the workouts are empty or not
+     *
+     * @return Whether the workouts are empty or not
+     */
     public LiveData<Boolean> getIsEmpty() {
         return isEmpty;
     }

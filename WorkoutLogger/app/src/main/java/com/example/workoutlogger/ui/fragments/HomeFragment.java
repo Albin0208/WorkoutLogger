@@ -28,15 +28,18 @@ public class HomeFragment extends Fragment {
     private ProgressBar loadingSpinner;
     private TextView workoutsError;
     private RecentWorkoutsAdapter adapter;
+    private Button startWorkoutButton;
+    private RecyclerView recyclerView;
+    private TextView noWorkoutsText;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Button startWorkoutButton = view.findViewById(R.id.btn_start_workout);
-        RecyclerView recyclerView = view.findViewById(R.id.rv_recent_workouts);
-        TextView noWorkoutsText = view.findViewById(R.id.no_workouts);
+        startWorkoutButton = view.findViewById(R.id.btn_start_workout);
+        recyclerView = view.findViewById(R.id.rv_recent_workouts);
+        noWorkoutsText = view.findViewById(R.id.no_workouts);
         workoutsError = view.findViewById(R.id.error_workouts);
         loadingSpinner = view.findViewById(R.id.loading_spinner);
 

@@ -49,4 +49,5 @@
     <string name="user_not_logged_in">User is not logged in</string>
     <string name="unexpected_error_message">An unexpected error occurred. Please try again. If the problem persists, please contact support.</string>
     <string name="no_workouts_found">No workouts found</string>
+    <string name="unexpected_error_getting_workouts">Unexpected error getting workouts</string>
 </resources>
