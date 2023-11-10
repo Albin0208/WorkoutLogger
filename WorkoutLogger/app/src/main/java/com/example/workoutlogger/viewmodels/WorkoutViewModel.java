@@ -105,6 +105,67 @@ public class WorkoutViewModel extends ViewModel {
         return workout;
     }
 
+    public LiveData<List<Workout>> getWorkouts() {
+        // Create a list of dummy workouts to display
+        MutableLiveData<List<Workout>> workoutsLiveData = new MutableLiveData<>();
+
+        // TODO Replace this with a call to the database
+        List<Workout> workouts = new ArrayList<>();
+
+        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
+                List.of(
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift")
+                )
+        )));
+        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
+                List.of(
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("3", "Deadlift"),
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift")
+                )
+        )));
+        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
+                List.of(
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift")
+                )
+        )));
+        workouts.add(new Workout(1, "Workout 1", new ArrayList<>(
+                List.of(
+                        new Exercise("1", "Bench Press"),
+                        new Exercise("2", "Squat"),
+                        new Exercise("3", "Deadlift")
+                )
+        )));
+
+        workoutsLiveData.setValue(workouts);
+
+        return workoutsLiveData;
+    }
+
     @SuppressLint("CheckResult")
     public void saveWorkout(Workout workout) {
         WorkoutRepository workoutRepository = new WorkoutRepository();
