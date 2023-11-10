@@ -117,7 +117,7 @@ public class WorkoutViewModel extends ViewModel {
         isLoading.postValue(true);
 
         // TODO Sort the workouts by date
-        workoutRepository.getWorkouts()
+        workoutRepository.getWorkouts(10)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {

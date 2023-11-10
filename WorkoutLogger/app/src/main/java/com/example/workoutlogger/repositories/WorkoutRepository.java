@@ -51,12 +51,16 @@ public class WorkoutRepository {
 
     }
 
+    public Observable<Result<List<Workout>>> getWorkouts() {
+        return getWorkouts(0);
+    }
+
     /**
      * Gets all workouts for the current user
      *
      * @return An Observable object containing the result of the operation
      */
-    public Observable<Result<List<Workout>>> getWorkouts() {
+    public Observable<Result<List<Workout>>> getWorkouts(int limit) {
         return Observable.create(emitter -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -69,6 +73,10 @@ public class WorkoutRepository {
                     .document(currentUser.getUid())
                     .collection("workouts")
                     .orderBy("date", Query.Direction.DESCENDING);
+
+            if (limit > 0) {
+                query = query.limit(limit);
+            }
 
             query.get()
                     .addOnSuccessListener(queryDocumentSnapshots -> emitter.onNext(new Result<>(queryDocumentSnapshots.toObjects(Workout.class))))
