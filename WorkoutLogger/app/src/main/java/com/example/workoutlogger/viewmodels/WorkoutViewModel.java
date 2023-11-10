@@ -1,13 +1,8 @@
 package com.example.workoutlogger.viewmodels;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -19,10 +14,11 @@ import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.data.Workout;
 import com.example.workoutlogger.repositories.WorkoutRepository;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -144,6 +140,8 @@ public class WorkoutViewModel extends ViewModel {
 
     @SuppressLint("CheckResult")
     public void saveWorkout(Workout workout) {
+        workout.setDate(Timestamp.now());
+
         // Notify the user that the workout was saved
         workoutRepository.createWorkout(workout)
                 .subscribeOn(Schedulers.io())

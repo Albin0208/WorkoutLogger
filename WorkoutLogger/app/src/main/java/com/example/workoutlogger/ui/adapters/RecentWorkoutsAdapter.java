@@ -12,8 +12,11 @@ import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.Workout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecentWorkoutsAdapter.RecentWorkoutsViewHolder>{
@@ -57,8 +60,9 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecentWorkoutsAd
 
         public void bind(Workout workout) {
             workoutName.setText(workout.getName());
-//            workoutDate.setText(workout.getDate().toString()); // TODO Add a actual date to the workout
-            workoutDate.setText("2023-11-10");
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            workoutDate.setText(formatter.format(workout.getDate().toDate()));
 
             // Set the text of the exercises to be a comma separated list of all the exercises
             exercises.setText(

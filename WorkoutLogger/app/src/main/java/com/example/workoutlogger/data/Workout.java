@@ -5,12 +5,15 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.Timestamp;
+
 import java.util.List;
 
 public class Workout implements Parcelable {
     private int id;
     private String name;
     private List<Exercise> exercises;
+    private Timestamp date = Timestamp.now();
 
     public Workout(int id, String name, List<Exercise> exercises) {
         this.id = id;
@@ -77,5 +80,14 @@ public class Workout implements Parcelable {
         parcel.writeInt(id);
         parcel.writeString(name);
         parcel.writeTypedList(exercises);
+        parcel.writeString(date.toString());
+    }
+
+    public Timestamp getDate() {
+        return date;
+    }
+
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 }

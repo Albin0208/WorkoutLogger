@@ -9,6 +9,7 @@ import com.example.workoutlogger.data.Workout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.List;
 
@@ -64,16 +65,29 @@ public class WorkoutRepository {
                 return;
             }
 
-            db.collection("users")
+            Query query = db.collection("users")
                     .document(currentUser.getUid())
                     .collection("workouts")
-                    .get()
+                    .orderBy("date", Query.Direction.DESCENDING);
+
+            query.get()
                     .addOnSuccessListener(queryDocumentSnapshots -> emitter.onNext(new Result<>(queryDocumentSnapshots.toObjects(Workout.class))))
                     .addOnFailureListener(e -> {
                         Log.e("WorkoutRepository", "Error getting workouts", e);
 
                         emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_message))));
                     });
+//
+//            db.collection("users")
+//                    .document(currentUser.getUid())
+//                    .collection("workouts")
+//                    .get()
+//                    .addOnSuccessListener(queryDocumentSnapshots -> emitter.onNext(new Result<>(queryDocumentSnapshots.toObjects(Workout.class))))
+//                    .addOnFailureListener(e -> {
+//                        Log.e("WorkoutRepository", "Error getting workouts", e);
+//
+//                        emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_message))));
+//                    });
         });
 
     }
