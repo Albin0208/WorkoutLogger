@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
 import io.reactivex.rxjava3.core.Observable;
 
 public class WorkoutRepository {
@@ -45,6 +47,34 @@ public class WorkoutRepository {
                     });
         });
 
+
+    }
+
+    /**
+     * Gets all workouts for the current user
+     *
+     * @return An Observable object containing the result of the operation
+     */
+    public Observable<Result<List<Workout>>> getWorkouts() {
+        return Observable.create(emitter -> {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (currentUser == null) {
+                emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.user_not_logged_in))));
+                return;
+            }
+
+            db.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("workouts")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> emitter.onNext(new Result<>(queryDocumentSnapshots.toObjects(Workout.class))))
+                    .addOnFailureListener(e -> {
+                        Log.e("WorkoutRepository", "Error getting workouts", e);
+
+                        emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_message))));
+                    });
+        });
 
     }
 }

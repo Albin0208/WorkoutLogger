@@ -12,11 +12,12 @@ import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.Workout;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecentWorkoutsAdapter.RecentWorkoutsViewHolder>{
-    private List<Workout> workouts;
+    private List<Workout> workouts = new ArrayList<>();
 
     @NonNull
     @Override
