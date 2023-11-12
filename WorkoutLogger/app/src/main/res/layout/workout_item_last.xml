@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:clickable="true"
+    app:cardUseCompatPadding="true"
+    android:focusable="true"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="?attr/colorPrimaryContainer"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:orientation="vertical"
+        >
+
+    <!--  Date of the workout  -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/workout_date"
+        android:text="See more workouts in the full log"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        />
+
+
+    <!--  Add a line (separator) between items  -->
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        app:dividerColor="?attr/colorOnPrimaryContainer"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/full_log_button"
+        android:text="See full log"
+        android:layout_gravity="center"
+        android:layout_marginVertical="10dp"
+        />
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
