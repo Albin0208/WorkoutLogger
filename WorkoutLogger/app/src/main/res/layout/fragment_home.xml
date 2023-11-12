@@ -47,7 +47,8 @@
         android:layout_gravity="center"
         android:padding="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/workout_item" />
+        tools:listitem="@layout/workout_item"
+        android:visibility="gone" />
 
     <!--  No workouts  -->
     <TextView

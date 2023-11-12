@@ -59,8 +59,15 @@ public class HomeFragment extends Fragment {
         workoutViewModel.getWorkouts();
         workoutViewModel.getWorkoutsLiveData().observe(getViewLifecycleOwner(), this::handleWorkoutsResult);
 
-        workoutViewModel.getIsEmpty().observe(getViewLifecycleOwner(), isEmpty -> handleVisibility(isEmpty, noWorkoutsText));
-        workoutViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> handleVisibility(isLoading, loadingSpinner));
+        // If empty don't show the recycler view and show the no workouts text
+        workoutViewModel.getIsEmpty().observe(getViewLifecycleOwner(), isEmpty -> {
+            handleVisibility(isEmpty, noWorkoutsText);
+            handleVisibility(!isEmpty, recyclerView);
+        });
+        workoutViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            handleVisibility(isLoading, loadingSpinner);
+            handleVisibility(!isLoading, noWorkoutsText, recyclerView);
+        });
 
         startWorkoutButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), WorkoutActivity.class)));
 
@@ -77,7 +84,7 @@ public class HomeFragment extends Fragment {
             adapter.setWorkouts(result.getData());
         } else {
             // Show error to user
-            workoutsError.setVisibility(View.VISIBLE);
+            handleVisibility(true, workoutsError);
             workoutsError.setText(result.getError().getMessage());
         }
     }

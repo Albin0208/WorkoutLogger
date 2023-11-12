@@ -28,7 +28,7 @@ public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<Result<Workout>> workoutCreatedResult = new MutableLiveData<>();
     private final MutableLiveData<Result<List<Workout>>> workoutsLiveData = new MutableLiveData<>(new Result<>(new ArrayList<>()));
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(true);
 
     private final WorkoutRepository workoutRepository = new WorkoutRepository();
 
