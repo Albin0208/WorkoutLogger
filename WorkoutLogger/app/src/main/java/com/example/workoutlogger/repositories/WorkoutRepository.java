@@ -54,24 +54,7 @@ public class WorkoutRepository {
      * @return An Observable object containing the result of the operation
      */
     public Single<Result<List<Workout>>> getWorkouts(int limit) {
-        return Single.create(emitter -> {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (currentUser == null) {
-                emitter.onSuccess(Result.error(new Exception(), R.string.user_not_logged_in));
-                return;
-            }
-
-
-            Query query = buildWorkoutsQuery(currentUser.getUid(), limit);
-
-            query.get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> emitter.onSuccess(Result.success(queryDocumentSnapshots.toObjects(Workout.class))))
-                    .addOnFailureListener(e -> {
-                        Log.e("WorkoutRepository", "Error getting workouts", e);
-
-                        emitter.onSuccess(Result.error(e, R.string.unexpected_error_message));
-                    });
-        });
+        return fetchWorkouts(limit);
     }
 
     /**
@@ -80,6 +63,16 @@ public class WorkoutRepository {
      * @return An Observable object containing the result of the operation
      */
     public Single<Result<List<Workout>>> getAllWorkouts() {
+        return fetchWorkouts(0);
+    }
+
+    /**
+     * Fetches workouts from Firestore
+     *
+     * @param limit The maximum number of workouts to get, or 0 for no limit
+     * @return An Observable object containing the result of the operation
+     */
+    private Single<Result<List<Workout>>> fetchWorkouts(int limit) {
         return Single.create(emitter -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -88,7 +81,14 @@ public class WorkoutRepository {
                 return;
             }
 
-            Query query = buildWorkoutsQuery(currentUser.getUid(), 0);
+            Query query = db.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("workouts")
+                    .orderBy("date", Query.Direction.DESCENDING);
+
+            if (limit > 0) {
+                query = query.limit(limit);
+            }
 
             query.get()
                     .addOnSuccessListener(queryDocumentSnapshots -> emitter.onSuccess(Result.success(queryDocumentSnapshots.toObjects(Workout.class))))
@@ -98,25 +98,5 @@ public class WorkoutRepository {
                         emitter.onSuccess(Result.error(e, R.string.unexpected_error_message));
                     });
         });
-    }
-
-    /**
-     * Builds a query for getting workouts
-     *
-     * @param UserID The user ID to get workouts for
-     * @param limit  The maximum number of workouts to get, or 0 for no limit
-     * @return A Query object for getting workouts
-     */
-    private Query buildWorkoutsQuery(String UserID, int limit) {
-        Query query = db.collection("users")
-                .document(UserID)
-                .collection("workouts")
-                .orderBy("date", Query.Direction.DESCENDING);
-
-        if (limit > 0) {
-            query = query.limit(limit);
-        }
-
-        return query;
     }
 }
