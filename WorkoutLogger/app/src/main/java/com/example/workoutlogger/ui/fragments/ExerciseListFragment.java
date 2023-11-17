@@ -19,6 +19,7 @@ import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.ui.activities.ChooseExerciseActivity;
 import com.example.workoutlogger.ui.activities.CreateExerciseActivity;
+import com.example.workoutlogger.ui.activities.RecordsActivity;
 import com.example.workoutlogger.ui.adapters.ExerciseAdapter;
 import com.example.workoutlogger.ui.adapters.ExerciseOnClickListener;
 import com.example.workoutlogger.viewmodels.ExerciseViewModel;
@@ -32,14 +33,15 @@ public class ExerciseListFragment extends Fragment {
     private final ExerciseOnClickListener listener;
 
     public ExerciseListFragment() {
-        // TODO Replace with going to detail view of exercise
         this.listener = exercise -> {
-            Toast.makeText(getContext(), "Exercise clicked: " + exercise.getName(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getContext(), RecordsActivity.class);
+            intent.putExtra("exercise", exercise);
+            startActivity(intent);
         };
     }
 
-    public ExerciseListFragment(ChooseExerciseActivity chooseExerciseActivity) {
-        this.listener = chooseExerciseActivity;
+    public ExerciseListFragment(ExerciseOnClickListener listener) {
+        this.listener = listener;
     }
 
     @Override

@@ -14,13 +14,6 @@
         android:layout_height="wrap_content"
         android:text="@string/start_workout" />
 
-    <!-- Records Button (if applicable) -->
-    <Button
-        android:id="@+id/records_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Records" />
-
     <!-- Section Header: "My Latest Workouts" -->
     <TextView
         android:layout_width="match_parent"

@@ -30,7 +30,6 @@ public class HomeFragment extends Fragment {
     private TextView workoutsError;
     private RecentWorkoutsAdapter adapter;
     private Button startWorkoutButton;
-    private Button recordsButton;
     private RecyclerView recyclerView;
     private TextView noWorkoutsText;
     @Override
@@ -40,7 +39,6 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         startWorkoutButton = view.findViewById(R.id.btn_start_workout);
-        recordsButton = view.findViewById(R.id.records_button);
         recyclerView = view.findViewById(R.id.rv_recent_workouts);
         noWorkoutsText = view.findViewById(R.id.no_workouts);
         workoutsError = view.findViewById(R.id.error_workouts);
@@ -73,8 +71,6 @@ public class HomeFragment extends Fragment {
         });
 
         startWorkoutButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), WorkoutActivity.class)));
-
-        recordsButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), RecordsActivity.class)));
 
         return view;
     }
