@@ -42,7 +42,6 @@ public class ExerciseViewModel extends ViewModel {
         LiveData<List<Exercise>> userExercises = exerciseRepository.getUserExercises();
 
         mergedExercises.addSource(globalExercises, exercises -> updateMergedData(mergedExercises, globalExercises, userExercises));
-
         mergedExercises.addSource(userExercises, exercises -> updateMergedData(mergedExercises, globalExercises, userExercises));
 
         return mergedExercises;

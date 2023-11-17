@@ -17,24 +17,30 @@
         <activity
             android:name=".ui.activities.FinishWorkoutActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.WorkoutActivity"/>
+            android:parentActivityName=".ui.activities.WorkoutActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.ChooseExerciseActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.WorkoutActivity" />
+            android:parentActivityName=".ui.activities.WorkoutActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.WorkoutActivity"
             android:exported="false"
-            android:theme="@style/Base.Theme.WorkoutLogger" />
+            android:theme="@style/Base.Theme.WorkoutLogger"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.CreateExerciseActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.MainActivity" />
+            android:parentActivityName=".ui.activities.MainActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.RegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.LoginActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +50,8 @@
         </activity>
         <activity
             android:name=".ui.activities.MainActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
