@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment {
         adapter = new RecentWorkoutsAdapter();
         recyclerView.setAdapter(adapter);
 
-        workoutViewModel.getWorkouts();
+        fetchWorkouts();
         workoutViewModel.getWorkoutsLiveData().observe(getViewLifecycleOwner(), this::handleWorkoutsResult);
 
         // If empty don't show the recycler view and show the no workouts text
@@ -85,7 +85,7 @@ public class HomeFragment extends Fragment {
         } else {
             // Show error to user
             handleVisibility(true, workoutsError);
-            workoutsError.setText(result.getError().getMessage());
+            workoutsError.setText(getString(result.getErrorMessageRes()));
         }
     }
 
@@ -100,10 +100,14 @@ public class HomeFragment extends Fragment {
             v.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
+    private void fetchWorkouts() {
+        workoutViewModel.getWorkouts(10);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         // Update the recent workouts
-        workoutViewModel.getWorkouts();
+        fetchWorkouts();
     }
 }

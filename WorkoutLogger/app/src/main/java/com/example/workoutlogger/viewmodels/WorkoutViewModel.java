@@ -26,7 +26,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<List<Exercise>> exercisesLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Result<Workout>> workoutCreatedResult = new MutableLiveData<>();
-    private final MutableLiveData<Result<List<Workout>>> workoutsLiveData = new MutableLiveData<>(new Result<>(new ArrayList<>()));
+    private final MutableLiveData<Result<List<Workout>>> workoutsLiveData = new MutableLiveData<>(Result.success(new ArrayList<>()));
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(true);
 
@@ -113,29 +113,44 @@ public class WorkoutViewModel extends ViewModel {
      * Gets all workouts for the current user
      */
     @SuppressLint("CheckResult")
-    public void getWorkouts() {
+    public void getWorkouts(int numWorkouts) {
         isLoading.postValue(true);
 
-        // TODO Sort the workouts by date
-        workoutRepository.getWorkouts(10)
+        workoutRepository.getWorkouts(numWorkouts)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
                     isLoading.postValue(false);
                     if (response.isSuccess()) {
-                        workoutsLiveData.postValue(new Result<>(response.getData()));
+                        workoutsLiveData.postValue(Result.success(response.getData()));
                         isEmpty.postValue(response.getData().isEmpty());
                         return;
                     }
-
-                    workoutsLiveData.postValue(new Result<>(response.getError()));
-                },
-                    error -> {
-                    isLoading.postValue(false);
-                    Log.e("WorkoutViewModel", "Error getting workouts", error);
-                    // TODO Extract to strings.xml
-                    workoutsLiveData.postValue(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_getting_workouts))));
+                    isEmpty.postValue(true);
+                    workoutsLiveData.postValue(response);
                 });
+    }
+
+    /**
+     * Gets all workouts for the current user
+     */
+    @SuppressLint("CheckResult")
+    public void getAllWorkouts() {
+        isLoading.postValue(true);
+
+        workoutRepository.getAllWorkouts()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                            isLoading.postValue(false);
+                            if (response.isSuccess()) {
+                                workoutsLiveData.postValue(Result.success(response.getData()));
+                                isEmpty.postValue(response.getData().isEmpty());
+                                return;
+                            }
+
+                            workoutsLiveData.postValue(response);
+                        });
     }
 
     @SuppressLint("CheckResult")
@@ -147,7 +162,6 @@ public class WorkoutViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(workoutCreatedResult::postValue);
-
     }
 
     /**

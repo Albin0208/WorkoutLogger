@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 public class ExerciseRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -114,14 +115,13 @@ public class ExerciseRepository {
      *
      * @return An Observable object containing the created exercise
      */
-    public Observable<Result<Exercise>> createUserExercise(Exercise exercise) {
-        return Observable.create(emitter -> {
+    public Single<Result<Exercise>> createUserExercise(Exercise exercise) {
+        return Single.create(emitter -> {
             // Get the current user
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
             if (currentUser == null) {
-                emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.user_not_logged_in))));
-                emitter.onComplete();
+                emitter.onSuccess(Result.error(R.string.user_not_logged_in));
             } else {
                 Map<String, Object> exerciseMap = new HashMap<>();
                 exerciseMap.put("name", exercise.getName());
@@ -132,13 +132,12 @@ public class ExerciseRepository {
                         .add(exerciseMap)
                         .addOnSuccessListener(ref -> {
                             exercise.setId(ref.getId());
-                            emitter.onNext(new Result<>(exercise));
-                            emitter.onComplete();
+                            emitter.onSuccess(Result.success(exercise));
                         })
                         .addOnFailureListener(e -> {
                             Log.e("ExerciseRepository", "Error creating exercise", e);
 
-                            emitter.onNext(new Result<>(new Exception(Resources.getSystem().getString(R.string.unexpected_error_message))));
+                            emitter.onSuccess(Result.error(R.string.unexpected_error_message));
                         });
             }
         });
