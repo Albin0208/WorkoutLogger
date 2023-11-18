@@ -27,5 +27,21 @@ public class RecordsActivity extends AppCompatActivity {
 
         exerciseViewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
         // TODO Handle the nav back to main activity so the user can choose a different workout
+
+        // Grab the exercise from the intent
+        Exercise exercise = getIntent().getParcelableExtra("exercise", Exercise.class);
+        getSupportActionBar().setTitle(exercise.getName());
+
+        // Grab the records for this exercise
+        exerciseViewModel.getRecords(exercise).observe(this, records -> {
+            // TODO Display the records in a RecyclerView
+            Log.d("RecordsActivity", "Records: " + records);
+        });
+
+//        NavController navController = Navigation.findNavController(this, R.id.host_fragment);
+
+        // Set the title of the action bar to the name of the exercise
+
+
     }
 }

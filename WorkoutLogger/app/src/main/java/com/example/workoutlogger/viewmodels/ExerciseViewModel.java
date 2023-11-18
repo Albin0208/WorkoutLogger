@@ -11,6 +11,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.repositories.ExerciseRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -121,5 +122,9 @@ public class ExerciseViewModel extends ViewModel {
      */
     public boolean isValidName(String name) {
         return !name.isEmpty() && name.trim().length() > 0;
+    }
+
+    public LiveData<Result<Record>> getRecords(Exercise exercise) {
+        return exerciseRepository.getRecords(exercise);
     }
 }

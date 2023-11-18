@@ -1,18 +1,35 @@
 package com.example.workoutlogger.repositories;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.ExerciseSet;
+import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.data.Workout;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class WorkoutRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -25,6 +42,7 @@ public class WorkoutRepository {
      * @param workout The workout to create
      * @return An Observable object containing the result of the operation
      */
+    @SuppressLint("CheckResult")
     public Single<Result<Workout>> createWorkout(Workout workout) {
         return Single.create(emitter -> {
             // Grab the current user
@@ -35,16 +53,85 @@ public class WorkoutRepository {
                 return;
             }
 
-            db.collection("users")
-                    .document(currentUser.getUid())
-                    .collection("workouts")
+            DocumentReference userDocument = db.collection("users").document(currentUser.getUid());
+
+            userDocument.collection("workouts")
                     .add(workout)
-                    .addOnSuccessListener(documentReference -> emitter.onSuccess(Result.success(workout)))
+                    .addOnSuccessListener(documentReference -> {
+                        updateRecords(userDocument, workout)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(result -> {
+                                    if (result.isSuccess()) {
+                                        emitter.onSuccess(Result.success(workout));
+                                    } else {
+                                        emitter.onSuccess(Result.error(result.getError(), result.getErrorMessageRes()));
+                                    }
+                                });
+                    })
                     .addOnFailureListener(e -> {
                         Log.e("WorkoutRepository", "Error creating workout", e);
 
                         emitter.onSuccess(Result.error(e, R.string.unexpected_error_message));
                     });
+        });
+    }
+
+    private Single<Result<Exercise>> updateRecords(DocumentReference userDocument, Workout workout) {
+        return Single.create(emitter -> {
+            // Go through all the exercises in the workout
+            CollectionReference recordsCollection = userDocument.collection("records");
+            for (Exercise exercise : workout.getExercises()) {
+                DocumentReference exerciseDocument = recordsCollection.document(exercise.getId());
+
+                for (ExerciseSet set : exercise.getSets()) {
+                    // Check if the set is completed
+                    if (!set.isCompleted()) continue;
+
+                    CollectionReference exerciseRecordDocument = exerciseDocument.collection("records");
+                    Record newRecord = new Record(exercise.getId(), set);
+
+                    // Check if the record exists
+                    exerciseRecordDocument.get()
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot result =  task.getResult();
+                                    if (result != null) {
+                                        // Convert to list of records
+                                        List<Record> recordsList = result.getDocuments().stream()
+                                                .map(document ->  {
+                                                    Record rec = document.toObject(Record.class);
+                                                    rec.setDocumentID(document.getId());
+                                                    return rec;
+                                                })
+                                                .filter(Objects::nonNull)
+                                                .collect(Collectors.toList());
+
+                                        // Check if the list is empty or if the new record is a new record
+                                        if (recordsList.isEmpty() || recordsList.stream().noneMatch(newRecord::checkIfNewRecord)) {
+                                            // Update the database
+                                            exerciseRecordDocument.add(newRecord)
+                                                    .addOnSuccessListener(t -> emitter.onSuccess(Result.success(exercise)))
+                                                    .addOnFailureListener(t -> emitter.onSuccess(Result.error(t, R.string.unexpected_error_message)));
+                                        }
+
+                                        // Check if it beats any records
+                                        for (Record record : recordsList) {
+                                            if (newRecord.checkIfNewRecord(record))
+                                                exerciseRecordDocument.document(record.getDocumentID())
+                                                        .set(newRecord)
+                                                        .addOnSuccessListener(t -> emitter.onSuccess(Result.success(exercise)))
+                                                        .addOnFailureListener(t -> emitter.onSuccess(Result.error(t, R.string.unexpected_error_message)));
+                                        }
+                                    } else {
+                                        emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message));
+                                    }
+                                } else {
+                                    emitter.onSuccess(Result.error(task.getException(), R.string.unexpected_error_message));
+                                }
+                            });
+                }
+            }
         });
     }
 

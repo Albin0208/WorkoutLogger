@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.data.Result;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -141,5 +142,38 @@ public class ExerciseRepository {
                         });
             }
         });
+    }
+
+    public LiveData<Result<Record>> getRecords(Exercise exercise) {
+        MutableLiveData<Result<Record>> records = new MutableLiveData<>();
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            records.setValue(Result.error(R.string.user_not_logged_in));
+        } else {
+            db.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("records")
+                    .document(exercise.getId())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            Record record = documentSnapshot.toObject(Record.class);
+                            if (record != null) {
+                                records.setValue(Result.success(record));
+                            } else {
+                                records.setValue(Result.error(R.string.unexpected_error_message));
+                            }
+                        } else {
+                            records.setValue(Result.error(R.string.unexpected_error_message));
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("ExerciseRepository", "Error getting records", e);
+                        records.setValue(Result.error(R.string.unexpected_error_message));
+                    });
+        }
+
+        return records;
     }
 }
