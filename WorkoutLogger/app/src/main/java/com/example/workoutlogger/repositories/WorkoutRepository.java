@@ -157,6 +157,8 @@ public class WorkoutRepository {
                     return; // No need to check if it beats any records since it's the first record or a new record
                 }
 
+                // TODO If two records have the same weight and reps, only keep the one with the latest timestamp
+
                 /*
                  * Check if the new record beats any records
                  * If it does, update the records
