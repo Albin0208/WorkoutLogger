@@ -1,29 +1,18 @@
 package com.example.workoutlogger.ui.activities;
 
-import androidx.activity.OnBackPressedCallback;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Dialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
-import android.window.OnBackInvokedDispatcher;
-
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
-import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.data.Record;
-import com.example.workoutlogger.ui.adapters.ExerciseAdapter;
-import com.example.workoutlogger.ui.adapters.ExerciseOnClickListener;
 import com.example.workoutlogger.ui.adapters.RecordAdapter;
 import com.example.workoutlogger.viewmodels.ExerciseViewModel;
 
@@ -50,14 +39,17 @@ public class RecordsActivity extends AppCompatActivity {
         // Grab the records for this exercise
         exerciseViewModel.getRecords(exercise).observe(this, records -> {
             findViewById(R.id.spinner).setVisibility(RecyclerView.GONE);
-            // Check if records are not 0
-            if (records.getData().size() == 0) {
+            List<Record> recordList = records.getData();
+            // Check if the exercise has records
+            if (recordList.isEmpty()) {
                 recyclerView.setVisibility(RecyclerView.GONE);
                 findViewById(R.id.no_records_text).setVisibility(RecyclerView.VISIBLE);
+            } else {
+                recyclerView.setVisibility(View.VISIBLE);
+                findViewById(R.id.no_records_text).setVisibility(View.GONE);
+
+                recordAdapter.setRecords(recordList);
             }
-
-
-            recordAdapter.setRecords(records.getData());
         });
     }
 

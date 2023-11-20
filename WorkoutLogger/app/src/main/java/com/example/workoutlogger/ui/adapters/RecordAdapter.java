@@ -13,8 +13,11 @@ import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.data.Result;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordViewHolder> {
     private List<Record> records = new ArrayList<>();
@@ -57,7 +60,9 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
             ExerciseSet set = record.getSet();
             reps.setText(set.getReps() + " RM");
             weight.setText(set.getWeight() + " kg");
-//            date.setText(record.getDate().toString()); // TODO Add actual date label
+            SimpleDateFormat formatter = new SimpleDateFormat(
+                    itemView.getContext().getString(R.string.date_format), Locale.getDefault());
+            date.setText(formatter.format(record.getTimestamp().toDate()));
         }
     }
 

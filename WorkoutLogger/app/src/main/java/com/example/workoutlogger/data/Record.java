@@ -11,12 +11,14 @@ public class Record implements Parcelable {
     private String exerciseID;
     private String documentID;
     private ExerciseSet set;
+    private Timestamp timestamp;
 
     public Record() {}
 
     public Record(String exerciseID, ExerciseSet set) {
         this.exerciseID = exerciseID;
         this.set = set;
+        this.timestamp = Timestamp.now();
     }
 
     public String getExerciseID() {
@@ -25,6 +27,10 @@ public class Record implements Parcelable {
 
     public ExerciseSet getSet() {
         return set;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
     public boolean checkIfNewRecord(Record oldRecord) {
@@ -53,8 +59,9 @@ public class Record implements Parcelable {
 
     protected Record(Parcel in) {
         exerciseID = in.readString();
-        documentID = in.readString();  // Read the documentID from Parcel
-        set = in.readParcelable(ExerciseSet.class.getClassLoader());
+        documentID = in.readString();
+        set = in.readParcelable(ExerciseSet.class.getClassLoader(), ExerciseSet.class);
+        timestamp = in.readParcelable(Timestamp.class.getClassLoader(), Timestamp.class); // Read the timestamp
     }
 
     public static final Creator<Record> CREATOR = new Creator<Record>() {
@@ -79,5 +86,6 @@ public class Record implements Parcelable {
         parcel.writeString(exerciseID);
         parcel.writeString(documentID);
         parcel.writeParcelable(set, flags);
+        parcel.writeParcelable(timestamp, flags);
     }
 }
