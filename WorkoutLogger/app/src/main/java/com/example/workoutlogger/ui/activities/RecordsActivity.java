@@ -20,9 +20,14 @@ import android.window.OnBackInvokedDispatcher;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.ExerciseSet;
+import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.ui.adapters.ExerciseAdapter;
 import com.example.workoutlogger.ui.adapters.ExerciseOnClickListener;
+import com.example.workoutlogger.ui.adapters.RecordAdapter;
 import com.example.workoutlogger.viewmodels.ExerciseViewModel;
+
+import java.util.List;
 
 public class RecordsActivity extends AppCompatActivity {
     private ExerciseViewModel exerciseViewModel;
@@ -37,10 +42,22 @@ public class RecordsActivity extends AppCompatActivity {
         Exercise exercise = getIntent().getParcelableExtra("exercise", Exercise.class);
         getSupportActionBar().setTitle(exercise.getName());
 
+        RecordAdapter recordAdapter = new RecordAdapter();
+        RecyclerView recyclerView = findViewById(R.id.records_recycler_view);
+        recyclerView.setAdapter(recordAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         // Grab the records for this exercise
         exerciseViewModel.getRecords(exercise).observe(this, records -> {
-            // TODO Display the records in a RecyclerView
-            Log.d("RecordsActivity", "Records: " + records);
+            findViewById(R.id.spinner).setVisibility(RecyclerView.GONE);
+            // Check if records are not 0
+            if (records.getData().size() == 0) {
+                recyclerView.setVisibility(RecyclerView.GONE);
+                findViewById(R.id.no_records_text).setVisibility(RecyclerView.VISIBLE);
+            }
+
+
+            recordAdapter.setRecords(records.getData());
         });
     }
 

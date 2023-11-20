@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -144,8 +145,8 @@ public class ExerciseRepository {
         });
     }
 
-    public LiveData<Result<Record>> getRecords(Exercise exercise) {
-        MutableLiveData<Result<Record>> records = new MutableLiveData<>();
+    public LiveData<Result<List<Record>>> getRecords(Exercise exercise) {
+        MutableLiveData<Result<List<Record>>> records = new MutableLiveData<>();
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -155,15 +156,25 @@ public class ExerciseRepository {
                     .document(currentUser.getUid())
                     .collection("records")
                     .document(exercise.getId())
+                    .collection("records")
                     .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            Record record = documentSnapshot.toObject(Record.class);
-                            if (record != null) {
-                                records.setValue(Result.success(record));
-                            } else {
-                                records.setValue(Result.error(R.string.unexpected_error_message));
+                    .addOnSuccessListener(documentSnapshots -> {
+                        if (true) {
+                            List<Record> recordsList = new ArrayList<>();
+                            for (var snap : documentSnapshots.getDocuments())
+                            {
+                                Record record = snap.toObject(Record.class);
+                                if (record != null) {
+                                    recordsList.add(record);
+                                }
                             }
+                            records.setValue(Result.success(recordsList));
+//                            Record record = documentSnapshot.toObject(Record.class);
+//                            if (record != null) {
+//                                records.setValue(Result.success(record));
+//                            } else {
+//                                records.setValue(Result.error(R.string.unexpected_error_message));
+//                            }
                         } else {
                             records.setValue(Result.error(R.string.unexpected_error_message));
                         }

@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.Timestamp;
+
 public class Record implements Parcelable {
     private String exerciseID;
     private String documentID;
@@ -75,7 +77,7 @@ public class Record implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int flags) {
         parcel.writeString(exerciseID);
-        parcel.writeString(documentID);  // Write the documentID to Parcel
+        parcel.writeString(documentID);
         parcel.writeParcelable(set, flags);
     }
 }

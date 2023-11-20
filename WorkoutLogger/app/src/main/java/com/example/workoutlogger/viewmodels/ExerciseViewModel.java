@@ -1,9 +1,7 @@
 package com.example.workoutlogger.viewmodels;
 
 import android.annotation.SuppressLint;
-import android.view.animation.Transformation;
 
-import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,6 +9,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.workoutlogger.data.Exercise;
+import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.repositories.ExerciseRepository;
@@ -18,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -124,7 +124,21 @@ public class ExerciseViewModel extends ViewModel {
         return !name.isEmpty() && name.trim().length() > 0;
     }
 
-    public LiveData<Result<Record>> getRecords(Exercise exercise) {
-        return exerciseRepository.getRecords(exercise);
+    public LiveData<Result<List<Record>>> getRecords(Exercise exercise) {
+        // Transform the original LiveData to sort the records
+        return Transformations.map(exerciseRepository.getRecords(exercise), result -> {
+            if (result.isSuccess()) {
+                List<Record> unsortedRecords = result.getData();
+
+                // Sort the records based on the number of reps
+                List<Record> sortedRecords = new ArrayList<>(unsortedRecords);
+                sortedRecords.sort(Comparator.comparingInt(o -> o.getSet().getReps()));
+
+                return Result.success(sortedRecords);
+            } else {
+                // If there is an error, simply return the original result
+                return result;
+            }
+        });
     }
 }

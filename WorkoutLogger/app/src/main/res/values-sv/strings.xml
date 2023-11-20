@@ -47,4 +47,7 @@
     <string name="unexpected_error_message">Ett oväntat problem uppstod. Försök igen. Problemet kvarstår kontakta supporten.</string>
     <string name="no_workouts_found">Inga pass hittades</string>
     <string name="unexpected_error_getting_workouts">Något gick fel när passen hämtades</string>
+    <string name="date_format">yyyy-MM-dd</string>
+    <string name="personal_records">Personbästa</string>
+    <string name="no_records_text">Inga record satta ännu</string>
 </resources>

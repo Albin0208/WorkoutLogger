@@ -51,4 +51,6 @@
     <string name="no_workouts_found">No workouts found</string>
     <string name="unexpected_error_getting_workouts">Unexpected error getting workouts</string>
     <string name="date_format">yyyy-MM-dd</string>
+    <string name="personal_records">Personal records</string>
+    <string name="no_records_text">No records recorded yet</string>
 </resources>
