@@ -107,6 +107,8 @@ public class WorkoutRepository {
             DocumentReference exerciseDocument = recordsCollection.document(exercise.getId());
             CollectionReference exerciseRecordDocument = exerciseDocument.collection("records");
 
+            // TODO Filter all the exercises that got beaten by a later set
+
             for (ExerciseSet set : exercise.getSets()) {
                 if (!set.isCompleted()) continue;
 
