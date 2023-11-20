@@ -13,26 +13,22 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Emitter;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.core.SingleEmitter;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class WorkoutRepository {
@@ -61,18 +57,10 @@ public class WorkoutRepository {
 
             userDocument.collection("workouts")
                     .add(workout)
-                    .addOnSuccessListener(documentReference -> {
-                        updateRecords(userDocument, workout.getExercises())
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(result -> {
-                                    if (result.isSuccess()) {
-                                        emitter.onSuccess(Result.success(workout));
-                                    } else {
-                                        emitter.onSuccess(Result.error(result.getError(), result.getErrorMessageRes()));
-                                    }
-                                });
-                    })
+                    .addOnSuccessListener(documentReference -> updateRecords(userDocument, workout.getExercises())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(result -> emitter.onSuccess(result.isSuccess() ? Result.success(workout) : Result.error(result.getError(), result.getErrorMessageRes()))))
                     .addOnFailureListener(e -> {
                         Log.e("WorkoutRepository", "Error creating workout", e);
 
@@ -85,27 +73,48 @@ public class WorkoutRepository {
      * Updates the records for a workout
      *
      * @param userDocument The document reference to the user
-     * @param exercises The workout to with all exercises
+     * @param exercises    The workout to with all exercises
      * @return An Observable object containing the result of the operation
      */
-    private Single<Result<Exercise>> updateRecords(DocumentReference userDocument, List<Exercise> exercises) {
+    private @NonNull Single<Result<?>> updateRecords(DocumentReference userDocument, List<Exercise> exercises) {
+        return Observable.fromIterable(exercises)
+                .flatMap(exercise -> updateExercise(userDocument, exercise).toObservable())
+                .toList()
+                .map(results -> {
+                    // Check for errors
+                    for (Result<Exercise> result : results) {
+                        if (!result.isSuccess()) {
+                            return Result.error(result.getError(), result.getErrorMessageRes());
+                        }
+                    }
+                    // No error found
+                    return Result.success(results);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * Updates the records for an exercise
+     *
+     * @param userDocument The document reference to the user
+     * @param exercise     The exercise to update
+     * @return An Observable object containing the result of the operation
+     */
+    private Single<Result<Exercise>> updateExercise(DocumentReference userDocument, Exercise exercise) {
         return Single.create(emitter -> {
-            // Go through all the exercises in the workout
             CollectionReference recordsCollection = userDocument.collection("records");
-            for (Exercise exercise : exercises) {
-                DocumentReference exerciseDocument = recordsCollection.document(exercise.getId());
+            DocumentReference exerciseDocument = recordsCollection.document(exercise.getId());
+            CollectionReference exerciseRecordDocument = exerciseDocument.collection("records");
 
-                for (ExerciseSet set : exercise.getSets()) {
-                    // Check if the set is completed
-                    if (!set.isCompleted()) continue;
+            for (ExerciseSet set : exercise.getSets()) {
+                if (!set.isCompleted()) continue;
 
-                    CollectionReference exerciseRecordDocument = exerciseDocument.collection("records");
-                    Record newRecord = new Record(exercise.getId(), set);
+                Record newRecord = new Record(exercise.getId(), set);
 
-                    // Check if the record exists
-                    exerciseRecordDocument.get()
-                            .addOnCompleteListener(task -> handleResult(emitter, task, exercise, newRecord, exerciseRecordDocument));
-                }
+                exerciseRecordDocument.get()
+                        .addOnCompleteListener(task -> handleResult(emitter, task, exercise, newRecord, exerciseRecordDocument))
+                        .addOnFailureListener(e -> emitter.onSuccess(Result.error(e, R.string.unexpected_error_message)));
             }
         });
     }
@@ -137,15 +146,21 @@ public class WorkoutRepository {
                 // Check if the list is empty or if the new record is a new record and update the database
                 if (recordsList.isEmpty() || recordsList.stream().noneMatch(record -> record.getSet().getWeight() == newRecord.getSet().getWeight() || record.getSet().getReps() == newRecord.getSet().getReps())) {
                     updateRecord(exerciseRecordDocument.document(), newRecord)
-                            .subscribeOn(Schedulers.io())
+                            .subscribeOn(Schedulers.computation())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(res -> emitter.onSuccess(res.isSuccess() ? Result.success(exercise) : Result.error(res.getError(), res.getErrorMessageRes())));
+                            .subscribe(
+                                    () -> emitter.onSuccess(Result.success(exercise)),
+                                    error -> emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message))
+                            );
                     return; // No need to check if it beats any records since it's the first record or a new record
                 }
 
-                // Check if it beats any records
-                List<Single<Result<Record>>> updateRecords =
-                        recordsList.stream()
+                /*
+                 * Check if the new record beats any records
+                 * If it does, update the records
+                 * Subscribe to the updating of the records to be able to wait for all the records to be updated
+                */
+                List<Completable> updateRecords = recordsList.stream()
                         .filter(newRecord::checkIfNewRecord)
                         .map(record -> updateRecord(exerciseRecordDocument.document(record.getDocumentID()), newRecord)
                                 .subscribeOn(Schedulers.io())
@@ -157,10 +172,12 @@ public class WorkoutRepository {
                     return;
                 }
 
-                Single.concat(updateRecords)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(res -> emitter.onSuccess(res.isSuccess() ? Result.success(exercise) : Result.error(res.getError(), res.getErrorMessageRes())));
+                // Wait for all the records to be updated then emit the result
+                Completable.concat(updateRecords)
+                        .subscribe(
+                                () -> emitter.onSuccess(Result.success(exercise)),
+                                error -> emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message))
+                        );
             } else {
                 emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message));
             }
@@ -174,11 +191,12 @@ public class WorkoutRepository {
      *
      * @param docRef The document reference to update
      * @param record The record to update or add
+     * @return An Observable object containing the result of the operation
      */
-    private Single<Result<Record>> updateRecord(DocumentReference docRef, Record record) {
-        return Single.create(emitter -> docRef.set(record)
-                .addOnSuccessListener(t -> emitter.onSuccess(Result.success(record)))
-                .addOnFailureListener(t -> emitter.onSuccess(Result.error(t, R.string.unexpected_error_message))));
+    private Completable updateRecord(DocumentReference docRef, Record record) {
+        return Completable.fromAction(() -> docRef.set(record))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
