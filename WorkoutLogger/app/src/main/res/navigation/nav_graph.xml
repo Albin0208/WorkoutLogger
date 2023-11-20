@@ -14,7 +14,8 @@
         android:id="@+id/exerciseFragment"
         android:name="com.example.workoutlogger.ui.fragments.ExerciseListFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_exercise_list" />
+        tools:layout="@layout/fragment_exercise_list" >
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"

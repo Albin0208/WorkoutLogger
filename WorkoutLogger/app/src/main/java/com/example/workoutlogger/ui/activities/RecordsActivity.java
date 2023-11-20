@@ -1,6 +1,9 @@
 package com.example.workoutlogger.ui.activities;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -8,9 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
+import android.window.OnBackInvokedDispatcher;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
@@ -26,7 +32,6 @@ public class RecordsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_records);
 
         exerciseViewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
-        // TODO Handle the nav back to main activity so the user can choose a different workout
 
         // Grab the exercise from the intent
         Exercise exercise = getIntent().getParcelableExtra("exercise", Exercise.class);
@@ -37,11 +42,15 @@ public class RecordsActivity extends AppCompatActivity {
             // TODO Display the records in a RecyclerView
             Log.d("RecordsActivity", "Records: " + records);
         });
+    }
 
-//        NavController navController = Navigation.findNavController(this, R.id.host_fragment);
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
 
-        // Set the title of the action bar to the name of the exercise
-
-
+        return super.onOptionsItemSelected(item);
     }
 }
