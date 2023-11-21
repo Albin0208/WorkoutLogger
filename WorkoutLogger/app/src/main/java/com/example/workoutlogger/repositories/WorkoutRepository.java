@@ -19,8 +19,12 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -107,18 +111,33 @@ public class WorkoutRepository {
             DocumentReference exerciseDocument = recordsCollection.document(exercise.getId());
             CollectionReference exerciseRecordDocument = exerciseDocument.collection("records");
 
-            // TODO Filter all the exercises that got beaten by a later set
+            // Filter and process completed sets with positive weights and reps
+            exercise.getSets()
+                    .stream()
+                    .filter(this::isValidSet)
+                    .collect(Collectors.toMap(ExerciseSet::getWeight, Function.identity(), BinaryOperator.maxBy(Comparator.comparingDouble(ExerciseSet::getReps)))) // Filter out the sets with the same weight and keep the one with the highest reps
+                    .values()
+                    .stream()
+                    .collect(Collectors.toMap(ExerciseSet::getReps, Function.identity(), BinaryOperator.maxBy(Comparator.comparingDouble(ExerciseSet::getWeight)))) // Filter out the sets with the same reps and keep the one with the highest weight
+                    .values()
+                    .forEach(set -> {
+                        Record newRecord = new Record(exercise.getId(), set);
 
-            for (ExerciseSet set : exercise.getSets()) {
-                if (!set.isCompleted()) continue;
-
-                Record newRecord = new Record(exercise.getId(), set);
-
-                exerciseRecordDocument.get()
-                        .addOnCompleteListener(task -> handleResult(emitter, task, exercise, newRecord, exerciseRecordDocument))
-                        .addOnFailureListener(e -> emitter.onSuccess(Result.error(e, R.string.unexpected_error_message)));
-            }
+                        exerciseRecordDocument.get()
+                                .addOnCompleteListener(task -> handleResult(emitter, task, exercise, newRecord, exerciseRecordDocument))
+                                .addOnFailureListener(e -> emitter.onSuccess(Result.error(e, R.string.unexpected_error_message)));
+                    });
         });
+    }
+
+    /**
+     * Checks if a set is valid
+     *
+     * @param set The set to check
+     * @return True if the set is valid, false otherwise
+     */
+    private boolean isValidSet(ExerciseSet set) {
+        return set.isCompleted() && set.getWeight() > 0 && set.getReps() > 0;
     }
 
     /**
