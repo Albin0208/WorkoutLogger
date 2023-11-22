@@ -102,7 +102,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchWorkouts() {
-        workoutViewModel.getWorkouts(10);
+        workoutViewModel.getWorkouts(7);
     }
 
     @Override

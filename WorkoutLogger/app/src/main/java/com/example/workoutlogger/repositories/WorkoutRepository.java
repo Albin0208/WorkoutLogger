@@ -13,16 +13,23 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -111,7 +118,7 @@ public class WorkoutRepository {
             DocumentReference exerciseDocument = recordsCollection.document(exercise.getId());
             CollectionReference exerciseRecordDocument = exerciseDocument.collection("records");
 
-            // Filter and process completed sets with positive weights and reps
+            // Filter out invalid sets and records beaten by a later set, then process the rest
             exercise.getSets()
                     .stream()
                     .filter(this::isValidSet)
@@ -178,6 +185,9 @@ public class WorkoutRepository {
 
                 // TODO If two records have the same weight and reps, only keep the one with the latest timestamp
 
+                // List of all updated records
+                List<String> updatedRecordIDs = new ArrayList<>();
+
                 /*
                  * Check if the new record beats any records
                  * If it does, update the records
@@ -185,9 +195,15 @@ public class WorkoutRepository {
                 */
                 List<Completable> updateRecords = recordsList.stream()
                         .filter(newRecord::checkIfNewRecord)
-                        .map(record -> updateRecord(exerciseRecordDocument.document(record.getDocumentID()), newRecord)
+                        .map(record -> {
+
+                            updatedRecordIDs.add(record.getDocumentID()); // Out new records has updated this records
+
+
+                            return updateRecord(exerciseRecordDocument.document(record.getDocumentID()), newRecord)
                                 .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread()))
+                                .observeOn(AndroidSchedulers.mainThread());
+                        })
                         .collect(Collectors.toList());
 
                 if (updateRecords.isEmpty()) {
@@ -195,8 +211,21 @@ public class WorkoutRepository {
                     return;
                 }
 
+                List<Completable> removeRecords = null;
+                // Updated more that one record we only want to keep the latest one
+                if (updatedRecordIDs.size() > 1) {
+                    updatedRecordIDs.remove(0); // Remove the first record since we want to keep that one
+
+                    removeRecords =  updatedRecordIDs.stream()
+                            .map(record -> Completable.fromAction(() -> exerciseRecordDocument.document(record).delete())
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()))
+                            .collect(Collectors.toList());
+                }
+
                 // Wait for all the records to be updated then emit the result
                 Completable.concat(updateRecords)
+                        .andThen(removeRecords != null ? Completable.concat(removeRecords) : Completable.complete())
                         .subscribe(
                                 () -> emitter.onSuccess(Result.success(exercise)),
                                 error -> emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message))
