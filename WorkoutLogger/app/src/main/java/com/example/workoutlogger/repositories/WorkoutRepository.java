@@ -183,40 +183,28 @@ public class WorkoutRepository {
                     return; // No need to check if it beats any records since it's the first record or a new record
                 }
 
-                // List of all updated records
-                List<String> updatedRecordIds = new ArrayList<>();
+                List<Completable> completables = new ArrayList<>();
+                boolean newRecordAdded = false;
 
-                Completable updatedRecordCompletable = null;
-
-                // Find all records that would be updated by the new record
-                // Only update one of the records, save the id for the rest so they can be deleted
+                // Find the and update the first record that is beaten by the new record and delete the rest that would be beaten by the new record
                 for (var record : recordsList) {
                     if (newRecord.checkIfNewRecord(record)) {
-                        updatedRecordIds.add(record.getDocumentID());
-                        if (updatedRecordCompletable == null)
-                            updatedRecordCompletable = updateRecord(exerciseRecordDocument.document(record.getDocumentID()), newRecord)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread());
+                        if (newRecordAdded){
+                            completables.add(Completable.fromAction(() -> exerciseRecordDocument.document(record.getDocumentID()).delete())
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()));
+                        } else {
+                            newRecordAdded = true;
+                            completables.add(updateRecord(exerciseRecordDocument.document(record.getDocumentID()), newRecord)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()));
+                        }
                     }
                 }
 
-                if (updatedRecordCompletable == null) {
+                if (!newRecordAdded) {
                     emitter.onSuccess(Result.success(exercise));
                     return;
-                }
-
-                List<Completable> completables = new ArrayList<>();
-                completables.add(updatedRecordCompletable);
-
-                // Updated more that one record we only want to keep the latest one
-                if (updatedRecordIds.size() > 1) {
-                    updatedRecordIds.remove(0); // Remove the first record since we want to keep that one
-
-                    completables.addAll(updatedRecordIds.stream()
-                            .map(record -> Completable.fromAction(() -> exerciseRecordDocument.document(record).delete())
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread()))
-                            .collect(Collectors.toList()));
                 }
 
                 // Wait for all the records to be updated then emit the result
