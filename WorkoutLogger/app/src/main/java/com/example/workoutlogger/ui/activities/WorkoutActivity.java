@@ -158,7 +158,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
         // Check if the user has added any exercises
         if (workoutViewModel.getExercises().getValue() != null && !workoutViewModel.getExercises().getValue().isEmpty()) {
 
-
         // Send the workout to the FinishWorkoutActivity
         Intent intent = new Intent(this, FinishWorkoutActivity.class);
         intent.putExtra("workout", workoutViewModel.getWorkout());
@@ -166,7 +165,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
         finishWorkoutLauncher.launch(intent);
         } else {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-//            final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
             builder.setTitle(R.string.cannot_finish_workout);
             builder.setMessage(R.string.add_exercise_before_finish_text);
 
