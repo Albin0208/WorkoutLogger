@@ -53,4 +53,10 @@
     <string name="date_format">yyyy-MM-dd</string>
     <string name="personal_records">Personal records</string>
     <string name="no_records_text">No records recorded yet</string>
+    <string name="latest_workouts">My Latest Workouts</string>
+    <string name="more_workouts_text">See more workouts in the full log</string>
+    <string name="see_full_log">See full log</string>
+    <string name="dark_mode" translatable="false">Dark mode</string>
+    <string name="cannot_finish_workout">Cannot Finish Workout</string>
+    <string name="add_exercise_before_finish_text">Please add at least one exercise to finish the workout.</string>
 </resources>

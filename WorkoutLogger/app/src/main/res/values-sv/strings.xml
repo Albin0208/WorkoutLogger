@@ -50,4 +50,9 @@
     <string name="date_format">yyyy-MM-dd</string>
     <string name="personal_records">Personbästa</string>
     <string name="no_records_text">Inga record satta ännu</string>
+    <string name="latest_workouts">Mina senaste pass</string>
+    <string name="more_workouts_text">Se fler pass i träningsloggen</string>
+    <string name="see_full_log">Se hela träningsloggen</string>
+    <string name="cannot_finish_workout">Kan inte avsluta pass</string>
+    <string name="add_exercise_before_finish_text">Vänligen lägg till minst en övning innan du avslutar</string>
 </resources>

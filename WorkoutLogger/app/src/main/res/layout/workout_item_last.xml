@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/workout_date"
-        android:text="See more workouts in the full log"
+        android:text="@string/more_workouts_text"
         android:textAppearance="?attr/textAppearanceTitleMedium"
         />
 
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/full_log_button"
-        android:text="See full log"
+        android:text="@string/see_full_log"
         android:layout_gravity="center"
         android:layout_marginVertical="10dp"
         />

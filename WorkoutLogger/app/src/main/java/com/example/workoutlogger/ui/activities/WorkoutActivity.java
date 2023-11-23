@@ -167,8 +167,8 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
         } else {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
 //            final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
-            builder.setTitle("Cannot Finish Workout");
-            builder.setMessage("Please add at least one exercise to finish the workout.");
+            builder.setTitle(R.string.cannot_finish_workout);
+            builder.setMessage(R.string.add_exercise_before_finish_text);
 
             builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 

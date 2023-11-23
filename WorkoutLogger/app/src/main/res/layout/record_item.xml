@@ -2,12 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1 RM"
+        tools:text="1 RM"
         android:id="@+id/record_item_rm"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -21,7 +22,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="100 kg"
+        tools:text="100 kg"
         android:id="@+id/record_item_weight"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -36,7 +37,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2020-01-01"
+        tools:text="2020-01-01"
         android:id="@+id/record_item_date"
         android:textSize="20sp"
         android:textStyle="bold"
