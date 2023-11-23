@@ -13,23 +13,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -162,63 +155,58 @@ public class WorkoutRepository {
             QuerySnapshot result =  task.getResult();
             if (result != null) {
                 // Convert to list of records
-                List<Record> recordsList = result.getDocuments().stream()
-                        .map(document ->  {
-                            Record rec = document.toObject(Record.class);
-                            rec.setDocumentID(document.getId());
-                            return rec;
-                        })
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-
-                // Check if the list is empty or if the new record is a new record and update the database
-                if (recordsList.isEmpty() || recordsList.stream().noneMatch(record -> record.getSet().getWeight() == newRecord.getSet().getWeight() || record.getSet().getReps() == newRecord.getSet().getReps())) {
-                    updateRecord(exerciseRecordDocument.document(), newRecord)
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    () -> emitter.onSuccess(Result.success(exercise)),
-                                    error -> emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message))
-                            );
-                    return; // No need to check if it beats any records since it's the first record or a new record
-                }
+                List<Record> recordsList = convertDocumentsToRecords(result.getDocuments());
 
                 List<Completable> completables = new ArrayList<>();
-                boolean newRecordAdded = false;
+                // Check if the list is empty or if the new record is a new record and update the database
+                if (recordsList.isEmpty() || recordsList.stream().noneMatch(record ->
+                        record.getSet().getWeight() == newRecord.getSet().getWeight() || record.getSet().getReps() == newRecord.getSet().getReps())) {
+                    completables.add(updateRecord(exerciseRecordDocument.document(), newRecord));
+                } else {
+                    boolean newRecordAdded = false;
 
-                // Find the and update the first record that is beaten by the new record and delete the rest that would be beaten by the new record
-                for (var record : recordsList) {
-                    if (newRecord.checkIfNewRecord(record)) {
-                        if (newRecordAdded){
-                            completables.add(Completable.fromAction(() -> exerciseRecordDocument.document(record.getDocumentID()).delete())
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread()));
-                        } else {
-                            newRecordAdded = true;
-                            completables.add(updateRecord(exerciseRecordDocument.document(record.getDocumentID()), newRecord)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread()));
+                    // Find the and update the first record that is beaten by the new record and delete the rest that would be beaten by the new record
+                    for (var record : recordsList) {
+                        if (newRecord.checkIfNewRecord(record)) {
+                            if (newRecordAdded) {
+                                completables.add(deleteRecord(exerciseRecordDocument.document(record.getDocumentID())));
+                            } else {
+                                newRecordAdded = true;
+                                completables.add(updateRecord(exerciseRecordDocument.document(record.getDocumentID()), newRecord));
+                            }
                         }
                     }
                 }
 
-                if (!newRecordAdded) {
-                    emitter.onSuccess(Result.success(exercise));
-                    return;
-                }
-
                 // Wait for all the records to be updated then emit the result
-                Completable.concat(completables)
+                Completable.merge(completables)
                         .subscribe(
                                 () -> emitter.onSuccess(Result.success(exercise)),
                                 error -> emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message))
                         );
-            } else {
-                emitter.onSuccess(Result.error(new Exception(), R.string.unexpected_error_message));
+                return;
             }
-        } else {
-            emitter.onSuccess(Result.error(task.getException(), R.string.unexpected_error_message));
         }
+
+        emitter.onSuccess(Result.error(task.getException(), R.string.unexpected_error_message));
+    }
+
+    /**
+     * Converts a list of documents to a list of records
+     *
+     * @param documents The documents to convert
+     * @return A list of records
+     */
+    private List<Record> convertDocumentsToRecords(List<DocumentSnapshot> documents) {
+        return documents.stream()
+                .map(document ->  {
+                    Record rec = document.toObject(Record.class);
+                    if (rec != null)
+                        rec.setDocumentID(document.getId());
+                    return rec;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -230,6 +218,18 @@ public class WorkoutRepository {
      */
     private Completable updateRecord(DocumentReference docRef, Record record) {
         return Completable.fromAction(() -> docRef.set(record))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * Deletes a record in Firestore
+     *
+     * @param docRef The document reference to delete
+     * @return An Observable object containing the result of the operation
+     */
+    private Completable deleteRecord(DocumentReference docRef) {
+        return Completable.fromAction(docRef::delete)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
