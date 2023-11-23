@@ -47,7 +47,9 @@ public class WorkoutViewModel extends ViewModel {
      */
     public void addExercise(Exercise exercise) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
-        currentExercises.add(new Exercise(exercise));
+        Exercise e = new Exercise(exercise);
+        e.addSet(new ExerciseSet(0, 0, 1));
+        currentExercises.add(e);
         exercisesLiveData.setValue(currentExercises);
     }
 
