@@ -73,11 +73,10 @@ public class WorkoutViewModel extends ViewModel {
     public void removeSet(int position, int setPosition) {
         List<Exercise> currentExercises = exercisesLiveData.getValue();
         Exercise exercise = currentExercises.get(position);
-        exercise.removeSet(setPosition);
-        if (exercise.getSets().isEmpty()) {
+        if (exercise.getSets().size() == 1) {
             currentExercises.remove(position);
         } else
-            currentExercises.set(position, exercise);
+            exercise.removeSet(setPosition);
         exercisesLiveData.setValue(currentExercises);
     }
 
