@@ -9,16 +9,17 @@
     android:orientation="vertical">
 
     <!-- Search Field -->
-    <EditText
-        android:id="@+id/search_editText"
+    <SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/search"
-        android:drawableStart="@android:drawable/ic_menu_search"
-        android:padding="8dp"
+        android:id="@+id/searchView"
+        android:queryHint="@string/search"
+        android:iconifiedByDefault="false"
         android:layout_marginBottom="5dp"
         android:background="@drawable/rounded_edittext_background"
+        android:queryBackground="@android:color/transparent"
         android:inputType="text" />
+
 
     <!-- Loading spinner -->
     <ProgressBar
@@ -27,14 +28,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/no_exercise_text"
+        android:text="@string/no_exercise"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:visibility="gone" />
+
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/exercise_recyclerView" />
-
-
 
     <!-- Button -->
     <Button

@@ -59,4 +59,5 @@
     <string name="dark_mode" translatable="false">Dark mode</string>
     <string name="cannot_finish_workout">Cannot Finish Workout</string>
     <string name="add_exercise_before_finish_text">Please add at least one exercise to finish the workout.</string>
+    <string name="no_exercise">No exercises found</string>
 </resources>

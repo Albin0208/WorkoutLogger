@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -53,6 +55,19 @@ public class ExerciseListFragment extends Fragment {
         ExerciseViewModel exerciseViewModel = new ViewModelProvider(requireActivity()).get(ExerciseViewModel.class);
         exerciseViewModel.getExercises().observe(getViewLifecycleOwner(), this::setExercises);
 
+        SearchView searchView = view.findViewById(R.id.searchView);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) { return false; }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                exerciseViewModel.searchExercises(newText).observe(getViewLifecycleOwner(), ExerciseListFragment.this::setExercises);
+                return false;
+            }
+        });
+
         RecyclerView recyclerView = view.findViewById(R.id.exercise_recyclerView);
         exerciseAdapter = new ExerciseAdapter(listener);
         recyclerView.setAdapter(exerciseAdapter);
@@ -61,7 +76,7 @@ public class ExerciseListFragment extends Fragment {
         Button createExerciseButton = view.findViewById(R.id.add_exercise_button);
 
         createExerciseButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), CreateExerciseActivity.class);
+            Intent intent = new Intent(requireContext(), CreateExerciseActivity.class);
             startActivity(intent);
         });
 
@@ -74,5 +89,10 @@ public class ExerciseListFragment extends Fragment {
         if (exerciseAdapter != null) {
             exerciseAdapter.submitList(exercises);
         }
+
+        TextView noExercises = requireView().findViewById(R.id.no_exercise_text);
+
+        noExercises.setVisibility(exercises.isEmpty() ? View.VISIBLE : View.GONE); // Show or hide the no exercises text
+
     }
 }

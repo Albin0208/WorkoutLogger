@@ -26,6 +26,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class ExerciseViewModel extends ViewModel {
     private final ExerciseRepository exerciseRepository;
     private final MutableLiveData<Result<Exercise>> exerciseCreatedResult;
+    private final MediatorLiveData<List<Exercise>> mergedExercises = new MediatorLiveData<>();
 
     public ExerciseViewModel() {
         exerciseRepository = new ExerciseRepository();
@@ -38,7 +39,6 @@ public class ExerciseViewModel extends ViewModel {
      * @return A LiveData object containing a list of exercises
      */
     public LiveData<List<Exercise>> getExercises() {
-        MediatorLiveData<List<Exercise>> mergedExercises = new MediatorLiveData<>();
         LiveData<List<Exercise>> globalExercises = exerciseRepository.getGlobalExercises();
         LiveData<List<Exercise>> userExercises = exerciseRepository.getUserExercises();
 
@@ -139,6 +139,18 @@ public class ExerciseViewModel extends ViewModel {
                 // If there is an error, simply return the original result
                 return result;
             }
+        });
+    }
+
+    public LiveData<List<Exercise>> searchExercises(String newText) {
+        return Transformations.switchMap(mergedExercises, exercises -> {
+            List<Exercise> filteredExercises = new ArrayList<>();
+            for (Exercise exercise : exercises) {
+                if (exercise.getName().toLowerCase().contains(newText.toLowerCase())) {
+                    filteredExercises.add(exercise);
+                }
+            }
+            return new MutableLiveData<>(filteredExercises);
         });
     }
 }
