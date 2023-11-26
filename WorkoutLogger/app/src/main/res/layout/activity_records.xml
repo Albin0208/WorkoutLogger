@@ -48,7 +48,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/exercise_list_item" />
+        tools:listitem="@layout/record_item" />
 
 
 </LinearLayout>
