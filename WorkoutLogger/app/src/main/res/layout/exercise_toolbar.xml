@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageButton
-            android:id="@+id/finish_workout"
+            android:id="@+id/delete_exercise"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/baseline_delete_outline_24"

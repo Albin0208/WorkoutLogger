@@ -160,25 +160,15 @@ public class ExerciseRepository {
                     .collection("records")
                     .get()
                     .addOnSuccessListener(documentSnapshots -> {
-                        if (true) {
-                            List<Record> recordsList = new ArrayList<>();
-                            for (var snap : documentSnapshots.getDocuments())
-                            {
-                                Record record = snap.toObject(Record.class);
-                                if (record != null) {
-                                    recordsList.add(record);
-                                }
+                        List<Record> recordsList = new ArrayList<>();
+                        for (var snap : documentSnapshots.getDocuments())
+                        {
+                            Record record = snap.toObject(Record.class);
+                            if (record != null) {
+                                recordsList.add(record);
                             }
-                            records.setValue(Result.success(recordsList));
-//                            Record record = documentSnapshot.toObject(Record.class);
-//                            if (record != null) {
-//                                records.setValue(Result.success(record));
-//                            } else {
-//                                records.setValue(Result.error(R.string.unexpected_error_message));
-//                            }
-                        } else {
-                            records.setValue(Result.error(R.string.unexpected_error_message));
                         }
+                        records.setValue(Result.success(recordsList));
                     })
                     .addOnFailureListener(e -> {
                         Log.e("ExerciseRepository", "Error getting records", e);
@@ -187,5 +177,29 @@ public class ExerciseRepository {
         }
 
         return records;
+    }
+
+    /**
+     * Deletes a user specific exercise from Firestore
+     *
+     * @param exercise The exercise to delete
+     */
+    public void deleteUserExercise(Exercise exercise) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            return;
+        }
+
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("exercises")
+                .document(exercise.getId())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("ExerciseRepository", "Exercise deleted");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ExerciseRepository", "Error deleting exercise", e);
+                });
     }
 }

@@ -154,7 +154,15 @@ public class ExerciseViewModel extends ViewModel {
         });
     }
 
-    public boolean checkIfUserExercise(Exercise exercise) {
-        return exercise.isUserCreated();
+    /**
+     * Delete a user created exercise
+     *
+     * @param exercise The exercise to delete
+     */
+    public void deleteExercise(Exercise exercise) {
+        // Make sure the exercise is user created
+        if (exercise.isUserCreated()) {
+            exerciseRepository.deleteUserExercise(exercise);
+        }
     }
 }

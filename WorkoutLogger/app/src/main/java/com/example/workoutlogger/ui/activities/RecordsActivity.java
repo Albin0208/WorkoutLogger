@@ -3,6 +3,8 @@ package com.example.workoutlogger.ui.activities;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,8 +34,6 @@ public class RecordsActivity extends AppCompatActivity {
 
         // Grab the exercise from the intent
         Exercise exercise = getIntent().getParcelableExtra("exercise", Exercise.class);
-//        getSupportActionBar().setTitle(exercise.getName());
-        // Check if the exercise is a usercreated exercise
 
         ActionBar bar = getSupportActionBar();
 
@@ -43,6 +43,13 @@ public class RecordsActivity extends AppCompatActivity {
                 bar.setCustomView(R.layout.exercise_toolbar);
                 TextView toolbarTitle = bar.getCustomView().findViewById(R.id.action_bar_title);
                 toolbarTitle.setText(exercise.getName());
+
+                ImageButton deleteExercise = bar.getCustomView().findViewById(R.id.delete_exercise);
+                deleteExercise.setOnClickListener(v -> {
+                    exerciseViewModel.deleteExercise(exercise);
+                    finish();
+                });
+
                 bar.setDisplayHomeAsUpEnabled(true);
                 bar.setDisplayShowHomeEnabled(true);
             } else
