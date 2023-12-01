@@ -28,7 +28,8 @@ public class FinishWorkoutActivity extends AppCompatActivity {
             bar.setTitle(R.string.finish_workout);
             bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             bar.setCustomView(R.layout.finish_workout_toolbar);
-
+            bar.setDisplayHomeAsUpEnabled(true);
+            bar.setDisplayShowHomeEnabled(true);
         }
 
         assert bar != null;
@@ -55,9 +56,6 @@ public class FinishWorkoutActivity extends AppCompatActivity {
         EditText workoutName = findViewById(R.id.workout_name);
         ProgressBar spinner = findViewById(R.id.workout_name_loading);
 
-        ImageButton continueWorkingOutButton = barView.findViewById(R.id.back_to_workout);
-        continueWorkingOutButton.setOnClickListener(v -> finish());
-
         ImageButton finishWorkoutButton = barView.findViewById(R.id.finish_workout);
         finishWorkoutButton.setOnClickListener(v -> {
             spinner.setVisibility(View.VISIBLE);
@@ -73,5 +71,11 @@ public class FinishWorkoutActivity extends AppCompatActivity {
 
             viewModel.saveWorkout(workout);
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

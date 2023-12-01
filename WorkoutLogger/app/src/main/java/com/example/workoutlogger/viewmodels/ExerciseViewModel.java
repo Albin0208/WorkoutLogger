@@ -153,4 +153,8 @@ public class ExerciseViewModel extends ViewModel {
             return new MutableLiveData<>(filteredExercises);
         });
     }
+
+    public boolean checkIfUserExercise(Exercise exercise) {
+        return exercise.isUserCreated();
+    }
 }

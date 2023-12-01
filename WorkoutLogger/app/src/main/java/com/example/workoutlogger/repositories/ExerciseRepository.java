@@ -127,6 +127,7 @@ public class ExerciseRepository {
             } else {
                 Map<String, Object> exerciseMap = new HashMap<>();
                 exerciseMap.put("name", exercise.getName());
+                exerciseMap.put("userCreated", exercise.isUserCreated());
 
                 db.collection("users")
                         .document(currentUser.getUid())

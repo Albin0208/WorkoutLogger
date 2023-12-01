@@ -5,6 +5,15 @@
     android:layout_height="?attr/actionBarSize"
     android:id="@+id/custom_actionbar">
 
+    <TextView
+        android:id="@+id/action_bar_title"
+        android:layout_width="0dp"
+        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -17,7 +26,7 @@
             android:id="@+id/finish_workout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/baseline_check_24"
+            android:src="@drawable/baseline_delete_outline_24"
             android:background="?attr/selectableItemBackgroundBorderless" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

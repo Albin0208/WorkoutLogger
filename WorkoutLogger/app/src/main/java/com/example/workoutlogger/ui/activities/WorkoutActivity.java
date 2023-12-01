@@ -82,7 +82,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
 
         if (bar != null) {
             bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            bar.setCustomView(R.layout.custom_toolbar);
+            bar.setCustomView(R.layout.workout_toolbar);
         }
     }
 

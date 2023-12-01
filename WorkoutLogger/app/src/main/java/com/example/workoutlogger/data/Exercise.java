@@ -13,6 +13,7 @@ public class Exercise implements Parcelable {
     private String id;
     private String name;
     private List<ExerciseSet> sets;
+    private boolean userCreated;
 
     public Exercise() {
         this.sets = new ArrayList<>();
@@ -22,15 +23,23 @@ public class Exercise implements Parcelable {
         this.id = id;
         this.name = name;
         this.sets = new ArrayList<>();
+        this.userCreated = false;
+    }
+
+    public Exercise(String name) {
+        this.name = name;
+        this.sets = new ArrayList<>();
+        this.userCreated = true;
     }
 
     protected Exercise(Parcel in) {
         id = in.readString();
         name = in.readString();
         sets = in.createTypedArrayList(ExerciseSet.CREATOR);
+        userCreated = in.readByte() != 0;
     }
 
-    public static final Creator<Exercise> CREATOR = new Creator<Exercise>() {
+    public static final Creator<Exercise> CREATOR = new Creator<>() {
         @Override
         public Exercise createFromParcel(Parcel in) {
             return new Exercise(in);
@@ -41,11 +50,6 @@ public class Exercise implements Parcelable {
             return new Exercise[size];
         }
     };
-
-    public Exercise(String name) {
-        this.name = name;
-        this.sets = new ArrayList<>();
-    }
 
     public Exercise(Exercise exercise) {
         this.id = exercise.getId();
@@ -69,6 +73,7 @@ public class Exercise implements Parcelable {
         if (this == obj) {
             return true;
         }
+
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
@@ -76,7 +81,7 @@ public class Exercise implements Parcelable {
         Exercise other = (Exercise) obj;
 
         // Compare based on exercise name and sets
-        return Objects.equals(name, other.name) && Objects.equals(sets, other.sets);
+        return Objects.equals(name, other.name) && Objects.equals(sets, other.sets) && userCreated == other.userCreated;
     }
 
     @Override
@@ -125,5 +130,10 @@ public class Exercise implements Parcelable {
         parcel.writeString(id);
         parcel.writeString(name);
         parcel.writeTypedList(sets);
+        parcel.writeByte((byte) (userCreated ? 1 : 0));
+    }
+
+    public boolean isUserCreated() {
+        return userCreated;
     }
 }

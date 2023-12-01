@@ -3,9 +3,12 @@ package com.example.workoutlogger.ui.activities;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +32,22 @@ public class RecordsActivity extends AppCompatActivity {
 
         // Grab the exercise from the intent
         Exercise exercise = getIntent().getParcelableExtra("exercise", Exercise.class);
-        getSupportActionBar().setTitle(exercise.getName());
+//        getSupportActionBar().setTitle(exercise.getName());
+        // Check if the exercise is a usercreated exercise
+
+        ActionBar bar = getSupportActionBar();
+
+        if (bar != null) {
+            if (exercise.isUserCreated()) {
+                bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+                bar.setCustomView(R.layout.exercise_toolbar);
+                TextView toolbarTitle = bar.getCustomView().findViewById(R.id.action_bar_title);
+                toolbarTitle.setText(exercise.getName());
+                bar.setDisplayHomeAsUpEnabled(true);
+                bar.setDisplayShowHomeEnabled(true);
+            } else
+                bar.setTitle(exercise.getName());
+        }
 
         RecordAdapter recordAdapter = new RecordAdapter();
         RecyclerView recyclerView = findViewById(R.id.records_recycler_view);
