@@ -143,6 +143,11 @@ public class AuthViewModel extends AndroidViewModel {
         return authSuccess;
     }
 
+    /**
+     * Get the username of the current user
+     *
+     * @return A LiveData object containing the username of the current user
+     */
     public LiveData<String> getUsername() {
         return userRepository.getUserName();
     }

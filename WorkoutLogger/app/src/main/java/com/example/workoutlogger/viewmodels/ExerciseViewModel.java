@@ -124,6 +124,11 @@ public class ExerciseViewModel extends ViewModel {
         return !name.isEmpty() && name.trim().length() > 0;
     }
 
+    /**
+     * Get all records for a specific exercise
+     * @param exercise The exercise to get records for
+     * @return A LiveData object containing a list of records
+     */
     public LiveData<Result<List<Record>>> getRecords(Exercise exercise) {
         // Transform the original LiveData to sort the records
         return Transformations.map(exerciseRepository.getRecords(exercise), result -> {
@@ -142,6 +147,12 @@ public class ExerciseViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Search for exercises
+     *
+     * @param newText The text to search for
+     * @return A LiveData object containing a list of exercises that match the search term
+     */
     public LiveData<List<Exercise>> searchExercises(String newText) {
         return Transformations.switchMap(mergedExercises, exercises -> {
             List<Exercise> filteredExercises = new ArrayList<>();

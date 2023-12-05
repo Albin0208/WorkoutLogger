@@ -61,6 +61,11 @@ public class UserRepository {
         return user != null;
     }
 
+    /**
+     * Gets the current user's username
+     *
+     * @return A LiveData object containing the current user's username
+     */
     public LiveData<String> getUserName() {
         MutableLiveData<String> userData = new MutableLiveData<>();
         FirebaseUser currentUser = auth.getCurrentUser();

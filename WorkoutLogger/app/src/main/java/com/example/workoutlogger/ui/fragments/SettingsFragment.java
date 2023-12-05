@@ -32,11 +32,7 @@ public class SettingsFragment extends Fragment {
         SwitchCompat switchCompat = view.findViewById(R.id.dark_mode_toggle);
         TextView username = view.findViewById(R.id.username_text_view);
 
-        authViewModel.getUsername().observe(getViewLifecycleOwner(), user -> {
-            if (user != null) {
-                username.setText(user);
-            }
-        });
+        authViewModel.getUsername().observe(getViewLifecycleOwner(), username::setText);
 
         // Get the current theme of the app
         int currentTheme = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
