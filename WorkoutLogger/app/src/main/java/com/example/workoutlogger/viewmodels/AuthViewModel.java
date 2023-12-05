@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.R;
-import com.example.workoutlogger.data.User;
 import com.example.workoutlogger.repositories.UserRepository;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -60,9 +59,7 @@ public class AuthViewModel extends AndroidViewModel {
         }
 
         userRepository.signIn(email, password)
-                .addOnSuccessListener(authResult -> {
-                    authSuccess.setValue(true);
-                })
+                .addOnSuccessListener(authResult -> authSuccess.setValue(true))
                 .addOnFailureListener(e -> {
                     authSuccess.setValue(false);
 
@@ -102,9 +99,7 @@ public class AuthViewModel extends AndroidViewModel {
         }
         // If the input is valid, register the user
         userRepository.createUser(email, password, username)
-                .addOnSuccessListener(authResult -> {
-                    authSuccess.setValue(true);
-                })
+                .addOnSuccessListener(authResult -> authSuccess.setValue(true))
                 .addOnFailureListener(e -> {
                     authSuccess.setValue(false);
 
@@ -148,7 +143,7 @@ public class AuthViewModel extends AndroidViewModel {
         return authSuccess;
     }
 
-    public LiveData<User> getUser() {
-        return userRepository.getUser();
+    public LiveData<String> getUsername() {
+        return userRepository.getUserName();
     }
 }

@@ -1,6 +1,5 @@
 package com.example.workoutlogger.ui.fragments;
 
-import android.app.Application;
 import android.app.UiModeManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,9 +32,9 @@ public class SettingsFragment extends Fragment {
         SwitchCompat switchCompat = view.findViewById(R.id.dark_mode_toggle);
         TextView username = view.findViewById(R.id.username_text_view);
 
-        authViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+        authViewModel.getUsername().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
-                username.setText(user.getName());
+                username.setText(user);
             }
         });
 
