@@ -9,12 +9,9 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.workoutlogger.data.Exercise;
-import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.repositories.ExerciseRepository;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,26 +66,6 @@ public class ExerciseViewModel extends ViewModel {
         }
 
         mergedExercises.setValue(mergedList);
-    }
-
-    /**
-     * Gets all users exercises from Firestore
-     *
-     * @return A LiveData object containing a list of users exercises
-     */
-    public LiveData<List<Exercise>> getUserExercises() {
-        return exerciseRepository.getUserExercises();
-    }
-
-    /**
-     * Creates a global exercise
-     *
-     * @param name                The name of the exercise to create
-     * @param onCompleteListener The listener to call when the exercise is created
-     */
-    public void createExercise(String name, OnCompleteListener<DocumentReference> onCompleteListener) {
-        Exercise exercise = new Exercise(name);
-        exerciseRepository.createExercise(exercise, onCompleteListener);
     }
 
     /**

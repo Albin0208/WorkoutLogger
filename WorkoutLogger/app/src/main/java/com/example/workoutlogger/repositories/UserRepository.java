@@ -3,10 +3,13 @@ package com.example.workoutlogger.repositories;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 public class UserRepository {
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -73,5 +76,22 @@ public class UserRepository {
             userData.setValue(currentUser.getDisplayName());
         }
         return userData;
+    }
+
+    public Task<AuthResult> signInWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        return auth.signInWithCredential(credential)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = auth.getCurrentUser();
+
+                            // Check if the user is new
+                            if (user != null && task.getResult().getAdditionalUserInfo().isNewUser()) {
+                                user.updateProfile(new com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                                        .setDisplayName(account.getGivenName())
+                                        .build());
+                            }
+                        }
+                    });
     }
 }

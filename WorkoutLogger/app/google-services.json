@@ -12,7 +12,20 @@
           "package_name": "com.example.workoutlogger"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "865831224677-0vggv9e53h0hhoudq4371ab5ui8jl45i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.workoutlogger",
+            "certificate_hash": "068ce5df0c69408f55b68c34dfe790232865668e"
+          }
+        },
+        {
+          "client_id": "865831224677-r584elrdmqmna9sflh00sia528c1pv4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCRCmubIi3sB3rGBoCLOLhO6b_SftFmQXc"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "865831224677-kfpr5j8ffqpbunmd959ou1l5hpe0i2vs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

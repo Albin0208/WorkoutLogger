@@ -1,6 +1,5 @@
 package com.example.workoutlogger.repositories;
 
-import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -10,20 +9,16 @@ import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.Record;
 import com.example.workoutlogger.data.Result;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class ExerciseRepository {
@@ -93,24 +88,6 @@ public class ExerciseRepository {
     }
 
     /**
-     * Creates an exercise in Firestore
-     *
-     * @param exercise             The exercise to create
-     * @param onCompleteListener   The listener to call when the exercise is created
-     */
-    public void createExercise(Exercise exercise, OnCompleteListener<DocumentReference> onCompleteListener) {
-        Map<String, Object> exerciseMap = new HashMap<>();
-        exerciseMap.put("name", exercise.getName());
-
-        db.collection("exercises").add(exerciseMap)
-                .addOnCompleteListener(onCompleteListener)
-                .addOnFailureListener(e -> {
-                    // Handle Firestore exception
-                    Log.e("ExerciseRepository", "Error creating exercise", e);
-                });
-    }
-
-    /**
      * Creates a user specific exercise in Firestore
      *
      * @param exercise The exercise to create
@@ -146,6 +123,13 @@ public class ExerciseRepository {
         });
     }
 
+    /**
+     * Gets all records for a user specific exercise from Firestore
+     *
+     * @param exercise The exercise to get records for
+     *
+     * @return A LiveData object containing a list of records
+     */
     public LiveData<Result<List<Record>>> getRecords(Exercise exercise) {
         MutableLiveData<Result<List<Record>>> records = new MutableLiveData<>();
 
@@ -195,11 +179,7 @@ public class ExerciseRepository {
                 .collection("exercises")
                 .document(exercise.getId())
                 .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("ExerciseRepository", "Exercise deleted");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("ExerciseRepository", "Error deleting exercise", e);
-                });
+                .addOnSuccessListener(aVoid -> Log.d("ExerciseRepository", "Exercise deleted"))
+                .addOnFailureListener(e -> Log.e("ExerciseRepository", "Error deleting exercise", e));
     }
 }

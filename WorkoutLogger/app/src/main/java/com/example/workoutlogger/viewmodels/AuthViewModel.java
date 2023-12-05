@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.repositories.UserRepository;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
@@ -150,5 +152,25 @@ public class AuthViewModel extends AndroidViewModel {
      */
     public LiveData<String> getUsername() {
         return userRepository.getUserName();
+    }
+
+    public GoogleSignInOptions getGoogleSignInOptions() {
+        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getApplication().getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+    }
+
+    public void signInWithGoogle(GoogleSignInAccount account) {
+        userRepository.signInWithGoogle(account)
+                        .addOnSuccessListener(authResult -> authSuccess.setValue(true))
+                        .addOnFailureListener(e -> {
+                            authSuccess.setValue(false);
+
+                            List<Pair<String, String>> errors = new ArrayList<>();
+                            errors.add(new Pair<>("general", e.getMessage()));
+
+                            authError.setValue(errors);
+                        });
     }
 }

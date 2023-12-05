@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">WorkoutLogger</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="login">Login</string>
+    <string name="login">Sign in</string>
     <string name="register">Register</string>
     <string name="click_to_login">Click to login</string>
     <string name="click_to_register">Click to register</string>
@@ -36,7 +36,7 @@
     <string name="enter_an_exercise_error">Please enter a exercise name</string>
     <string name="server_error_on_exercise_creation">Something went wrong when creating the exercise. Please try again</string>
     <string name="create_exercise">Create Exercise</string>
-    <string name="search">Search...</string>
+    <string name="search">Search…</string>
     <string name="add_exercise">Add Exercise</string>
     <string name="start_workout">Start Workout</string>
     <string name="reps">Reps</string>
