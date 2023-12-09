@@ -1,16 +1,25 @@
 package com.example.workoutlogger.viewmodels;
 
 import android.app.Application;
+import android.os.CancellationSignal;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.repositories.UserRepository;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
@@ -154,23 +163,67 @@ public class AuthViewModel extends AndroidViewModel {
         return userRepository.getUserName();
     }
 
-    public GoogleSignInOptions getGoogleSignInOptions() {
-        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getApplication().getString(R.string.default_web_client_id))
-                .requestEmail()
+    /**
+     * Signs the user in with Google Sign-In
+     *
+     * @param cancellationSignal A CancellationSignal object that can be used to cancel the operation
+     */
+    public void signInWithGoogleSignIn(CancellationSignal cancellationSignal) {
+        var request = getCredentialRequest();
+
+        CredentialManager credentialManager = CredentialManager.create(getApplication());
+
+        credentialManager.getCredentialAsync(
+                getApplication(),
+                request,
+                cancellationSignal,
+                Runnable::run,
+                getCredentialManagerCallback()
+        );
+    }
+
+    private GetCredentialRequest getCredentialRequest() {
+        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(true)
+                .setServerClientId(getApplication().getString(R.string.default_web_client_id))
+                .setAutoSelectEnabled(true)
+                .build();
+
+        return new GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
                 .build();
     }
 
-    public void signInWithGoogle(GoogleSignInAccount account) {
-        userRepository.signInWithGoogle(account)
-                        .addOnSuccessListener(authResult -> authSuccess.setValue(true))
-                        .addOnFailureListener(e -> {
-                            authSuccess.setValue(false);
+    private CredentialManagerCallback<GetCredentialResponse, GetCredentialException> getCredentialManagerCallback() {
+        return new CredentialManagerCallback<>() {
 
-                            List<Pair<String, String>> errors = new ArrayList<>();
-                            errors.add(new Pair<>("general", e.getMessage()));
+            @Override
+            public void onResult(GetCredentialResponse getCredentialResponse) {
+                Credential credential = getCredentialResponse.getCredential();
+                if (credential instanceof CustomCredential) {
+                    if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
+                        GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.getData());
+                        userRepository.signInWithGoogle(googleIdTokenCredential)
+                                .addOnSuccessListener(authResult -> authSuccess.setValue(true))
+                                .addOnFailureListener(e -> {
+                                    authSuccess.setValue(false);
 
-                            authError.setValue(errors);
-                        });
+                                    List<Pair<String, String>> errors = new ArrayList<>();
+                                    errors.add(new Pair<>("general", e.getMessage()));
+
+                                    authError.setValue(errors);
+                                });
+                    }
+                }
+            }
+
+            @Override
+            public void onError(@NonNull GetCredentialException e) {
+                List<Pair<String, String>> errors = new ArrayList<>();
+                errors.add(new Pair<>("general", e.getMessage()));
+
+                authError.setValue(errors);
+            }
+        };
     }
 }

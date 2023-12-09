@@ -1,42 +1,32 @@
 package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.viewmodels.AuthViewModel;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
     private AuthViewModel authViewModel;
+    private TextInputEditText editTextEmail;
+    private TextInputEditText editTextPassword;
+    private Button buttonLogin;
+    private ProgressBar progressBar;
+    private TextView textView;
+    private SignInButton googleSignInButton;
 
     @Override
     public void onStart() {
@@ -48,24 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                try {
-                    Intent data = result.getData();
-                    Task<GoogleSignInAccount> accountTask = GoogleSignIn.getSignedInAccountFromIntent(data);
-                    GoogleSignInAccount account = accountTask.getResult(ApiException.class);
-
-                    if (account != null) {
-                        authViewModel.signInWithGoogle(account);
-                    }
-                } catch (ApiException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-    );
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,12 +48,12 @@ public class LoginActivity extends AppCompatActivity {
         // Remove the actionbar
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        TextInputEditText editTextEmail = findViewById(R.id.email);
-        TextInputEditText editTextPassword = findViewById(R.id.password);
-        Button buttonLogin = findViewById(R.id.btn_login);
-        ProgressBar progressBar = findViewById(R.id.progressBar);
-        TextView textView = findViewById(R.id.registerNow);
-        SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
+        editTextEmail = findViewById(R.id.email);
+        editTextPassword = findViewById(R.id.password);
+        buttonLogin = findViewById(R.id.btn_login);
+        progressBar = findViewById(R.id.progressBar);
+        textView = findViewById(R.id.registerNow);
+        googleSignInButton = findViewById(R.id.btn_google_sign_in);
 
         textView.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
@@ -98,8 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         authViewModel.getAuthError().observe(this, error -> {
-            progressBar.setVisibility(View.GONE);
-            buttonLogin.setEnabled(true);
+            setUiForLogin(false);
 
             boolean hasFocused = false;
             // Go through the error list and set all fields that have errors and the first field should be focused
@@ -129,8 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         buttonLogin.setOnClickListener(View -> {
-            progressBar.setVisibility(android.view.View.VISIBLE);
-            buttonLogin.setEnabled(false);
+            setUiForLogin(true);
             String email = String.valueOf(editTextEmail.getText());
             String password = String.valueOf(editTextPassword.getText());
 
@@ -138,13 +108,17 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         googleSignInButton.setOnClickListener(v -> {
-            progressBar.setVisibility(android.view.View.VISIBLE);
-            buttonLogin.setEnabled(false);
-            googleSignInButton.setEnabled(false);
+            setUiForLogin(true);
+            CancellationSignal cancellationSignal = new CancellationSignal();
 
-            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, authViewModel.getGoogleSignInOptions());
+            authViewModel.signInWithGoogleSignIn(cancellationSignal);
 
-            signInLauncher.launch(googleSignInClient.getSignInIntent());
         });
+    }
+
+    private void setUiForLogin(boolean isLogin) {
+        progressBar.setVisibility(isLogin ? android.view.View.VISIBLE : android.view.View.GONE);
+        buttonLogin.setEnabled(!isLogin);
+        googleSignInButton.setEnabled(!isLogin);
     }
 }

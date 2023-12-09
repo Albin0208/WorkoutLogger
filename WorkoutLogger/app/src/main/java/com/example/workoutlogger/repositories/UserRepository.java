@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,7 +79,7 @@ public class UserRepository {
         return userData;
     }
 
-    public Task<AuthResult> signInWithGoogle(GoogleSignInAccount account) {
+    public Task<AuthResult> signInWithGoogle(GoogleIdTokenCredential account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         return auth.signInWithCredential(credential)
                     .addOnCompleteListener(task -> {
