@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.viewmodels.AuthViewModel;
-import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -30,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView textView;
     private SignInButton googleSignInButton;
-    private SignInClient oneTapClient;
 
     private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartIntentSenderForResult(),
@@ -128,12 +126,8 @@ public class LoginActivity extends AppCompatActivity {
             setUiForLogin(true);
 
             authViewModel.startSignIn()
-                    .addOnSuccessListener(signInResult -> {
-                        signInLauncher.launch(new IntentSenderRequest.Builder(signInResult.getPendingIntent().getIntentSender()).build());
-                    })
-                    .addOnFailureListener(e -> {
-                        setUiForLogin(false);
-                    });
+                    .addOnSuccessListener(signInResult -> signInLauncher.launch(new IntentSenderRequest.Builder(signInResult.getPendingIntent().getIntentSender()).build()))
+                    .addOnFailureListener(e -> setUiForLogin(false));
         });
     }
 
