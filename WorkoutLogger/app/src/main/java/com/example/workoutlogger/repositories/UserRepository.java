@@ -79,20 +79,7 @@ public class UserRepository {
         return userData;
     }
 
-    public Task<AuthResult> signInWithGoogle(GoogleIdTokenCredential account) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        return auth.signInWithCredential(credential)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = auth.getCurrentUser();
-
-                            // Check if the user is new
-                            if (user != null && task.getResult().getAdditionalUserInfo().isNewUser()) {
-                                user.updateProfile(new com.google.firebase.auth.UserProfileChangeRequest.Builder()
-                                        .setDisplayName(account.getGivenName())
-                                        .build());
-                            }
-                        }
-                    });
+    public Task<AuthResult> signInWithGoogle(AuthCredential credential) {
+        return auth.signInWithCredential(credential);
     }
 }

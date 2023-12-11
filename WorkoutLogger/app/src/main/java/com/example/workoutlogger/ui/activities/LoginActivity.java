@@ -2,18 +2,21 @@ package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CancellationSignal;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.viewmodels.AuthViewModel;
+import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -27,6 +30,20 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView textView;
     private SignInButton googleSignInButton;
+    private SignInClient oneTapClient;
+
+    private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartIntentSenderForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    authViewModel.signInWithIntent(data);
+                } else {
+                    setUiForLogin(false);
+                }
+            }
+    );
+
 
     @Override
     public void onStart() {
@@ -109,10 +126,14 @@ public class LoginActivity extends AppCompatActivity {
 
         googleSignInButton.setOnClickListener(v -> {
             setUiForLogin(true);
-            CancellationSignal cancellationSignal = new CancellationSignal();
 
-            authViewModel.signInWithGoogleSignIn(cancellationSignal);
-
+            authViewModel.startSignIn()
+                    .addOnSuccessListener(signInResult -> {
+                        signInLauncher.launch(new IntentSenderRequest.Builder(signInResult.getPendingIntent().getIntentSender()).build());
+                    })
+                    .addOnFailureListener(e -> {
+                        setUiForLogin(false);
+                    });
         });
     }
 
