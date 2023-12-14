@@ -219,7 +219,7 @@ public class AuthViewModel extends AndroidViewModel {
                                     List<Pair<String, String>> errors = new ArrayList<>();
                                     errors.add(new Pair<>("general", e.getMessage()));
 
-                                    authError.setValue(errors);
+                                    authError.postValue(errors);
                                 });
                     }
                 }
@@ -235,7 +235,7 @@ public class AuthViewModel extends AndroidViewModel {
                 if (!(e instanceof GetCredentialCancellationException))
                     errors.add(new Pair<>("general", getApplication().getString(R.string.unexpected_error_message)));
 
-                authError.setValue(errors);
+                authError.postValue(errors);
             }
         };
     }
