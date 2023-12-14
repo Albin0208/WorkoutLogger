@@ -47,7 +47,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp){
-                lp.width = (int) (getWidth() / 1.5);
+                lp.width = (int) (getWidth() / 1.3);
                 return true;
             }
         });
