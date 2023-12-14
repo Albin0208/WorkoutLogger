@@ -1,10 +1,7 @@
 package com.example.workoutlogger.viewmodels;
 
-import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
-
 import android.app.Activity;
 import android.app.Application;
-import android.content.Intent;
 import android.os.CancellationSignal;
 import android.util.Log;
 import android.util.Pair;
@@ -16,6 +13,7 @@ import androidx.credentials.CredentialManagerCallback;
 import androidx.credentials.CustomCredential;
 import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialCancellationException;
 import androidx.credentials.exceptions.GetCredentialException;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -23,24 +21,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.repositories.UserRepository;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +33,6 @@ public class AuthViewModel extends AndroidViewModel {
     private final UserRepository userRepository;
     private final MutableLiveData<Boolean> authSuccess;
     private final MutableLiveData<List<Pair<String, String>>> authError;
-    private SignInClient oneTapClient;
 
     public AuthViewModel(Application application) {
         super(application);
@@ -183,6 +166,12 @@ public class AuthViewModel extends AndroidViewModel {
         return userRepository.getUserName();
     }
 
+    /**
+     * Signs the user in with Google Sign In
+     *
+     * @param cancellationSignal The cancellation signal
+     * @param activity          The activity, used for the credential manager
+     */
     public void signInWithGoogle(CancellationSignal cancellationSignal, Activity activity) {
         CredentialManager credentialManager = CredentialManager.create(activity);
 
@@ -195,6 +184,11 @@ public class AuthViewModel extends AndroidViewModel {
         );
     }
 
+    /**
+     * Get the sign in request for Google Sign In
+     *
+     * @return A GetCredentialRequest object containing the sign in request
+     */
     private GetCredentialRequest getSignInRequest() {
         var googleIdOption = new GetSignInWithGoogleOption.Builder(getApplication().getString(R.string.default_web_client_id))
                 .build();
@@ -204,9 +198,13 @@ public class AuthViewModel extends AndroidViewModel {
                 .build();
     }
 
+    /**
+     * Get the callback for the credential manager
+     *
+     * @return A CredentialManagerCallback object containing the callback
+     */
     private CredentialManagerCallback<GetCredentialResponse, GetCredentialException> getCredentialManagerCallback() {
         return new CredentialManagerCallback<>() {
-
             @Override
             public void onResult(GetCredentialResponse getCredentialResponse) {
                 Credential credential = getCredentialResponse.getCredential();
@@ -230,13 +228,15 @@ public class AuthViewModel extends AndroidViewModel {
             @Override
             public void onError(@NonNull GetCredentialException e) {
                 List<Pair<String, String>> errors = new ArrayList<>();
-                errors.add(new Pair<>("general", e.getMessage()));
+
+                Log.e("AuthViewModel", "OnError: ", e);
+
+                // If this is a cancellation exception, do nothing
+                if (!(e instanceof GetCredentialCancellationException))
+                    errors.add(new Pair<>("general", getApplication().getString(R.string.unexpected_error_message)));
 
                 authError.setValue(errors);
             }
         };
     }
-
-
-
 }

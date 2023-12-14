@@ -82,7 +82,16 @@ public class UserRepository {
     }
 
     public Task<AuthResult> signInWithGoogle(GoogleIdTokenCredential credential) {
-        AuthCredential cred = GoogleAuthProvider.getCredential(credential.getIdToken(), null);
-        return auth.signInWithCredential(cred);
+        return auth.signInWithCredential(GoogleAuthProvider.getCredential(credential.getIdToken(), null))
+                .addOnSuccessListener(
+                        authResult -> {
+                            FirebaseUser user = auth.getCurrentUser();
+                            if (user != null) {
+                                user.updateProfile(new com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                                        .setDisplayName(credential.getGivenName())
+                                        .build());
+                            }
+                        }
+                );
     }
 }
