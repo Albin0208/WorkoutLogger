@@ -1,10 +1,22 @@
 package com.example.workoutlogger.viewmodels;
 
+import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
+
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.os.CancellationSignal;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,8 +28,14 @@ import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -165,66 +183,60 @@ public class AuthViewModel extends AndroidViewModel {
         return userRepository.getUserName();
     }
 
-    public Task<BeginSignInResult> startSignIn() {
-        oneTapClient = Identity.getSignInClient(getApplication());
-        return oneTapClient.beginSignIn(buildSignInRequest())
-                .addOnFailureListener(e -> {
-                    List<Pair<String, String>> errors = new ArrayList<>();
-                    errors.add(new Pair<>("general", getApplication().getString(R.string.unexpected_error_message)));
+    public void signInWithGoogle(CancellationSignal cancellationSignal, Activity activity) {
+        CredentialManager credentialManager = CredentialManager.create(activity);
 
-                    authError.setValue(errors);
-                });
+        credentialManager.getCredentialAsync(
+                activity,
+                getSignInRequest(),
+                cancellationSignal,
+                Runnable::run,
+                getCredentialManagerCallback()
+        );
     }
 
-    public void signInWithIntent(Intent data) {
-        try {
-            SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
-            String idToken = credential.getGoogleIdToken();
-            AuthCredential authCredential = GoogleAuthProvider.getCredential(idToken, null);
-            userRepository.signInWithGoogle(authCredential)
-                    .addOnSuccessListener(authResult -> {
-                        authSuccess.setValue(true);
-                        if (authResult.getAdditionalUserInfo().isNewUser()) // If new user update username
-                            authResult.getUser().updateProfile(
-                                    new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(credential.getGivenName())
-                                    .build());
+    private GetCredentialRequest getSignInRequest() {
+        var googleIdOption = new GetSignInWithGoogleOption.Builder(getApplication().getString(R.string.default_web_client_id))
+                .build();
 
-                        // TODO: Link accounts of the same email
-
-                    })
-                    .addOnFailureListener(e -> {
-                        authSuccess.setValue(false);
-
-                        List<Pair<String, String>> errors = new ArrayList<>();
-                        errors.add(new Pair<>("general", getApplication().getString(R.string.unexpected_error_message)));
-
-                        authError.setValue(errors);
-                    });
-        } catch (ApiException e) {
-            // Display error to user
-            authSuccess.setValue(false);
-
-            List<Pair<String, String>> errors = new ArrayList<>();
-            Log.e("AuthViewModel", e.getMessage());
-            errors.add(new Pair<>("general", getApplication().getString(R.string.unexpected_error_message)));
-
-            authError.setValue(errors);
-
-            throw new RuntimeException(e);
-        }
-    }
-
-    private BeginSignInRequest buildSignInRequest() {
-        return BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(
-                        BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                                .setSupported(true)
-                                .setFilterByAuthorizedAccounts(false)
-                                .setServerClientId(getApplication().getString(R.string.default_web_client_id))
-                                .build()
-                )
-                .setAutoSelectEnabled(true)
+        return new GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
                 .build();
     }
+
+    private CredentialManagerCallback<GetCredentialResponse, GetCredentialException> getCredentialManagerCallback() {
+        return new CredentialManagerCallback<>() {
+
+            @Override
+            public void onResult(GetCredentialResponse getCredentialResponse) {
+                Credential credential = getCredentialResponse.getCredential();
+                if (credential instanceof CustomCredential) {
+                    if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
+                        GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.getData());
+                        userRepository.signInWithGoogle(googleIdTokenCredential)
+                                .addOnSuccessListener(authResult -> authSuccess.setValue(true))
+                                .addOnFailureListener(e -> {
+                                    authSuccess.setValue(false);
+
+                                    List<Pair<String, String>> errors = new ArrayList<>();
+                                    errors.add(new Pair<>("general", e.getMessage()));
+
+                                    authError.setValue(errors);
+                                });
+                    }
+                }
+            }
+
+            @Override
+            public void onError(@NonNull GetCredentialException e) {
+                List<Pair<String, String>> errors = new ArrayList<>();
+                errors.add(new Pair<>("general", e.getMessage()));
+
+                authError.setValue(errors);
+            }
+        };
+    }
+
+
+
 }

@@ -3,7 +3,9 @@ package com.example.workoutlogger.repositories;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
@@ -79,7 +81,8 @@ public class UserRepository {
         return userData;
     }
 
-    public Task<AuthResult> signInWithGoogle(AuthCredential credential) {
-        return auth.signInWithCredential(credential);
+    public Task<AuthResult> signInWithGoogle(GoogleIdTokenCredential credential) {
+        AuthCredential cred = GoogleAuthProvider.getCredential(credential.getIdToken(), null);
+        return auth.signInWithCredential(cred);
     }
 }

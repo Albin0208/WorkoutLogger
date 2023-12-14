@@ -2,6 +2,7 @@ package com.example.workoutlogger.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +17,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.viewmodels.AuthViewModel;
+import com.google.android.gms.auth.api.identity.SignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -29,19 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView textView;
     private SignInButton googleSignInButton;
-
-    private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartIntentSenderForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    Intent data = result.getData();
-                    authViewModel.signInWithIntent(data);
-                } else {
-                    setUiForLogin(false);
-                }
-            }
-    );
-
 
     @Override
     public void onStart() {
@@ -125,9 +119,8 @@ public class LoginActivity extends AppCompatActivity {
         googleSignInButton.setOnClickListener(v -> {
             setUiForLogin(true);
 
-            authViewModel.startSignIn()
-                    .addOnSuccessListener(signInResult -> signInLauncher.launch(new IntentSenderRequest.Builder(signInResult.getPendingIntent().getIntentSender()).build()))
-                    .addOnFailureListener(e -> setUiForLogin(false));
+            CancellationSignal cancellationSignal = new CancellationSignal();
+            authViewModel.signInWithGoogle(cancellationSignal, this);
         });
     }
 
