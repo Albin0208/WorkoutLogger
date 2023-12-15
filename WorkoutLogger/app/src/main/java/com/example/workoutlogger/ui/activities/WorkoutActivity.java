@@ -3,6 +3,7 @@ package com.example.workoutlogger.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -11,10 +12,13 @@ import android.widget.ImageButton;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
@@ -24,6 +28,7 @@ import com.example.workoutlogger.ui.adapters.SetAdapter;
 import com.example.workoutlogger.ui.adapters.SetListener;
 import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 import com.example.workoutlogger.ui.adapters.WorkoutListener;
+import com.example.workoutlogger.ui.fragments.WorkoutFragment;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -32,6 +37,8 @@ import java.util.ArrayList;
 public class WorkoutActivity extends AppCompatActivity implements WorkoutListener, SetListener {
     private WorkoutAdapter workoutAdapter;
     private WorkoutViewModel workoutViewModel;
+
+    private NavController navController;
 
     /**
      * The launcher for the ChooseExerciseActivity
@@ -68,10 +75,11 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
         setContentView(R.layout.activity_workout);
 
         setupCustomActionBar();
-        setupWorkoutViewModel();
-        setupRecyclerView();
-        setupButtons();
+        workoutViewModel = new ViewModelProvider(this).get(WorkoutViewModel.class);
         setupOnBackPressedCallback();
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
+        navController = navHostFragment.getNavController();
     }
 
     /**
@@ -87,45 +95,18 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
     }
 
     /**
-     * Sets up the WorkoutViewModel
-     */
-    private void setupWorkoutViewModel() {
-        workoutViewModel = new ViewModelProvider(this).get(WorkoutViewModel.class);
-        workoutViewModel.getExercises().observe(this, exercises -> workoutAdapter.submitList(new ArrayList<>(exercises)));
-    }
-
-    /**
-     * Sets up the RecyclerView
-     */
-    private void setupRecyclerView() {
-        RecyclerView recyclerView = findViewById(R.id.exercise_list);
-        workoutAdapter = new WorkoutAdapter(this, this);
-        recyclerView.setAdapter(workoutAdapter);
-        recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
-    }
-
-    /**
-     * Sets up the buttons
-     */
-    private void setupButtons() {
-        Button addExerciseButton = findViewById(R.id.add_exercise_button);
-        addExerciseButton.setOnClickListener(v -> chooseExerciseLauncher.launch(new Intent(this, ChooseExerciseActivity.class)));
-
-        ImageButton abortWorkout = findViewById(R.id.abort_workout);
-        ImageButton finishWorkout = findViewById(R.id.finish_workout);
-
-        abortWorkout.setOnClickListener(v -> showAbortWorkout());
-        finishWorkout.setOnClickListener(v -> handleFinishWorkout());
-    }
-
-    /**
      * Sets up the onBackPressed callback
      */
     private void setupOnBackPressedCallback() {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                showAbortWorkout();
+                if (navController.getCurrentDestination().getId() == R.id.workoutFragment) {
+                    // If the NavController didn't handle the back press, you can provide your custom logic.
+                    showAbortWorkout();
+                } else {
+                    navController.popBackStack();
+                }
             }
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
@@ -175,6 +156,12 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
             dialog.show();
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        navController.navigateUp();
+        return true;
     }
 
     @Override

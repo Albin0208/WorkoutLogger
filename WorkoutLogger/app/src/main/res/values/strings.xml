@@ -60,4 +60,6 @@
     <string name="cannot_finish_workout">Cannot Finish Workout</string>
     <string name="add_exercise_before_finish_text">Please add at least one exercise to finish the workout.</string>
     <string name="no_exercise">No exercises found</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

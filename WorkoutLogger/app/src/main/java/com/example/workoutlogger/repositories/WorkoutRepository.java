@@ -64,7 +64,10 @@ public class WorkoutRepository {
                     .addOnSuccessListener(documentReference -> updateRecords(userDocument, workout.getExercises())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(result -> emitter.onSuccess(result.isSuccess() ? Result.success(workout) : Result.error(result.getError(), result.getErrorMessageRes()))))
+                            .subscribe(result -> {
+                                Log.d("WorkoutRepository", "createWorkout: " + result.isSuccess());
+                                emitter.onSuccess(result.isSuccess() ? Result.success(workout) : Result.error(result.getError(), result.getErrorMessageRes()));
+                            }))
                     .addOnFailureListener(e -> {
                         Log.e("WorkoutRepository", "Error creating workout", e);
 
