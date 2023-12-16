@@ -33,6 +33,8 @@ public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<String> workoutName = new MutableLiveData<>();
     private final WorkoutRepository workoutRepository = new WorkoutRepository();
 
+    private Workout workout;
+
     public LiveData<List<Exercise>> getExercises() {
         return exercisesLiveData;
     }

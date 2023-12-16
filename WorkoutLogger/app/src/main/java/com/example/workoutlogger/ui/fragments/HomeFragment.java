@@ -14,20 +14,25 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.data.Workout;
+import com.example.workoutlogger.ui.activities.LogViewActivity;
 import com.example.workoutlogger.ui.activities.RecordsActivity;
 import com.example.workoutlogger.ui.activities.WorkoutActivity;
 import com.example.workoutlogger.ui.adapters.RecentWorkoutsAdapter;
+import com.example.workoutlogger.ui.adapters.WorkoutClickListener;
+import com.example.workoutlogger.ui.adapters.WorkoutListener;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements WorkoutClickListener {
     private WorkoutViewModel workoutViewModel;
     private ProgressBar loadingSpinner;
     private TextView workoutsError;
@@ -57,7 +62,8 @@ public class HomeFragment extends Fragment {
 
         workoutViewModel = new ViewModelProvider(requireActivity()).get(WorkoutViewModel.class);
 
-        adapter = new RecentWorkoutsAdapter();
+
+        adapter = new RecentWorkoutsAdapter(v -> startActivity(new Intent(getActivity(), LogViewActivity.class)), this);
         recyclerView.setAdapter(adapter);
 
         fetchWorkouts();
@@ -105,7 +111,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchWorkouts() {
-        workoutViewModel.getWorkouts(7);
+        workoutViewModel.getWorkouts(4);
     }
 
     @Override
@@ -113,5 +119,12 @@ public class HomeFragment extends Fragment {
         super.onResume();
         // Update the recent workouts
         fetchWorkouts();
+    }
+
+    @Override
+    public void WorkoutClicked(Workout workout) {
+        Intent intent = new Intent(getActivity(), LogViewActivity.class);
+        intent.putExtra("workout", workout);
+        startActivity(intent);
     }
 }

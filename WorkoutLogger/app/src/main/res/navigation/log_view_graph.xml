@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/log_view_graph.xml"
+    app:startDestination="@id/logViewFragment">
+
+    <fragment
+        android:id="@+id/logViewFragment"
+        android:name="com.example.workoutlogger.ui.fragments.LogViewFragment"
+        android:label="fragment_log_view"
+        tools:layout="@layout/fragment_log_view" >
+        <action
+            android:id="@+id/action_logViewFragment_to_workoutDetailFragment"
+            app:destination="@id/workoutDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/workoutDetailFragment"
+        android:name="com.example.workoutlogger.ui.fragments.WorkoutDetailFragment"
+        android:label="fragment_workout_detail"
+        tools:layout="@layout/fragment_workout_detail" >
+        <action
+            android:id="@+id/action_workoutDetailFragment_to_logViewFragment"
+            app:destination="@id/logViewFragment" />
+    </fragment>
+</navigation>

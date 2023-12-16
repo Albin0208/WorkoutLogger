@@ -1,9 +1,9 @@
 package com.example.workoutlogger.ui.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,22 +15,29 @@ import com.example.workoutlogger.data.Workout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_NORMAL = 0;
     private static final int VIEW_TYPE_LAST = 1;
     private List<Workout> workouts = new ArrayList<>();
 
+    private final View.OnClickListener onButtonClick;
+    private final WorkoutClickListener onWorkoutClick;
+
+    public RecentWorkoutsAdapter(View.OnClickListener onButtonClick, WorkoutClickListener onWorkoutClick) {
+        super();
+        this.onButtonClick = onButtonClick;
+        this.onWorkoutClick = onWorkoutClick;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_LAST) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_item_last, parent, false);
-            return new LastItemViewHolder(view);
+            return new LastItemViewHolder(view, onButtonClick);
         }
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_item, parent, false);
@@ -45,6 +52,7 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         Workout workout = workouts.get(position);
         RecentWorkoutsViewHolder workoutsViewHolder = (RecentWorkoutsViewHolder) holder;
         workoutsViewHolder.bind(workout);
+        workoutsViewHolder.itemView.setOnClickListener(v -> onWorkoutClick.WorkoutClicked(workout));
     }
 
     @Override
@@ -97,8 +105,13 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * This item is special since it will be used to navigate to the view all workouts screen
      */
     public static class LastItemViewHolder extends RecyclerView.ViewHolder {
-        public LastItemViewHolder(@NonNull View itemView) {
+
+
+        public LastItemViewHolder(@NonNull View itemView, View.OnClickListener onButtonClick) {
             super(itemView);
+            Button button = itemView.findViewById(R.id.full_log_button);
+
+            button.setOnClickListener(onButtonClick);
         }
     }
 }
