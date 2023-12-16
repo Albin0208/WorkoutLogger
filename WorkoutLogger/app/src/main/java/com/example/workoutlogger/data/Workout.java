@@ -54,14 +54,6 @@ public class Workout implements Parcelable {
         return exercises;
     }
 
-    public void addExercise(Exercise exercise) {
-        exercises.add(exercise);
-    }
-
-    public void removeExercise(Exercise exercise) {
-        exercises.remove(exercise);
-    }
-
     public void setName(String name) {
         this.name = name;
     }

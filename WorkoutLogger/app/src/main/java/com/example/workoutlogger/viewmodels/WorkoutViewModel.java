@@ -30,7 +30,7 @@ public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<Result<List<Workout>>> workoutsLiveData = new MutableLiveData<>(Result.success(new ArrayList<>()));
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(true);
-
+    private final MutableLiveData<String> workoutName = new MutableLiveData<>();
     private final WorkoutRepository workoutRepository = new WorkoutRepository();
 
     public LiveData<List<Exercise>> getExercises() {
@@ -110,6 +110,7 @@ public class WorkoutViewModel extends ViewModel {
     public Workout getWorkout() {
         Workout workout = new Workout();
         workout.setExercises(exercisesLiveData.getValue());
+        workout.setName(workoutName.getValue());
 
         return workout;
     }
@@ -159,7 +160,8 @@ public class WorkoutViewModel extends ViewModel {
     }
 
     @SuppressLint("CheckResult")
-    public void saveWorkout(Workout workout) {
+    public void saveWorkout() {
+        Workout workout = getWorkout();
         workout.setDate(Timestamp.now());
 
         // Notify the user that the workout was saved
@@ -203,5 +205,13 @@ public class WorkoutViewModel extends ViewModel {
      */
     public LiveData<Boolean> getIsEmpty() {
         return isEmpty;
+    }
+
+    public void setWorkoutName(String string) {
+        workoutName.setValue(string);
+    }
+
+    public LiveData<String> getWorkoutName() {
+        return workoutName;
     }
 }

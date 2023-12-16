@@ -16,11 +16,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Workout name"
-            android:autofillHints="name"
             android:inputType="text"
             android:minHeight="48dp"
             android:id="@+id/workout_name"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:importantForAutofill="no" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

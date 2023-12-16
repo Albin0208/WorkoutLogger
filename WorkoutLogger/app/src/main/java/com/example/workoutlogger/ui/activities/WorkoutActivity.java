@@ -1,17 +1,13 @@
 package com.example.workoutlogger.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -19,55 +15,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.ui.adapters.SetAdapter;
 import com.example.workoutlogger.ui.adapters.SetListener;
-import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 import com.example.workoutlogger.ui.adapters.WorkoutListener;
-import com.example.workoutlogger.ui.fragments.WorkoutFragment;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.ArrayList;
-
-public class WorkoutActivity extends AppCompatActivity implements WorkoutListener, SetListener {
-    private WorkoutAdapter workoutAdapter;
+public class WorkoutActivity extends AppCompatActivity {
     private WorkoutViewModel workoutViewModel;
 
     private NavController navController;
-
-    /**
-     * The launcher for the ChooseExerciseActivity
-     */
-    ActivityResultLauncher<Intent> chooseExerciseLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Exercise exercise = result.getData().getParcelableExtra("exercise", Exercise.class);
-                    workoutViewModel.addExercise(exercise);
-                }
-            });
-
-    /**
-     * The launcher for the FinishWorkoutActivity
-     */
-    ActivityResultLauncher<Intent> finishWorkoutLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    // Grab a tag that says if the user finished the workout or not
-                    boolean finishedWorkout = result.getData().getBooleanExtra("finishedWorkout", false);
-
-                    // If the user finished the workout, then finish the activity
-                    if (finishedWorkout) {
-                        finish();
-                    }
-                }
-            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +63,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
             @Override
             public void handleOnBackPressed() {
                 if (navController.getCurrentDestination().getId() == R.id.workoutFragment) {
-                    // If the NavController didn't handle the back press, you can provide your custom logic.
                     showAbortWorkout();
                 } else {
-                    navController.popBackStack();
+                    navController.navigateUp();
                 }
             }
         };
@@ -132,63 +92,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutListene
         dialog.show();
     }
 
-    /**
-     * Handles finishing the workout
-     */
-    private void handleFinishWorkout() {
-        // Check if the user has added any exercises
-        if (workoutViewModel.getExercises().getValue() != null && !workoutViewModel.getExercises().getValue().isEmpty()) {
-
-        // Send the workout to the FinishWorkoutActivity
-        Intent intent = new Intent(this, FinishWorkoutActivity.class);
-        intent.putExtra("workout", workoutViewModel.getWorkout());
-
-        finishWorkoutLauncher.launch(intent);
-        } else {
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-            builder.setTitle(R.string.cannot_finish_workout);
-            builder.setMessage(R.string.add_exercise_before_finish_text);
-
-            builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-
-            AlertDialog dialog = builder.create();
-
-            dialog.show();
-        }
-
-    }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         navController.navigateUp();
         return true;
-    }
-
-    @Override
-    public void onSetRemoved(ExerciseSet set, int adapterPosition, SetAdapter adapter) {
-        int setPosition = set.getSetNumber() - 1; // Subtract 1 because the set number is 1-indexed
-        workoutViewModel.removeSet(adapterPosition, setPosition);
-
-        // Notify the adapter that the set was removed and all sets after it need to be updated
-        if (setPosition >= 0 && setPosition <= adapter.getItemCount()) {
-            adapter.notifyItemRangeChanged(setPosition, adapter.getItemCount() - setPosition + 1); // + 1 to account for the set that was removed
-        }
-    }
-
-    @Override
-    public void onSetAdded(int adapterPosition, SetAdapter adapter) {
-        workoutViewModel.addSet(adapterPosition);
-        adapter.notifyItemInserted(adapter.getItemCount() - 1);
-    }
-
-    @Override
-    public void onSetToggleCompletion(ExerciseSet set, int position, SetAdapter adapter) {
-        workoutViewModel.toggleSetCompletion(set);
-        adapter.notifyItemChanged(position);
-    }
-
-    @Override
-    public void onExerciseRemoved(Exercise exercise, int position) {
-        workoutViewModel.removeExercise(position);
     }
 }

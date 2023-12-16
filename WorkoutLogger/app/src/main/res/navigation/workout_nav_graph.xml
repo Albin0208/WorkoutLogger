@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_workout" >
         <action
             android:id="@+id/action_workoutFragment_to_workout_summary_fragment"
-            app:destination="@id/workout_summary_fragment" />
+            app:destination="@id/workout_summary_fragment"
+            app:popUpTo="@id/workout_summary_fragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -22,7 +24,9 @@
         tools:layout="@layout/fragment_workout_summary" >
         <action
             android:id="@+id/action_workout_summary_fragment_to_workoutFragment"
-            app:destination="@id/workoutFragment" />
+            app:destination="@id/workoutFragment"
+            app:popUpTo="@id/workoutFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
 </navigation>

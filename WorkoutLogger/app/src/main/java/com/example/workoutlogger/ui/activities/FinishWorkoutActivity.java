@@ -69,7 +69,7 @@ public class FinishWorkoutActivity extends AppCompatActivity {
 
             workout.setName(workoutName.getText().toString());
 
-            viewModel.saveWorkout(workout);
+//            viewModel.saveWorkout(workout);
         });
     }
 
