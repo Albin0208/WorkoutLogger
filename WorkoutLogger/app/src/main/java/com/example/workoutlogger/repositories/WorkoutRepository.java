@@ -130,6 +130,9 @@ public class WorkoutRepository {
                                 .addOnCompleteListener(task -> handleResult(emitter, task, exercise, newRecord, exerciseRecordDocument))
                                 .addOnFailureListener(e -> emitter.onSuccess(Result.error(e, R.string.unexpected_error_message)));
                     });
+
+            // In case there are no valid sets, emit the result
+            emitter.onSuccess(Result.success(exercise));
         });
     }
 
