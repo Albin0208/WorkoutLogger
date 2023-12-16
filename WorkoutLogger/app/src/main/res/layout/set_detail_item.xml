@@ -53,7 +53,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/weightInputLayout"
-        app:layout_constraintEnd_toEndOf="@+id/menu_icon"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:suffixText="reps" >
@@ -68,18 +68,5 @@
             android:gravity="center"
             android:importantForAutofill="no" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <ImageView
-        android:id="@+id/menu_icon"
-        android:layout_width="20dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_menu"
-        app:layout_constraintStart_toEndOf="@+id/repsInputLayout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_percent="0.1"
-        android:clickable="true"
-        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

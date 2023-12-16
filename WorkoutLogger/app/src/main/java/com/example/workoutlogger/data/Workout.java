@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.Timestamp;
 
+import java.util.Date;
 import java.util.List;
 
 public class Workout implements Parcelable {
@@ -25,6 +26,7 @@ public class Workout implements Parcelable {
         id = in.readInt();
         name = in.readString();
         exercises = in.createTypedArrayList(Exercise.CREATOR);
+        date = new Timestamp(in.readSerializable(Date.class.getClassLoader(), Date.class));
     }
 
     public static final Creator<Workout> CREATOR = new Creator<Workout>() {
@@ -72,7 +74,7 @@ public class Workout implements Parcelable {
         parcel.writeInt(id);
         parcel.writeString(name);
         parcel.writeTypedList(exercises);
-        parcel.writeString(date.toString());
+        parcel.writeSerializable(date.toDate());
     }
 
     public Timestamp getDate() {
