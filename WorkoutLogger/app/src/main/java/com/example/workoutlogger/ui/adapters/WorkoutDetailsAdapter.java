@@ -16,8 +16,10 @@ import com.example.workoutlogger.data.Exercise;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter for displaying a finished workout's details
+ */
 public class WorkoutDetailsAdapter extends RecyclerView.Adapter<WorkoutDetailsAdapter.WorkoutViewHolder> {
-
     private List<Exercise> exercises;
     public WorkoutDetailsAdapter() {
         this.exercises = new ArrayList<>();

@@ -1,5 +1,7 @@
 package com.example.workoutlogger.ui.adapters;
 
+import android.content.Context;
+import android.view.ContentInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Adapter for displaying a list of records
+ */
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordViewHolder> {
     private List<Record> records = new ArrayList<>();
 
@@ -58,8 +63,9 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
 
         public void bind(Record record) {
             ExerciseSet set = record.getSet();
-            reps.setText(set.getReps() + " RM");
-            weight.setText(set.getWeight() + " kg");
+            Context context = itemView.getContext();
+            reps.setText(context.getString(R.string.reps_text, set.getReps()));
+            weight.setText(context.getString(R.string.weight_text, set.getWeight()));
             SimpleDateFormat formatter = new SimpleDateFormat(
                     itemView.getContext().getString(R.string.date_format), Locale.getDefault());
             date.setText(formatter.format(record.getTimestamp().toDate()));

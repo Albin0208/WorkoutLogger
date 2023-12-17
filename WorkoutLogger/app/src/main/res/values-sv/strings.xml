@@ -56,4 +56,5 @@
     <string name="cannot_finish_workout">Kan inte avsluta pass</string>
     <string name="add_exercise_before_finish_text">Vänligen lägg till minst en övning innan du avslutar</string>
     <string name="no_exercise">Inga övningar hittades</string>
+    <string name="time_format">HH:mm:ss</string>
 </resources>

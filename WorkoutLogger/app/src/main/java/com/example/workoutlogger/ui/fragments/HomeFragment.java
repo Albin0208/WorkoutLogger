@@ -8,26 +8,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.workoutlogger.R;
-import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.Result;
 import com.example.workoutlogger.data.Workout;
 import com.example.workoutlogger.ui.activities.LogViewActivity;
-import com.example.workoutlogger.ui.activities.RecordsActivity;
 import com.example.workoutlogger.ui.activities.WorkoutActivity;
 import com.example.workoutlogger.ui.adapters.RecentWorkoutsAdapter;
 import com.example.workoutlogger.ui.adapters.WorkoutClickListener;
-import com.example.workoutlogger.ui.adapters.WorkoutListener;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.util.List;

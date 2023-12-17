@@ -1,6 +1,9 @@
 package com.example.workoutlogger.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -8,24 +11,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Workout;
-import com.example.workoutlogger.ui.adapters.ExerciseAdapter;
 import com.example.workoutlogger.ui.adapters.RecentWorkoutsAdapter;
-import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 import com.example.workoutlogger.ui.adapters.WorkoutClickListener;
 import com.example.workoutlogger.viewmodels.LogViewModel;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 public class LogViewFragment extends Fragment implements WorkoutClickListener {
     private WorkoutViewModel workoutViewModel;

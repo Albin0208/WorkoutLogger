@@ -1,23 +1,19 @@
 package com.example.workoutlogger.ui.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.workoutlogger.R;
-import com.example.workoutlogger.data.Workout;
-import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
 import com.example.workoutlogger.ui.adapters.WorkoutDetailsAdapter;
 import com.example.workoutlogger.viewmodels.LogViewModel;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 

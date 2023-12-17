@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.DiffUtil;
 
 import com.example.workoutlogger.data.Exercise;
 
+/**
+ * DiffUtil callback for comparing exercises in a list
+ */
 public class ExerciseDiffCallback extends DiffUtil.ItemCallback<Exercise> {
     @Override
     public boolean areItemsTheSame(@NonNull Exercise oldItem, @NonNull Exercise newItem) {

@@ -1,14 +1,11 @@
 package com.example.workoutlogger.viewmodels;
 
 import android.annotation.SuppressLint;
-import android.content.res.Resources;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 import com.example.workoutlogger.data.ExerciseSet;
 import com.example.workoutlogger.data.Result;
@@ -17,11 +14,9 @@ import com.example.workoutlogger.repositories.WorkoutRepository;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class WorkoutViewModel extends ViewModel {
@@ -103,11 +98,11 @@ public class WorkoutViewModel extends ViewModel {
 
 
     /**
-     * Gets the workout that was created
+     * Creates the workouts based on the data in the view model
      *
      * @return The workout that was created
      */
-    public Workout getWorkout() {
+    private Workout getWorkout() {
         Workout workout = new Workout();
         workout.setExercises(exercisesLiveData.getValue());
         workout.setName(workoutName.getValue());
@@ -159,6 +154,9 @@ public class WorkoutViewModel extends ViewModel {
                         });
     }
 
+    /**
+     * Saves the workout
+     */
     @SuppressLint("CheckResult")
     public void saveWorkout() {
         Workout workout = getWorkout();
@@ -207,10 +205,20 @@ public class WorkoutViewModel extends ViewModel {
         return isEmpty;
     }
 
+    /**
+     * Sets the name of the workout
+     *
+     * @param string The name of the workout
+     */
     public void setWorkoutName(String string) {
         workoutName.setValue(string);
     }
 
+    /**
+     * Gets the name of the workout
+     *
+     * @return The name of the workout
+     */
     public LiveData<String> getWorkoutName() {
         return workoutName;
     }

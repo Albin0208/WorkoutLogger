@@ -1,5 +1,6 @@
 package com.example.workoutlogger.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Adapter for displaying a list of recent workouts
+ */
 public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_NORMAL = 0;
     private static final int VIEW_TYPE_LAST = 1;
@@ -27,6 +31,12 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private final WorkoutClickListener onWorkoutClick;
     private boolean shouldDisplayLastItem;
 
+    /**
+     * Constructor for the adapter that creates a instance where the last item differs from the rest of the items
+     *
+     * @param onButtonClick The click listener for the last item
+     * @param onWorkoutClick The click listener for the rest of the items
+     */
     public RecentWorkoutsAdapter(View.OnClickListener onButtonClick, WorkoutClickListener onWorkoutClick) {
         super();
         this.onButtonClick = onButtonClick;
@@ -34,6 +44,13 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.shouldDisplayLastItem = true;
     }
 
+    /**
+     * Constructor for the adapter that creates a instance where the last item differs from the rest of the items
+     *
+     * @param onButtonClick The click listener for the last item
+     * @param onWorkoutClick The click listener for the rest of the items
+     * @param shouldDisplayLastItem Whether or not the last item should be displayed
+     */
     public RecentWorkoutsAdapter(View.OnClickListener onButtonClick, WorkoutClickListener onWorkoutClick, boolean shouldDisplayLastItem) {
         this(onButtonClick, onWorkoutClick);
         this.shouldDisplayLastItem = shouldDisplayLastItem;
@@ -78,6 +95,7 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return workouts.size() + 1; // Special case for the last item
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setWorkouts(List<Workout> workouts) {
         this.workouts = workouts;
         notifyDataSetChanged();

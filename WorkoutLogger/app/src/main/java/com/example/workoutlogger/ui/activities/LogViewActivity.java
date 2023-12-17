@@ -1,17 +1,16 @@
 package com.example.workoutlogger.ui.activities;
 
+import android.os.Bundle;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.os.Bundle;
-
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Workout;
 import com.example.workoutlogger.viewmodels.LogViewModel;
-import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 public class LogViewActivity extends AppCompatActivity {
 

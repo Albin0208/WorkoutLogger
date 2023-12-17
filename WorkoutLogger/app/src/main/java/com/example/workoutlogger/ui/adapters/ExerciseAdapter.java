@@ -17,11 +17,6 @@ import com.example.workoutlogger.data.Exercise;
 public class ExerciseAdapter extends ListAdapter<Exercise, ExerciseAdapter.ExerciseViewHolder> {
     private final ExerciseOnClickListener listener;
 
-    public ExerciseAdapter() {
-        super(new ExerciseDiffCallback());
-        this.listener = null;
-    }
-
     public ExerciseAdapter(ExerciseOnClickListener listener) {
         super(new ExerciseDiffCallback());
         this.listener = listener;
