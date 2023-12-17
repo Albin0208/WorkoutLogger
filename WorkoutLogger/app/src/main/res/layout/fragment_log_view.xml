@@ -3,7 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.LogViewFragment">
+    tools:context=".ui.fragments.LogViewFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="From"
+            android:id="@+id/from_date_button"
+            android:layout_weight="1"
+            android:layout_marginEnd="5dp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="To"
+            android:id="@+id/to_date_button"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

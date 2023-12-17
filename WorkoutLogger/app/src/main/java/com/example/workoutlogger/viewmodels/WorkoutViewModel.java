@@ -1,6 +1,9 @@
 package com.example.workoutlogger.viewmodels;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -14,6 +17,8 @@ import com.example.workoutlogger.repositories.WorkoutRepository;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -27,6 +32,8 @@ public class WorkoutViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isEmpty = new MutableLiveData<>(true);
     private final MutableLiveData<String> workoutName = new MutableLiveData<>();
     private final WorkoutRepository workoutRepository = new WorkoutRepository();
+    private final MutableLiveData<Date> fromDate = new MutableLiveData<>();
+    private final MutableLiveData<Date> toDate = new MutableLiveData<>();
 
     public LiveData<List<Exercise>> getExercises() {
         return exercisesLiveData;
@@ -139,7 +146,7 @@ public class WorkoutViewModel extends ViewModel {
     public void getAllWorkouts() {
         isLoading.postValue(true);
 
-        workoutRepository.getAllWorkouts()
+        workoutRepository.getAllWorkouts(fromDate.getValue(), toDate.getValue())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -221,5 +228,77 @@ public class WorkoutViewModel extends ViewModel {
      */
     public LiveData<String> getWorkoutName() {
         return workoutName;
+    }
+
+    /**
+     * Sets the from date
+     *
+     * @param time The from date
+     */
+    public void setFromDate(Date time) {
+        if (toDate.getValue() != null && time.after(toDate.getValue())) {
+            toDate.setValue(time);
+        }
+        fromDate.setValue(time);
+        getAllWorkouts();
+    }
+
+    /**
+     * Sets the to date
+     *
+     * @param time The to date
+     */
+    public void setToDate(Date time) {
+        if (fromDate.getValue() != null && time.before(fromDate.getValue())) {
+            fromDate.setValue(time);
+        }
+        toDate.setValue(time);
+        getAllWorkouts();
+    }
+
+    /**
+     * Gets the from date
+     *
+     * @return The from date
+     */
+    public LiveData<Date> getFromDate() {
+        return fromDate;
+    }
+
+    /**
+     * Gets the to date
+     *
+     * @return The to date
+     */
+    public LiveData<Date> getToDate() {
+        return toDate;
+    }
+
+    /**
+     * Gets a date picker dialog
+     *
+     * @param isFromDate Whether the date picker is for the from date or not
+     * @param context The context to get the date picker dialog from
+     * @return The date picker dialog
+     */
+    public DatePickerDialog getDatePickerDialog(boolean isFromDate, Context context) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        return new DatePickerDialog(context, (view, year1, month1, dayOfMonth) -> {
+            Calendar newCalendar = Calendar.getInstance();
+            newCalendar.set(year, month, day,
+                    isFromDate ? 0 : 23,
+                    isFromDate ? 0 : 59,
+                    isFromDate ? 0 : 59);
+
+            if (isFromDate) {
+                this.setFromDate(newCalendar.getTime());
+            } else {
+                this.setToDate(newCalendar.getTime());
+            }
+        }, year, month, day);
     }
 }

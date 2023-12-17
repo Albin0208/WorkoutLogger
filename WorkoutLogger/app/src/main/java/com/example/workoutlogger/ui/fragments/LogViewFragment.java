@@ -1,9 +1,11 @@
 package com.example.workoutlogger.ui.fragments;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,10 +20,17 @@ import com.example.workoutlogger.ui.adapters.WorkoutClickListener;
 import com.example.workoutlogger.viewmodels.LogViewModel;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class LogViewFragment extends Fragment implements WorkoutClickListener {
     private WorkoutViewModel workoutViewModel;
     private LogViewModel logViewModel;
     private NavController navController;
+    private Button dateFromButton;
+    private Button dateToButton;
+
     public LogViewFragment() {
         // Required empty public constructor
     }
@@ -41,6 +50,13 @@ public class LogViewFragment extends Fragment implements WorkoutClickListener {
         View view =  inflater.inflate(R.layout.fragment_log_view, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.log_recycler_view);
+        dateFromButton = view.findViewById(R.id.from_date_button);
+        dateToButton = view.findViewById(R.id.to_date_button);
+
+        dateFromButton.setOnClickListener(v -> workoutViewModel.getDatePickerDialog(true, requireContext()).show());
+
+        dateToButton.setOnClickListener(v -> workoutViewModel.getDatePickerDialog(false, requireContext()).show());
+
         RecentWorkoutsAdapter workoutAdapter = new RecentWorkoutsAdapter(null, this, false);
         recyclerView.setAdapter(workoutAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(getContext()));
@@ -52,6 +68,16 @@ public class LogViewFragment extends Fragment implements WorkoutClickListener {
             if (result.isSuccess()) {
                 workoutAdapter.setWorkouts(result.getData());
             }
+        });
+
+        SimpleDateFormat formatter = new SimpleDateFormat(
+                requireContext().getString(R.string.date_format), Locale.getDefault());
+
+        workoutViewModel.getFromDate().observe(getViewLifecycleOwner(), date -> {
+            dateFromButton.setText(formatter.format(date));
+        });
+        workoutViewModel.getToDate().observe(getViewLifecycleOwner(), date -> {
+            dateToButton.setText(formatter.format(date));
         });
 
 

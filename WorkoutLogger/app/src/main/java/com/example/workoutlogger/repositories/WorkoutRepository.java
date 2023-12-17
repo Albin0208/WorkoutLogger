@@ -21,6 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BinaryOperator;
@@ -246,7 +247,7 @@ public class WorkoutRepository {
      * @return An Observable object containing the result of the operation
      */
     public Single<Result<List<Workout>>> getWorkouts(int limit) {
-        return fetchWorkouts(limit);
+        return fetchWorkouts(limit, null, null);
     }
 
     /**
@@ -254,17 +255,19 @@ public class WorkoutRepository {
      *
      * @return An Observable object containing the result of the operation
      */
-    public Single<Result<List<Workout>>> getAllWorkouts() {
-        return fetchWorkouts(0);
+    public Single<Result<List<Workout>>> getAllWorkouts(Date fromDate, Date toDate) {
+        return fetchWorkouts(0, fromDate, toDate);
     }
 
     /**
      * Fetches workouts from Firestore
      *
-     * @param limit The maximum number of workouts to get, or 0 for no limit
+     * @param limit    The maximum number of workouts to get, or 0 for no limit
+     * @param fromDate The date to get workouts from
+     * @param toDate  The date to get workouts to
      * @return An Observable object containing the result of the operation
      */
-    private Single<Result<List<Workout>>> fetchWorkouts(int limit) {
+    private Single<Result<List<Workout>>> fetchWorkouts(int limit, Date fromDate, Date toDate) {
         return Single.create(emitter -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -277,6 +280,12 @@ public class WorkoutRepository {
                     .document(currentUser.getUid())
                     .collection("workouts")
                     .orderBy("date", Query.Direction.DESCENDING);
+
+            if (fromDate != null)
+                query = query.whereGreaterThanOrEqualTo("date", fromDate);
+
+            if (toDate != null)
+                query = query.whereLessThanOrEqualTo("date", toDate);
 
             if (limit > 0) {
                 query = query.limit(limit);
