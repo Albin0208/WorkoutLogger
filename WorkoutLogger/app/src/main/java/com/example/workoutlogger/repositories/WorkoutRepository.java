@@ -253,6 +253,8 @@ public class WorkoutRepository {
     /**
      * Gets all workouts for the current user
      *
+     * @param fromDate The date to get workouts from
+     * @param toDate  The date to get workouts to
      * @return An Observable object containing the result of the operation
      */
     public Single<Result<List<Workout>>> getAllWorkouts(Date fromDate, Date toDate) {

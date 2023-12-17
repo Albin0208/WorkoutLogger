@@ -1,6 +1,5 @@
 package com.example.workoutlogger.ui.fragments;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,6 @@ import com.example.workoutlogger.viewmodels.LogViewModel;
 import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Locale;
 
 public class LogViewFragment extends Fragment implements WorkoutClickListener {
