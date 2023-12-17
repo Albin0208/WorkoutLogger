@@ -25,17 +25,24 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private final View.OnClickListener onButtonClick;
     private final WorkoutClickListener onWorkoutClick;
+    private boolean shouldDisplayLastItem;
 
     public RecentWorkoutsAdapter(View.OnClickListener onButtonClick, WorkoutClickListener onWorkoutClick) {
         super();
         this.onButtonClick = onButtonClick;
         this.onWorkoutClick = onWorkoutClick;
+        this.shouldDisplayLastItem = true;
+    }
+
+    public RecentWorkoutsAdapter(View.OnClickListener onButtonClick, WorkoutClickListener onWorkoutClick, boolean shouldDisplayLastItem) {
+        this(onButtonClick, onWorkoutClick);
+        this.shouldDisplayLastItem = shouldDisplayLastItem;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_LAST) {
+        if (shouldDisplayLastItem && viewType == VIEW_TYPE_LAST) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_item_last, parent, false);
             return new LastItemViewHolder(view, onButtonClick);
         }
@@ -57,11 +64,17 @@ public class RecentWorkoutsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemViewType(int position) {
+        if (!shouldDisplayLastItem)
+            return VIEW_TYPE_NORMAL;
+
         return position == getItemCount() - 1 ? VIEW_TYPE_LAST : VIEW_TYPE_NORMAL;
     }
 
     @Override
     public int getItemCount() {
+        if (!shouldDisplayLastItem)
+            return workouts.size();
+
         return workouts.size() + 1; // Special case for the last item
     }
 

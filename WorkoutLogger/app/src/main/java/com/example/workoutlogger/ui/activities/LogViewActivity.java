@@ -38,6 +38,15 @@ public class LogViewActivity extends AppCompatActivity {
 
             logViewModel.setWorkout(workout);
             navController.navigate(R.id.action_logViewFragment_to_workoutDetailFragment);
+        } else {
+            OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    if (!navController.popBackStack())
+                        finish();
+                }
+            };
+            getOnBackPressedDispatcher().addCallback(this, callback);
         }
 
     }

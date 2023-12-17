@@ -3,7 +3,10 @@ package com.example.workoutlogger.ui.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,52 +14,33 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.workoutlogger.R;
+import com.example.workoutlogger.data.Workout;
+import com.example.workoutlogger.ui.adapters.ExerciseAdapter;
+import com.example.workoutlogger.ui.adapters.RecentWorkoutsAdapter;
+import com.example.workoutlogger.ui.adapters.WorkoutAdapter;
+import com.example.workoutlogger.ui.adapters.WorkoutClickListener;
+import com.example.workoutlogger.viewmodels.LogViewModel;
+import com.example.workoutlogger.viewmodels.WorkoutViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LogViewFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class LogViewFragment extends Fragment {
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+public class LogViewFragment extends Fragment implements WorkoutClickListener {
+    private WorkoutViewModel workoutViewModel;
+    private LogViewModel logViewModel;
+    private NavController navController;
     public LogViewFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LogViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LogViewFragment newInstance(String param1, String param2) {
-        LogViewFragment fragment = new LogViewFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        workoutViewModel = new ViewModelProvider(requireActivity()).get(WorkoutViewModel.class);
+        logViewModel = new ViewModelProvider(requireActivity()).get(LogViewModel.class);
     }
 
     @Override
@@ -64,12 +48,28 @@ public class LogViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_log_view, container, false);
-        Button button = view.findViewById(R.id.detail_btn);
 
-        button.setOnClickListener(v -> {
-            var navController = NavHostFragment.findNavController(this);
-            navController.navigate(R.id.action_logViewFragment_to_workoutDetailFragment);
+        RecyclerView recyclerView = view.findViewById(R.id.log_recycler_view);
+        RecentWorkoutsAdapter workoutAdapter = new RecentWorkoutsAdapter(null, this, false);
+        recyclerView.setAdapter(workoutAdapter);
+        recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(getContext()));
+        navController = NavHostFragment.findNavController(this);
+
+        workoutViewModel.getAllWorkouts();
+
+        workoutViewModel.getWorkoutsLiveData().observe(getViewLifecycleOwner(), result -> {
+            if (result.isSuccess()) {
+                workoutAdapter.setWorkouts(result.getData());
+            }
         });
+
+
         return view;
+    }
+
+    @Override
+    public void WorkoutClicked(Workout workout) {
+        logViewModel.setWorkout(workout);
+        navController.navigate(R.id.action_logViewFragment_to_workoutDetailFragment);
     }
 }
