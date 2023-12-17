@@ -59,7 +59,7 @@ public class WorkoutDetailFragment extends Fragment {
             if (date != null) {
                 // Format date
                 SimpleDateFormat formatter = new SimpleDateFormat(
-                        getContext().getString(R.string.date_format) + " - " + getString(R.string.time_format), Locale.getDefault());
+                        getString(R.string.date_format) + " - " + getString(R.string.time_format), Locale.getDefault());
                 workoutDateTextView.setText(formatter.format(date.toDate()));
             }
         });
@@ -72,7 +72,7 @@ public class WorkoutDetailFragment extends Fragment {
 
         logViewModel.getExercises().observe(getViewLifecycleOwner(), exercises -> {
             if (exercises != null) {
-                workoutDetailsAdapter.submitList(exercises);
+                workoutDetailsAdapter.setExercises(exercises);
             }
         });
 

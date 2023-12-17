@@ -4,9 +4,6 @@ package com.example.workoutlogger.ui.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,11 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.workoutlogger.R;
 import com.example.workoutlogger.data.Exercise;
 
-public class WorkoutDetailsAdapter extends ListAdapter<Exercise, WorkoutDetailsAdapter.WorkoutViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
 
+public class WorkoutDetailsAdapter extends RecyclerView.Adapter<WorkoutDetailsAdapter.WorkoutViewHolder> {
 
+    private List<Exercise> exercises;
     public WorkoutDetailsAdapter() {
-        super(new ExerciseDiffCallback());
+        this.exercises = new ArrayList<>();
     }
 
     @NonNull
@@ -32,8 +32,18 @@ public class WorkoutDetailsAdapter extends ListAdapter<Exercise, WorkoutDetailsA
 
     @Override
     public void onBindViewHolder(@NonNull WorkoutViewHolder holder, int position) {
-        Exercise exercise = getItem(position);
-        holder.bind(exercise, position);
+        Exercise exercise = exercises.get(position);
+        holder.bind(exercise);
+    }
+
+    @Override
+    public int getItemCount() {
+        return exercises.size();
+    }
+
+    public void setExercises(List<Exercise> exercises) {
+        this.exercises = exercises;
+        notifyDataSetChanged();
     }
 
     public static class WorkoutViewHolder extends RecyclerView.ViewHolder {
@@ -44,14 +54,15 @@ public class WorkoutDetailsAdapter extends ListAdapter<Exercise, WorkoutDetailsA
             super(itemView);
             name = itemView.findViewById(R.id.exercise_name);
             setList = itemView.findViewById(R.id.set_list);
-            setAdapter = new SetDetailAdapter(new SetDiffCallback());
+            setAdapter = new SetDetailAdapter();
             setList.setAdapter(setAdapter);
             setList.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(itemView.getContext()));
+            setList.setHasFixedSize(true);
         }
 
-        public void bind(Exercise exercise, int position) {
+        public void bind(Exercise exercise) {
             name.setText(exercise.getName());
-            setAdapter.submitList(exercise.getSets());
+            setAdapter.setSets(exercise.getSets());
         }
 
     }

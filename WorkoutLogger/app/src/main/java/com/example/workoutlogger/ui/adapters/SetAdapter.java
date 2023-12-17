@@ -35,6 +35,7 @@ public class SetAdapter extends ListAdapter<ExerciseSet, SetAdapter.SetViewHolde
     @Override
     public SetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.set_item_layout, parent, false);
+
         return new SetViewHolder(itemView);
     }
 
