@@ -71,12 +71,8 @@ public class LogViewFragment extends Fragment implements WorkoutClickListener {
         SimpleDateFormat formatter = new SimpleDateFormat(
                 requireContext().getString(R.string.date_format), Locale.getDefault());
 
-        workoutViewModel.getFromDate().observe(getViewLifecycleOwner(), date -> {
-            dateFromButton.setText(formatter.format(date));
-        });
-        workoutViewModel.getToDate().observe(getViewLifecycleOwner(), date -> {
-            dateToButton.setText(formatter.format(date));
-        });
+        workoutViewModel.getFromDate().observe(getViewLifecycleOwner(), date -> dateFromButton.setText(formatter.format(date)));
+        workoutViewModel.getToDate().observe(getViewLifecycleOwner(), date -> dateToButton.setText(formatter.format(date)));
 
 
         return view;

@@ -237,7 +237,7 @@ public class WorkoutViewModel extends ViewModel {
      */
     public void setFromDate(Date time) {
         if (toDate.getValue() != null && time.after(toDate.getValue())) {
-            toDate.setValue(time);
+            time = toDate.getValue();
         }
         fromDate.setValue(time);
         getAllWorkouts();
@@ -250,7 +250,7 @@ public class WorkoutViewModel extends ViewModel {
      */
     public void setToDate(Date time) {
         if (fromDate.getValue() != null && time.before(fromDate.getValue())) {
-            fromDate.setValue(time);
+            time = fromDate.getValue();
         }
         toDate.setValue(time);
         getAllWorkouts();
@@ -289,7 +289,7 @@ public class WorkoutViewModel extends ViewModel {
 
         return new DatePickerDialog(context, (view, year1, month1, dayOfMonth) -> {
             Calendar newCalendar = Calendar.getInstance();
-            newCalendar.set(year, month, day,
+            newCalendar.set(year1, month1, dayOfMonth,
                     isFromDate ? 0 : 23,
                     isFromDate ? 0 : 59,
                     isFromDate ? 0 : 59);
